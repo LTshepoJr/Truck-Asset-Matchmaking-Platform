@@ -1,0 +1,32 @@
+.app {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f4f6f8;
+}
+
+.welcome-card {
+  width: min(100%, 600px);
+  padding: 40px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+  text-align: center;
+}
+
+.project-name {
+  margin-bottom: 8px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.welcome-card h1 {
+  margin: 0 0 16px;
+  color: #172033;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+.welcome-card p {
+  line-height: 1.6;
+}
