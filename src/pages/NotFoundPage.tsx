@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { ROUTES } from "../routes/paths";
 
 export function NotFoundPage() {
