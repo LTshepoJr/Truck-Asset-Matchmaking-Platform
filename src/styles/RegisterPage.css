@@ -1,0 +1,896 @@
+/* =========================================================
+   TAMP Registration Page
+   ========================================================= */
+
+.register-page {
+  --register-navy: #172033;
+  --register-navy-soft: #29364d;
+  --register-red: #c8102e;
+  --register-red-hover: #ad0d27;
+  --register-red-active: #950b21;
+  --register-white: #ffffff;
+  --register-text: #172033;
+  --register-muted: #657187;
+  --register-border: #d6dce6;
+
+  display: grid;
+  grid-template-columns: minmax(360px, 0.88fr) minmax(560px, 1.12fr);
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  background: var(--register-white);
+}
+
+/* =========================================================
+   Marketing panel
+   ========================================================= */
+
+.register-page__hero {
+  position: sticky;
+  top: 0;
+
+  min-width: 0;
+  height: 100vh;
+  height: 100svh;
+
+  overflow: hidden;
+
+  color: var(--register-white);
+  background: var(--register-navy);
+}
+
+.register-page__hero-inner {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 720px;
+  height: 100%;
+
+  margin-left: auto;
+
+  padding: clamp(2.5rem, 5vw, 5rem) clamp(2.5rem, 5vw, 5.5rem)
+    clamp(2rem, 4vw, 3rem);
+}
+
+.register-page__hero-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+
+  max-width: 520px;
+}
+
+/* =========================================================
+   Brand
+   ========================================================= */
+
+.register-page__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  width: fit-content;
+}
+
+.register-page__brand--light {
+  --brand-cutout: var(--register-navy);
+
+  margin-bottom: clamp(3.5rem, 7vh, 5.5rem);
+
+  color: var(--register-white);
+}
+
+.register-page__brand--dark {
+  --brand-cutout: var(--register-white);
+
+  color: var(--register-text);
+}
+
+.register-page__brand-mark {
+  position: relative;
+
+  display: block;
+  flex: 0 0 auto;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: conic-gradient(
+    from -35deg,
+    var(--register-red) 0deg 74deg,
+    #080d17 74deg 135deg,
+    var(--register-red) 135deg 220deg,
+    #080d17 220deg 285deg,
+    var(--register-red) 285deg 360deg
+  );
+}
+
+.register-page__brand-mark::before {
+  position: absolute;
+  inset: 7px;
+
+  content: "";
+
+  background: var(--brand-cutout);
+
+  border-radius: 50%;
+}
+
+.register-page__brand-mark::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 13px;
+  height: 13px;
+
+  content: "";
+
+  border-bottom: 5px solid var(--register-red);
+  border-left: 5px solid var(--register-red);
+
+  transform: translate(-38%, -50%) rotate(45deg);
+}
+
+.register-page__brand-copy {
+  display: flex;
+  flex-direction: column;
+
+  line-height: 1;
+}
+
+.register-page__brand-copy strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.register-page__brand-copy small {
+  margin-top: 0.3rem;
+
+  color: inherit;
+
+  font-size: 0.58rem;
+
+  opacity: 0.85;
+}
+
+/* =========================================================
+   Hero copy
+   ========================================================= */
+
+.register-page__hero-label {
+  display: inline-flex;
+
+  width: fit-content;
+
+  margin: 0 0 1.5rem;
+  padding: 0.45rem 0.75rem;
+
+  color: var(--register-white);
+  background: var(--register-navy-soft);
+
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+.register-page__hero-copy h2 {
+  margin: 0 0 1rem;
+
+  color: var(--register-white);
+
+  font-size: clamp(2.4rem, 4vw, 3.7rem);
+  font-weight: 800;
+
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.register-page__hero-description {
+  max-width: 500px;
+
+  margin: 0;
+
+  color: #d4d9e3;
+
+  font-size: clamp(0.94rem, 1.2vw, 1.08rem);
+  line-height: 1.65;
+}
+
+/* =========================================================
+   Benefits
+   ========================================================= */
+
+.register-page__benefits {
+  display: grid;
+  gap: 1.15rem;
+
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+}
+
+.register-page__benefit {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.register-page__benefit > span {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  color: #ff8b9f;
+  background: rgb(200 16 46 / 0.14);
+
+  border: 1px solid rgb(200 16 46 / 0.3);
+  border-radius: 50%;
+
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.register-page__benefit strong {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: var(--register-white);
+
+  font-size: 0.86rem;
+}
+
+.register-page__benefit p {
+  margin: 0;
+
+  color: #aeb7c7;
+
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.register-page__company {
+  margin: 1rem 0 0;
+
+  color: #8794aa;
+
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   Registration panel
+   ========================================================= */
+
+.register-page__panel {
+  display: flex;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  padding: clamp(3rem, 6vw, 5rem) clamp(2.5rem, 6vw, 6rem);
+
+  background: var(--register-white);
+}
+
+.register-page__form-shell {
+  width: 100%;
+  max-width: 680px;
+
+  margin-block: auto;
+}
+
+.register-page__mobile-brand {
+  display: none;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.register-page__header {
+  margin-bottom: 2rem;
+}
+
+.register-page__eyebrow {
+  margin: 0 0 0.6rem;
+
+  color: var(--register-red);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.register-page__header h1 {
+  margin: 0 0 0.65rem;
+
+  color: var(--register-text);
+
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 780;
+
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.register-page__subtitle {
+  margin: 0;
+
+  color: var(--register-muted);
+
+  font-size: 0.93rem;
+}
+
+/* =========================================================
+   Alert
+   ========================================================= */
+
+.register-page__alert {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 0.95rem;
+
+  border: 1px solid;
+  border-radius: var(--radius-md);
+
+  font-size: 0.82rem;
+}
+
+.register-page__alert--error {
+  color: var(--color-error);
+  background: var(--color-error-background);
+
+  border-color: rgb(185 28 28 / 0.2);
+}
+
+/* =========================================================
+   Form
+   ========================================================= */
+
+.register-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.register-page__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.register-page__field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.register-page__field--full {
+  grid-column: 1 / -1;
+}
+
+.register-page__field label,
+.register-page__role-fieldset legend {
+  color: var(--register-text);
+
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.register-page__field input {
+  height: 46px;
+  min-height: 46px;
+
+  padding: 0.7rem 0.85rem;
+
+  color: var(--register-text);
+
+  border-color: var(--register-border);
+  border-radius: 7px;
+
+  font-size: 0.86rem;
+}
+
+.register-page__field input::placeholder {
+  color: #929bad;
+}
+
+.register-page__field input:hover {
+  border-color: #aeb7c5;
+}
+
+.register-page__field input:focus {
+  border-color: var(--register-red);
+
+  box-shadow: 0 0 0 3px rgb(200 16 46 / 0.1);
+}
+
+/* =========================================================
+   Section headings
+   ========================================================= */
+
+.register-page__section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  margin-top: 0.25rem;
+}
+
+.register-page__section-heading::after {
+  flex: 1;
+
+  height: 1px;
+
+  content: "";
+
+  background: #e8ebf0;
+}
+
+.register-page__section-heading span {
+  color: #7b8494;
+
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   Role selection
+   ========================================================= */
+
+.register-page__role-fieldset {
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+}
+
+.register-page__role-fieldset legend {
+  margin-bottom: 0.65rem;
+}
+
+.register-page__role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.register-page__role-card {
+  position: relative;
+
+  display: block;
+
+  min-width: 0;
+  padding: 0.9rem;
+
+  background: var(--register-white);
+
+  border: 1px solid var(--register-border);
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.register-page__role-card:hover {
+  background: #fafbfc;
+
+  border-color: #aeb7c5;
+}
+
+.register-page__role-card--selected {
+  background: #fff8f9;
+
+  border-color: var(--register-red);
+
+  box-shadow: 0 0 0 2px rgb(200 16 46 / 0.08);
+}
+
+.register-page__role-card input {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+
+  width: 16px;
+  height: 16px;
+  min-height: 16px;
+
+  margin: 0;
+  padding: 0;
+
+  accent-color: var(--register-red);
+}
+
+.register-page__role-card:focus-within {
+  outline: 3px solid rgb(200 16 46 / 0.14);
+  outline-offset: 2px;
+}
+
+.register-page__role-content {
+  display: flex;
+  gap: 0.75rem;
+
+  padding-right: 1.6rem;
+}
+
+.register-page__role-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  color: var(--register-red);
+  background: #fff1f3;
+
+  border-radius: 8px;
+}
+
+.register-page__role-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.register-page__role-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  min-width: 0;
+}
+
+.register-page__role-text strong {
+  color: var(--register-text);
+
+  font-size: 0.78rem;
+}
+
+.register-page__role-text small {
+  color: var(--register-muted);
+
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   Password fields
+   ========================================================= */
+
+.register-page__password-field {
+  position: relative;
+}
+
+.register-page__password-field input {
+  padding-right: 3rem;
+}
+
+.register-page__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+
+  padding: 0;
+
+  color: #657187;
+  background: transparent;
+
+  border: 0;
+  border-radius: 50%;
+
+  transform: translateY(-50%);
+}
+
+.register-page__password-toggle:hover:not(:disabled) {
+  color: var(--register-text);
+  background: #f1f3f6;
+}
+
+.register-page__password-toggle:active:not(:disabled) {
+  background: #e9ecf1;
+
+  transform: translateY(-50%);
+}
+
+.register-page__password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================================
+   Password requirements
+   ========================================================= */
+
+.register-page__password-requirements {
+  padding: 0.75rem 0.85rem;
+
+  background: #f7f8fa;
+
+  border: 1px solid #e7e9ed;
+  border-radius: 7px;
+}
+
+.register-page__password-requirements span {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: var(--register-text);
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.register-page__password-requirements p {
+  margin: 0;
+
+  color: var(--register-muted);
+
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Terms
+   ========================================================= */
+
+.register-page__terms label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+
+  color: #596579;
+
+  font-size: 0.74rem;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.register-page__terms input {
+  flex: 0 0 auto;
+
+  width: 15px;
+  height: 15px;
+  min-height: 15px;
+
+  margin: 0.12rem 0 0;
+  padding: 0;
+
+  accent-color: var(--register-red);
+
+  cursor: pointer;
+}
+
+.register-page__terms strong {
+  color: var(--register-red);
+
+  font-weight: 700;
+}
+
+/* =========================================================
+   Errors
+   ========================================================= */
+
+.register-page__field-error {
+  margin: 0.15rem 0 0;
+
+  color: var(--color-error);
+
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   Submit
+   ========================================================= */
+
+.register-page__submit {
+  width: 100%;
+  min-height: 48px;
+
+  margin-top: 0.15rem;
+
+  color: var(--register-white);
+  background: var(--register-red);
+
+  border: 0;
+  border-radius: 7px;
+
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.register-page__submit:hover:not(:disabled) {
+  background: var(--register-red-hover);
+}
+
+.register-page__submit:active:not(:disabled) {
+  background: var(--register-red-active);
+}
+
+/* =========================================================
+   Sign in link
+   ========================================================= */
+
+.register-page__signin {
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+
+  border-top: 1px solid #eef0f3;
+
+  text-align: center;
+}
+
+.register-page__signin p {
+  margin: 0;
+
+  color: #596579;
+
+  font-size: 0.74rem;
+}
+
+.register-page__signin a {
+  color: var(--register-red);
+
+  font-weight: 700;
+}
+
+.register-page__signin a:hover {
+  color: var(--register-red-hover);
+
+  text-decoration: underline;
+}
+
+/* =========================================================
+   Smaller desktops / tablets
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .register-page {
+    grid-template-columns: minmax(320px, 0.8fr) minmax(500px, 1.2fr);
+  }
+
+  .register-page__hero-inner {
+    padding-inline: 2.5rem;
+  }
+
+  .register-page__benefits {
+    margin-top: 2.25rem;
+  }
+
+  .register-page__panel {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .register-page {
+    display: block;
+
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .register-page__hero {
+    display: none;
+  }
+
+  .register-page__panel {
+    display: block;
+
+    min-height: 100vh;
+    min-height: 100svh;
+
+    padding: max(1.75rem, env(safe-area-inset-top)) 1.25rem
+      max(2rem, env(safe-area-inset-bottom));
+  }
+
+  .register-page__form-shell {
+    max-width: 520px;
+
+    margin-inline: auto;
+  }
+
+  .register-page__mobile-brand {
+    display: block;
+
+    margin-bottom: 3rem;
+  }
+
+  .register-page__brand-copy strong {
+    font-size: 1.35rem;
+  }
+
+  .register-page__brand-copy small {
+    font-size: 0.55rem;
+  }
+
+  .register-page__header {
+    margin-bottom: 1.7rem;
+  }
+
+  .register-page__header h1 {
+    font-size: clamp(2rem, 9vw, 2.5rem);
+  }
+
+  .register-page__form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-page__field--full {
+    grid-column: auto;
+  }
+
+  .register-page__role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-page__field input {
+    height: 48px;
+    min-height: 48px;
+
+    font-size: 1rem;
+  }
+
+  .register-page__submit {
+    min-height: 50px;
+
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================================================
+   Very small phones
+   ========================================================= */
+
+@media (max-width: 420px) {
+  .register-page__panel {
+    padding-inline: 1rem;
+  }
+
+  .register-page__mobile-brand {
+    margin-bottom: 2.5rem;
+  }
+
+  .register-page__role-card {
+    padding: 0.85rem;
+  }
+}
