@@ -8,6 +8,8 @@ import { NotFoundPage } from "../pages/NotFoundPage";
 import { TransporterDashboardPage } from "../pages/transporter/TransporterDashboardPage";
 import { ROUTES } from "./paths";
 import { ProtectedRoute } from "./ProtectedRoute";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 
 const freightOwnerNavigation = [
   {
@@ -40,6 +42,10 @@ export function AppRoutes() {
       <Route path={ROUTES.login} element={<LoginPage />} />
 
       <Route path={ROUTES.register} element={<RegisterPage />} />
+
+      <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
+
+      <Route path={ROUTES.resetPassword} element={<ResetPasswordPage />} />
 
       {/* Freight Owner routes */}
       <Route element={<ProtectedRoute requiredRole="freight-owner" />}>
