@@ -45,18 +45,6 @@ interface MockUser {
 
 const mockUsers: MockUser[] = [
   {
-    id: "user-001",
-    email: "owner@tamp.co.za",
-    password: "Password123!",
-    role: "freight-owner",
-  },
-  {
-    id: "user-002",
-    email: "transporter@tamp.co.za",
-    password: "Password123!",
-    role: "transporter",
-  },
-  {
     id: "user-003",
     email: "tshepojr@kortestalkstech.co.za",
     password: "Password123!",
