@@ -33,6 +33,7 @@ const roleRoutes: Record<UserRole, string> = {
 
 interface LoginLocationState {
   registrationSuccess?: boolean;
+  passwordResetSuccess?: boolean;
   email?: string;
 }
 
@@ -102,11 +103,17 @@ function LoginPage() {
   const [errors, setErrors] = useState<LoginPageFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notice, setNotice] = useState(
-    locationState?.registrationSuccess
-      ? "Account created successfully. Sign in to continue."
-      : "",
-  );
+  const [notice, setNotice] = useState(() => {
+    if (locationState?.registrationSuccess) {
+      return "Account created successfully. Sign in to continue.";
+    }
+
+    if (locationState?.passwordResetSuccess) {
+      return "Password reset successfully. Sign in with your new password.";
+    }
+
+    return "";
+  });
   const clearError = (field: keyof LoginPageFormErrors) => {
     setErrors((current) => ({
       ...current,
@@ -174,7 +181,7 @@ function LoginPage() {
   };
 
   const handleForgotPassword = () => {
-    setNotice("Password recovery is not available in the current TAMP MVP.");
+    navigate(ROUTES.forgotPassword);
   };
 
   return (
