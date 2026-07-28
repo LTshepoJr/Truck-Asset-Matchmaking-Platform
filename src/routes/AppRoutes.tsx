@@ -7,6 +7,7 @@ import { FreightOwnerDashboardPage } from "../pages/freight-owner/FreightOwnerDa
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { TransporterDashboardPage } from "../pages/transporter/TransporterDashboardPage";
 import { ROUTES } from "./paths";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 const freightOwnerNavigation = [
   {
@@ -40,39 +41,47 @@ export function AppRoutes() {
 
       <Route path={ROUTES.register} element={<RegisterPage />} />
 
-      <Route
-        path={ROUTES.freightOwner}
-        element={
-          <RoleLayout
-            roleName="Freight Owner"
-            navigation={freightOwnerNavigation}
-          />
-        }
-      >
-        <Route index element={<FreightOwnerDashboardPage />} />
+      {/* Freight Owner routes */}
+      <Route element={<ProtectedRoute requiredRole="freight-owner" />}>
+        <Route
+          path={ROUTES.freightOwner}
+          element={
+            <RoleLayout
+              roleName="Freight Owner"
+              navigation={freightOwnerNavigation}
+            />
+          }
+        >
+          <Route index element={<FreightOwnerDashboardPage />} />
+        </Route>
       </Route>
 
-      <Route
-        path={ROUTES.transporter}
-        element={
-          <RoleLayout
-            roleName="Transporter"
-            navigation={transporterNavigation}
-          />
-        }
-      >
-        <Route index element={<TransporterDashboardPage />} />
+      {/* Transporter routes */}
+      <Route element={<ProtectedRoute requiredRole="transporter" />}>
+        <Route
+          path={ROUTES.transporter}
+          element={
+            <RoleLayout
+              roleName="Transporter"
+              navigation={transporterNavigation}
+            />
+          }
+        >
+          <Route index element={<TransporterDashboardPage />} />
+        </Route>
       </Route>
 
-      <Route
-        path={ROUTES.admin}
-        element={
-          <RoleLayout roleName="Administrator" navigation={adminNavigation} />
-        }
-      >
-        <Route index element={<AdminDashboardPage />} />
+      {/* Administrator routes */}
+      <Route element={<ProtectedRoute requiredRole="admin" />}>
+        <Route
+          path={ROUTES.admin}
+          element={
+            <RoleLayout roleName="Administrator" navigation={adminNavigation} />
+          }
+        >
+          <Route index element={<AdminDashboardPage />} />
+        </Route>
       </Route>
-
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
