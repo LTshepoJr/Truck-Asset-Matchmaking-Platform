@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/RegisterPage.css";
 import { ROUTES } from "../../routes/paths";
+import { registerUser } from "../../services/authService";
 
 type RegistrationRole = "freight-owner" | "transporter";
 
@@ -120,33 +121,43 @@ function RegisterPage() {
       return;
     }
 
+    if (!formData.role) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      /*
-       * Registration API integration will go here.
-       *
-       * Do not store the password in localStorage or
-       * sessionStorage.
-       *
-       * Eventually:
-       *
-       * await authService.register({
-       *   role: formData.role,
-       *   organizationName: formData.organizationName,
-       *   fullName: formData.fullName,
-       *   email: formData.email,
-       *   phoneNumber: formData.phoneNumber,
-       *   password: formData.password,
-       * });
-       */
+      await registerUser({
+        role: formData.role,
 
-      await Promise.resolve();
+        organizationName: formData.organizationName,
 
-      navigate(ROUTES.login);
-    } catch {
+        fullName: formData.fullName,
+
+        email: formData.email,
+
+        phoneNumber: formData.phoneNumber,
+
+        password: formData.password,
+      });
+
+      navigate(ROUTES.login, {
+        replace: true,
+
+        state: {
+          registrationSuccess: true,
+          email: formData.email.trim().toLowerCase(),
+        },
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to create your account. Please try again.";
+
       setErrors({
-        general: "Unable to create your account. Please try again.",
+        general: message,
       });
     } finally {
       setIsSubmitting(false);
