@@ -166,4 +166,4 @@ dist-ssr
 *.sw?
 
 #Extra
-TAMP_Full_Product_Design.html
+documentation/
