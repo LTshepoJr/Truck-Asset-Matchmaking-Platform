@@ -1,19 +1,19 @@
 import { useState, type SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ROUTES } from "../../routes/paths";
+import "../../styles/LoginPage.css";
 
 type UserRole = "freight-owner" | "transporter" | "admin";
 
 interface LoginPageFormData {
   email: string;
   password: string;
-  role: UserRole | "";
   rememberMe: boolean;
 }
 
 interface LoginPageFormErrors {
   email?: string;
   password?: string;
-  role?: string;
   general?: string;
 }
 
@@ -25,9 +25,61 @@ interface UserSession {
 }
 
 const roleRoutes: Record<UserRole, string> = {
-  "freight-owner": "/freight-owner",
-  transporter: "/transporter",
-  admin: "/admin",
+  "freight-owner": ROUTES.freightOwner,
+  transporter: ROUTES.transporter,
+  admin: ROUTES.admin,
+};
+
+interface MockUser {
+  id: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+const mockUsers: MockUser[] = [
+  {
+    id: "user-001",
+    email: "owner@tamp.co.za",
+    password: "Password123!",
+    role: "freight-owner",
+  },
+  {
+    id: "user-002",
+    email: "transporter@tamp.co.za",
+    password: "Password123!",
+    role: "transporter",
+  },
+  {
+    id: "user-003",
+    email: "tshepojr@kortestalkstech.co.za",
+    password: "Password123!",
+    role: "admin",
+  },
+];
+
+const authenticateUser = async (
+  email: string,
+  password: string,
+): Promise<UserSession> => {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const user = mockUsers.find(
+    (mockUser) =>
+      mockUser.email.toLowerCase() === normalizedEmail &&
+      mockUser.password === password,
+  );
+
+  if (!user) {
+    throw new Error("Invalid email or password.");
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    loggedInAt: new Date().toISOString(),
+  };
 };
 
 function LoginPage() {
@@ -36,13 +88,20 @@ function LoginPage() {
   const [formData, setFormData] = useState<LoginPageFormData>({
     email: "",
     password: "",
-    role: "",
     rememberMe: false,
   });
 
   const [errors, setErrors] = useState<LoginPageFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notice, setNotice] = useState("");
+
+  const clearError = (field: keyof LoginPageFormErrors) => {
+    setErrors((current) => ({
+      ...current,
+      [field]: undefined,
+    }));
+  };
 
   const validateForm = (): LoginPageFormErrors => {
     const newErrors: LoginPageFormErrors = {};
@@ -55,12 +114,6 @@ function LoginPage() {
 
     if (!formData.password) {
       newErrors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters.";
-    }
-
-    if (!formData.role) {
-      newErrors.role = "Select your account role.";
     }
 
     return newErrors;
@@ -70,6 +123,7 @@ function LoginPage() {
     event.preventDefault();
 
     setErrors({});
+    setNotice("");
 
     const validationErrors = validateForm();
 
@@ -78,28 +132,10 @@ function LoginPage() {
       return;
     }
 
-    if (!formData.role) {
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      /*
-       * FRONT-END MVP LoginPage SIMULATION
-       *
-       * There is currently no production backend.
-       * A valid form is treated as a successful LoginPage.
-       *
-       * This block can later be replaced with an authentication API call.
-       */
-
-      const session: UserSession = {
-        id: crypto.randomUUID(),
-        email: formData.email.trim().toLowerCase(),
-        role: formData.role,
-        loggedInAt: new Date().toISOString(),
-      };
+      const session = await authenticateUser(formData.email, formData.password);
 
       const sessionData = JSON.stringify(session);
 
@@ -111,173 +147,264 @@ function LoginPage() {
         localStorage.removeItem("tamp-session");
       }
 
-      navigate(roleRoutes[formData.role]);
-    } catch {
+      navigate(roleRoutes[session.role]);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to sign in. Please try again.";
+
       setErrors({
-        general: "Unable to sign in. Please try again.",
+        general: message,
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleForgotPassword = () => {
+    setNotice("Password recovery is not available in the current TAMP MVP.");
+  };
+
   return (
-    <main>
-      <section aria-labelledby="LoginPage-title">
-        <header>
-          <p>Truck Asset Matchmaking Platform</p>
-          <h1 id="LoginPage-title">Sign in</h1>
-          <p>Access your TAMP account.</p>
-        </header>
+    <main className="login-page">
+      <section
+        className="login-page__hero"
+        aria-label="Truck Asset Matchmaking Platform introduction"
+      >
+        <div className="login-page__hero-inner">
+          <div className="login-page__hero-main">
+            <div className="login-page__brand login-page__brand--light">
+              <span className="login-page__brand-mark" aria-hidden="true" />
 
-        {errors.general && (
-          <div role="alert">
-            <p>{errors.general}</p>
-          </div>
-        )}
+              <span className="login-page__brand-copy">
+                <strong>TAMP</strong>
+                <small>
+                  Truck Asset Matchmaking Platform by Industrial Computing
+                  Engineering
+                </small>
+              </span>
+            </div>
 
-        <form onSubmit={handleSubmit} noValidate>
-          <div>
-            <label htmlFor="email">Email address</label>
-
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={(event) => {
-                setFormData((current) => ({
-                  ...current,
-                  email: event.target.value,
-                }));
-
-                if (errors.email) {
-                  setErrors((current) => ({
-                    ...current,
-                    email: undefined,
-                  }));
-                }
-              }}
-              placeholder="ICE@icloud.com"
-              autoComplete="email"
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? "email-error" : undefined}
-            />
-
-            {errors.email && (
-              <p id="email-error" role="alert">
-                {errors.email}
+            <div className="login-page__hero-copy">
+              <p className="login-page__hero-label">
+                Freight matching, made transparent
               </p>
-            )}
+
+              <h2>
+                Move cargo with the
+                <br />
+                right truck, faster.
+              </h2>
+
+              <p className="login-page__hero-description">
+                Post loads, discover compatible capacity, confirm engagements
+                and track delivery progress in one workspace with the Truck
+                Asset Matchmaking Platform
+              </p>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="password">Password</label>
+          <p className="login-page__company">
+            Industrial Computing Engineering (Pty) Ltd
+          </p>
+        </div>
+      </section>
 
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
-              onChange={(event) => {
-                setFormData((current) => ({
-                  ...current,
-                  password: event.target.value,
-                }));
+      <section className="login-page__panel" aria-labelledby="login-page-title">
+        <div className="login-page__form-shell">
+          <div className="login-page__mobile-brand">
+            <div className="login-page__brand login-page__brand--dark">
+              <span className="login-page__brand-mark" aria-hidden="true" />
 
-                if (errors.password) {
-                  setErrors((current) => ({
-                    ...current,
-                    password: undefined,
-                  }));
-                }
-              }}
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby={errors.password ? "password-error" : undefined}
-            />
+              <span className="login-page__brand-copy">
+                <strong>TAMP</strong>
+                <small>by Industrial Computing Engineering</small>
+              </span>
+            </div>
+          </div>
 
-            <button
-              type="button"
-              onClick={() => setShowPassword((current) => !current)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+          <header className="login-page__header">
+            <p className="login-page__eyebrow">Welcome back</p>
+
+            <h1 id="login-page-title">Sign in to TAMP</h1>
+
+            <p className="login-page__subtitle">Use your account details</p>
+          </header>
+
+          {errors.general && (
+            <div
+              className="login-page__alert login-page__alert--error"
+              role="alert"
             >
-              {showPassword ? "Hide password" : "Show password"}
-            </button>
+              {errors.general}
+            </div>
+          )}
 
-            {errors.password && (
-              <p id="password-error" role="alert">
-                {errors.password}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="role">Account role</label>
-
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={(event) => {
-                const role = event.target.value as UserRole | "";
-
-                setFormData((current) => ({
-                  ...current,
-                  role,
-                }));
-
-                if (errors.role) {
-                  setErrors((current) => ({
-                    ...current,
-                    role: undefined,
-                  }));
-                }
-              }}
-              aria-invalid={Boolean(errors.role)}
-              aria-describedby={errors.role ? "role-error" : undefined}
+          {notice && (
+            <div
+              className="login-page__alert login-page__alert--info"
+              role="status"
             >
-              <option value="">Select a role</option>
-              <option value="freight-owner">Freight Owner</option>
-              <option value="transporter">Transporter</option>
-              <option value="admin">Administrator</option>
-            </select>
+              {notice}
+            </div>
+          )}
 
-            {errors.role && (
-              <p id="role-error" role="alert">
-                {errors.role}
-              </p>
-            )}
-          </div>
+          <form className="login-page__form" onSubmit={handleSubmit} noValidate>
+            <div className="login-page__field">
+              <label htmlFor="email">Email address</label>
 
-          <div>
-            <label>
               <input
-                type="checkbox"
-                checked={formData.rememberMe}
-                onChange={(event) =>
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={(event) => {
                   setFormData((current) => ({
                     ...current,
-                    rememberMe: event.target.checked,
-                  }))
-                }
+                    email: event.target.value,
+                  }));
+
+                  if (errors.email) {
+                    clearError("email");
+                  }
+                }}
+                placeholder="tshepojr@kortestalkstech.co.za"
+                autoComplete="email"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
               />
-              Remember me
-            </label>
-          </div>
 
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
+              {errors.email && (
+                <p
+                  id="email-error"
+                  className="login-page__field-error"
+                  role="alert"
+                >
+                  {errors.email}
+                </p>
+              )}
+            </div>
 
-        <footer>
-          <p>
-            Do not have an account?{" "}
-            <Link to="/register">Create an account</Link>
-          </p>
-        </footer>
+            <div className="login-page__field">
+              <label htmlFor="password">Password</label>
+
+              <div className="login-page__password-field">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(event) => {
+                    setFormData((current) => ({
+                      ...current,
+                      password: event.target.value,
+                    }));
+
+                    if (errors.password) {
+                      clearError("password");
+                    }
+                  }}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="login-page__password-toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5 9 8a10.5 10.5 0 0 1-2.1 3.5M6.6 6.6C4.2 8 3 10.2 3 12c0 3 3.5 8 9 8 1.4 0 2.7-.3 3.8-.8"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M2.5 12S6 5 12 5s9.5 7 9.5 7S18 19 12 19 2.5 12 2.5 12Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+
+              {errors.password && (
+                <p
+                  id="password-error"
+                  className="login-page__field-error"
+                  role="alert"
+                >
+                  {errors.password}
+                </p>
+              )}
+            </div>
+
+            <div className="login-page__form-options">
+              <label className="login-page__remember">
+                <input
+                  type="checkbox"
+                  checked={formData.rememberMe}
+                  onChange={(event) =>
+                    setFormData((current) => ({
+                      ...current,
+                      rememberMe: event.target.checked,
+                    }))
+                  }
+                />
+
+                <span>Remember me</span>
+              </label>
+
+              <button
+                type="button"
+                className="login-page__forgot"
+                onClick={handleForgotPassword}
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            <button
+              className="login-page__submit"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+
+          <footer className="login-page__signup">
+            <p>
+              New to TAMP? <Link to="/register">Create an account</Link>
+            </p>
+          </footer>
+        </div>
       </section>
     </main>
   );

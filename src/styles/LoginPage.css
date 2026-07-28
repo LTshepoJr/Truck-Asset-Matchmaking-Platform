@@ -1,0 +1,700 @@
+/* =========================================================
+   TAMP Login Page
+   ========================================================= */
+
+.login-page {
+  --login-navy: #172033;
+  --login-navy-soft: #29364d;
+  --login-red: #c8102e;
+  --login-red-hover: #ad0d27;
+  --login-red-active: #950b21;
+  --login-white: #ffffff;
+  --login-text: #172033;
+  --login-muted: #657187;
+  --login-border: #d6dce6;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  background: var(--login-white);
+}
+
+/* =========================================================
+   Left marketing panel
+   ========================================================= */
+
+.login-page__hero {
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  overflow: hidden;
+
+  color: var(--login-white);
+  background: var(--login-navy);
+}
+
+.login-page__hero-inner {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 760px;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  margin-left: auto;
+
+  padding: clamp(2.5rem, 6vw, 5.5rem) clamp(2.5rem, 6vw, 6.5rem)
+    clamp(2rem, 4vw, 3rem);
+}
+
+.login-page__hero-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 540px;
+
+  transform: translateY(-1.5rem);
+}
+
+/* =========================================================
+   Brand
+   ========================================================= */
+
+.login-page__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  width: fit-content;
+}
+
+.login-page__brand--light {
+  --brand-cutout: var(--login-navy);
+
+  color: var(--login-white);
+
+  margin-bottom: clamp(4rem, 9vh, 7rem);
+}
+
+.login-page__brand--dark {
+  --brand-cutout: var(--login-white);
+
+  color: var(--login-text);
+}
+
+.login-page__brand-mark {
+  position: relative;
+
+  display: block;
+  flex: 0 0 auto;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: conic-gradient(
+    from -35deg,
+    var(--login-red) 0deg 74deg,
+    #080d17 74deg 135deg,
+    var(--login-red) 135deg 220deg,
+    #080d17 220deg 285deg,
+    var(--login-red) 285deg 360deg
+  );
+}
+
+.login-page__brand-mark::before {
+  position: absolute;
+  inset: 7px;
+
+  content: "";
+
+  border-radius: 50%;
+
+  background: var(--brand-cutout);
+}
+
+.login-page__brand-mark::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 13px;
+  height: 13px;
+
+  content: "";
+
+  border-bottom: 5px solid var(--login-red);
+  border-left: 5px solid var(--login-red);
+
+  transform: translate(-38%, -50%) rotate(45deg);
+}
+
+.login-page__brand-copy {
+  display: flex;
+  flex-direction: column;
+
+  line-height: 1;
+}
+
+.login-page__brand-copy strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.login-page__brand-copy small {
+  margin-top: 0.3rem;
+
+  color: inherit;
+
+  font-size: 0.58rem;
+  font-weight: 400;
+
+  opacity: 0.85;
+}
+
+/* =========================================================
+   Hero content
+   ========================================================= */
+
+.login-page__hero-copy {
+  max-width: 530px;
+}
+
+.login-page__hero-label {
+  display: inline-flex;
+
+  margin: 0 0 1.75rem;
+  padding: 0.45rem 0.75rem;
+
+  color: var(--login-white);
+  background: var(--login-navy-soft);
+
+  border-radius: 999px;
+
+  font-size: clamp(0.6rem, 0.75vw, 0.72rem);
+  font-weight: 800;
+
+  line-height: 1;
+  letter-spacing: 0.01em;
+
+  text-transform: uppercase;
+}
+
+.login-page__hero-copy h2 {
+  max-width: 520px;
+
+  margin: 0 0 1rem;
+
+  color: var(--login-white);
+
+  font-size: clamp(2.3rem, 4.3vw, 4rem);
+  font-weight: 800;
+
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.login-page__hero-description {
+  max-width: 530px;
+
+  margin: 0;
+
+  color: #d4d9e3;
+
+  font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+  line-height: 1.55;
+}
+
+.login-page__company {
+  margin: 0;
+
+  color: #93a0b5;
+
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   Right login panel
+   ========================================================= */
+
+.login-page__panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  padding: clamp(2rem, 5vw, 5rem) clamp(2rem, 5.5vw, 5.5rem);
+
+  background: var(--login-white);
+}
+
+.login-page__form-shell {
+  width: 100%;
+  max-width: 430px;
+}
+
+.login-page__mobile-brand {
+  display: none;
+}
+
+/* =========================================================
+   Login header
+   ========================================================= */
+
+.login-page__header {
+  margin-bottom: 1.7rem;
+}
+
+.login-page__eyebrow {
+  margin: 0 0 0.65rem;
+
+  color: var(--login-red);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.login-page__header h1 {
+  margin: 0 0 0.6rem;
+
+  color: var(--login-text);
+
+  font-size: clamp(2rem, 3vw, 2.55rem);
+  font-weight: 750;
+
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.login-page__subtitle {
+  margin: 0;
+
+  color: var(--login-muted);
+
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Alerts
+   ========================================================= */
+
+.login-page__alert {
+  margin-bottom: 1rem;
+  padding: 0.8rem 0.9rem;
+
+  border: 1px solid;
+  border-radius: var(--radius-md);
+
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.login-page__alert--error {
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border-color: rgb(185 28 28 / 0.2);
+}
+
+.login-page__alert--info {
+  color: var(--color-info);
+  background: var(--color-info-background);
+  border-color: rgb(29 78 216 / 0.18);
+}
+
+/* =========================================================
+   Form
+   ========================================================= */
+
+.login-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.login-page__field label {
+  color: var(--login-text);
+
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.login-page__field input {
+  height: 44px;
+  min-height: 44px;
+
+  padding: 0.7rem 0.85rem;
+
+  color: var(--login-text);
+
+  border-color: var(--login-border);
+  border-radius: 7px;
+
+  font-size: 0.86rem;
+}
+
+.login-page__field input::placeholder {
+  color: #8a94a5;
+}
+
+.login-page__field input:hover {
+  border-color: #acb6c6;
+}
+
+.login-page__field input:focus {
+  border-color: var(--login-red);
+
+  box-shadow: 0 0 0 3px rgb(200 16 46 / 0.1);
+}
+
+/* =========================================================
+   Password
+   ========================================================= */
+
+.login-page__password-field {
+  position: relative;
+}
+
+.login-page__password-field input {
+  padding-right: 3rem;
+}
+
+.login-page__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.45rem;
+
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+
+  padding: 0;
+
+  color: #66758b;
+  background: transparent;
+
+  border: 0;
+  border-radius: 50%;
+
+  transform: translateY(-50%);
+}
+
+.login-page__password-toggle:hover:not(:disabled) {
+  color: var(--login-text);
+  background: #f1f3f6;
+}
+
+.login-page__password-toggle:active:not(:disabled) {
+  background: #e9ecf1;
+
+  transform: translateY(-50%);
+}
+
+.login-page__password-toggle:focus-visible {
+  outline: 2px solid rgb(200 16 46 / 0.25);
+  outline-offset: 1px;
+}
+
+.login-page__password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================================
+   Field errors
+   ========================================================= */
+
+.login-page__field-error {
+  margin: 0.15rem 0 0;
+
+  color: var(--color-error);
+
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+/* =========================================================
+   Remember / Forgot password
+   ========================================================= */
+
+.login-page__form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  min-height: 24px;
+}
+
+.login-page__remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  color: #4e596d;
+
+  font-size: 0.72rem;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.login-page__remember input {
+  width: 15px;
+  height: 15px;
+  min-height: 15px;
+
+  margin: 0;
+  padding: 0;
+
+  accent-color: var(--login-red);
+
+  cursor: pointer;
+}
+
+.login-page__forgot {
+  min-height: 0;
+
+  padding: 0;
+
+  color: var(--login-red);
+  background: transparent;
+
+  border: 0;
+  border-radius: 0;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.login-page__forgot:hover:not(:disabled) {
+  color: var(--login-red-hover);
+  background: transparent;
+
+  text-decoration: underline;
+}
+
+.login-page__forgot:active:not(:disabled) {
+  color: var(--login-red-active);
+  background: transparent;
+
+  transform: none;
+}
+
+/* =========================================================
+   Submit
+   ========================================================= */
+
+.login-page__submit {
+  width: 100%;
+  min-height: 46px;
+
+  margin-top: 0.1rem;
+
+  color: var(--login-white);
+  background: var(--login-red);
+
+  border: 0;
+  border-radius: 6px;
+
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.login-page__submit:hover:not(:disabled) {
+  background: var(--login-red-hover);
+}
+
+.login-page__submit:active:not(:disabled) {
+  background: var(--login-red-active);
+}
+
+/* =========================================================
+   Signup
+   ========================================================= */
+
+.login-page__signup {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+
+  border-top: 1px solid #f0f1f3;
+
+  text-align: center;
+}
+
+.login-page__signup p {
+  margin: 0;
+
+  color: #596579;
+
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.login-page__signup a {
+  color: var(--login-red);
+
+  font-weight: 700;
+}
+
+.login-page__signup a:hover {
+  color: var(--login-red-hover);
+
+  text-decoration: underline;
+}
+
+/* =========================================================
+   Tablet / smaller desktop
+   ========================================================= */
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .login-page {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+  }
+
+  .login-page__hero-inner {
+    padding-inline: clamp(2.25rem, 5vw, 4rem);
+  }
+
+  .login-page__hero-copy h2 {
+    font-size: clamp(2.2rem, 4.2vw, 3rem);
+  }
+
+  .login-page__hero-description {
+    font-size: 0.95rem;
+  }
+
+  .login-page__panel {
+    padding-inline: clamp(2rem, 4vw, 3rem);
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .login-page {
+    display: block;
+
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  /*
+   * The desktop marketing panel is intentionally removed on
+   * mobile so authentication stays focused and space-efficient.
+   */
+  .login-page__hero {
+    display: none;
+  }
+
+  .login-page__panel {
+    display: block;
+
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+
+    padding: max(1.75rem, env(safe-area-inset-top)) 1.25rem
+      max(2rem, env(safe-area-inset-bottom));
+  }
+
+  .login-page__form-shell {
+    max-width: 480px;
+
+    margin-inline: auto;
+  }
+
+  .login-page__mobile-brand {
+    display: block;
+
+    margin-bottom: clamp(3rem, 10vh, 5rem);
+  }
+
+  .login-page__brand-copy strong {
+    font-size: 1.35rem;
+  }
+
+  .login-page__brand-copy small {
+    font-size: 0.55rem;
+  }
+
+  .login-page__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .login-page__header h1 {
+    font-size: clamp(2rem, 9vw, 2.5rem);
+  }
+
+  .login-page__subtitle {
+    max-width: 340px;
+
+    font-size: 0.9rem;
+  }
+
+  .login-page__form {
+    gap: 1.05rem;
+  }
+
+  .login-page__field input {
+    height: 48px;
+    min-height: 48px;
+
+    font-size: 1rem;
+  }
+
+  .login-page__submit {
+    min-height: 50px;
+
+    font-size: 0.9rem;
+  }
+
+  .login-page__signup {
+    margin-top: 1.75rem;
+  }
+}
+
+/* =========================================================
+   Very small phones
+   ========================================================= */
+
+@media (max-width: 420px) {
+  .login-page__panel {
+    padding-inline: 1rem;
+  }
+
+  .login-page__form-options {
+    align-items: flex-start;
+  }
+}
