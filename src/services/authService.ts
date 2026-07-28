@@ -34,9 +34,22 @@ interface StoredUser {
   createdAt: string;
 }
 
+interface StoredPasswordResetRequest {
+  token: string;
+  userId: string;
+  expiresAt: number;
+}
+
+export interface PasswordResetRequestResult {
+  token: string;
+  email: string;
+}
+
 const USERS_STORAGE_KEY = "tamp-users";
 const SESSION_STORAGE_KEY = "tamp-session";
-
+const PASSWORD_RESET_STORAGE_KEY = "tamp-password-reset";
+// That gives the temporary reset request a 15-minute lifetime.
+const PASSWORD_RESET_TTL_MS = 15 * 60 * 1000;
 const PBKDF2_ITERATIONS = 100_000;
 
 const normalizeEmail = (email: string): string => email.trim().toLowerCase();
@@ -248,4 +261,119 @@ export const getCurrentSession = (): UserSession | null => {
 export const clearCurrentSession = (): void => {
   sessionStorage.removeItem(SESSION_STORAGE_KEY);
   localStorage.removeItem(SESSION_STORAGE_KEY);
+};
+
+// This does something important: we do not reuse the old password hash or salt.
+const isPasswordResetRequest = (
+  value: unknown,
+): value is StoredPasswordResetRequest => {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const request = value as Record<string, unknown>;
+
+  return (
+    typeof request.token === "string" &&
+    typeof request.userId === "string" &&
+    typeof request.expiresAt === "number"
+  );
+};
+
+const getPasswordResetRequest = (): StoredPasswordResetRequest | null => {
+  const storedRequest = sessionStorage.getItem(PASSWORD_RESET_STORAGE_KEY);
+
+  if (!storedRequest) {
+    return null;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(storedRequest);
+
+    if (!isPasswordResetRequest(parsed)) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+export const createPasswordResetRequest = (
+  email: string,
+): PasswordResetRequestResult | null => {
+  const users = getStoredUsers();
+
+  const normalizedEmail = normalizeEmail(email);
+
+  const user = users.find((storedUser) => storedUser.email === normalizedEmail);
+
+  if (!user) {
+    return null;
+  }
+
+  const request: StoredPasswordResetRequest = {
+    token: crypto.randomUUID(),
+    userId: user.id,
+    expiresAt: Date.now() + PASSWORD_RESET_TTL_MS,
+  };
+
+  sessionStorage.setItem(PASSWORD_RESET_STORAGE_KEY, JSON.stringify(request));
+
+  return {
+    token: request.token,
+    email: user.email,
+  };
+};
+
+export const resetRegisteredUserPassword = async (
+  token: string,
+  newPassword: string,
+): Promise<void> => {
+  const resetRequest = getPasswordResetRequest();
+
+  if (!resetRequest) {
+    throw new Error("This password reset request is invalid or has expired.");
+  }
+
+  if (resetRequest.token !== token) {
+    sessionStorage.removeItem(PASSWORD_RESET_STORAGE_KEY);
+
+    throw new Error("This password reset request is invalid or has expired.");
+  }
+
+  if (Date.now() > resetRequest.expiresAt) {
+    sessionStorage.removeItem(PASSWORD_RESET_STORAGE_KEY);
+
+    throw new Error(
+      "This password reset request has expired. Please start again.",
+    );
+  }
+
+  const users = getStoredUsers();
+
+  const userIndex = users.findIndex((user) => user.id === resetRequest.userId);
+
+  if (userIndex === -1) {
+    sessionStorage.removeItem(PASSWORD_RESET_STORAGE_KEY);
+
+    throw new Error("Unable to reset this account password.");
+  }
+
+  const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+
+  const saltBuffer = bytesToArrayBuffer(saltBytes);
+
+  const passwordHash = await derivePasswordHash(newPassword, saltBuffer);
+
+  users[userIndex] = {
+    ...users[userIndex],
+    passwordHash,
+    passwordSalt: bytesToBase64(saltBytes),
+  };
+
+  saveUsers(users);
+
+  sessionStorage.removeItem(PASSWORD_RESET_STORAGE_KEY);
 };
