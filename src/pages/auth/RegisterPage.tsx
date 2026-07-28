@@ -62,7 +62,7 @@ function RegisterPage() {
     }
 
     if (!formData.organizationName.trim()) {
-      newErrors.organizationName = "organization name is required.";
+      newErrors.organizationName = "Organization name is required.";
     }
 
     if (!formData.fullName.trim()) {
@@ -386,7 +386,7 @@ function RegisterPage() {
             </fieldset>
 
             <div className="register-page__section-heading">
-              <span>organization details</span>
+              <span>Organization details</span>
             </div>
 
             <div className="register-page__form-grid">
