@@ -219,7 +219,10 @@ function LoginPage() {
 
               <span className="login-page__brand-copy">
                 <strong>TAMP</strong>
-                <small>by Industrial Computing Engineering</small>
+                <small>
+                  Truck Asset Matchmaking Platform by Industrial Computing
+                  Engineering
+                </small>
               </span>
             </div>
           </div>
