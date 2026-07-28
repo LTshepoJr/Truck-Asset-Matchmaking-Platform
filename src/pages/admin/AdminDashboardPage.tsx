@@ -4,8 +4,9 @@ export function AdminDashboardPage() {
       <h2>Admin Dashboard</h2>
 
       <p>
-        From here, admin will post available trucks, review suitable loads and
-        manage active trips.
+        From here, administrators can manage users, review compliance
+        information, monitor platform activity, handle flagged or disputed
+        matters and view platform metrics.
       </p>
     </section>
   );

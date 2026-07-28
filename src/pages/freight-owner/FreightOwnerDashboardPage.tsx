@@ -1,11 +1,11 @@
 export function FreightOwnerDashboardPage() {
   return (
     <section>
-      <h2>Freight Dashboard</h2>
+      <h2>Freight Owner Dashboard</h2>
 
       <p>
-        From here, freight owner will post available trucks, review suitable
-        loads and manage active trips.
+        From here, freight owners can post cargo loads, review suitable truck
+        matches and manage active trips.
       </p>
     </section>
   );
