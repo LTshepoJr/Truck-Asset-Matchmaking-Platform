@@ -422,7 +422,7 @@ function LoginPage() {
 
           <footer className="login-page__signup">
             <p>
-              New to TAMP? <Link to="/register">Create an account</Link>
+              New to TAMP? <Link to={ROUTES.register}>Create an account</Link>
             </p>
           </footer>
         </div>
