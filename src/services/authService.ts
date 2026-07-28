@@ -35,6 +35,7 @@ interface StoredUser {
 }
 
 const USERS_STORAGE_KEY = "tamp-users";
+const SESSION_STORAGE_KEY = "tamp-session";
 
 const PBKDF2_ITERATIONS = 100_000;
 
@@ -199,4 +200,52 @@ export const authenticateRegisteredUser = async (
     role: user.role,
     loggedInAt: new Date().toISOString(),
   };
+};
+
+const isUserRole = (value: unknown): value is UserRole => {
+  return (
+    value === "freight-owner" || value === "transporter" || value === "admin"
+  );
+};
+
+const isUserSession = (value: unknown): value is UserSession => {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const session = value as Record<string, unknown>;
+
+  return (
+    typeof session.id === "string" &&
+    typeof session.email === "string" &&
+    isUserRole(session.role) &&
+    typeof session.loggedInAt === "string"
+  );
+};
+
+const parseSession = (value: string | null): UserSession | null => {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(value);
+
+    return isUserSession(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+export const getCurrentSession = (): UserSession | null => {
+  const sessionValue =
+    sessionStorage.getItem(SESSION_STORAGE_KEY) ??
+    localStorage.getItem(SESSION_STORAGE_KEY);
+
+  return parseSession(sessionValue);
+};
+
+export const clearCurrentSession = (): void => {
+  sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  localStorage.removeItem(SESSION_STORAGE_KEY);
 };
