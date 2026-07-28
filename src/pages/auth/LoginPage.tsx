@@ -1,7 +1,8 @@
 import { useState, type SubmitEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "../../routes/paths";
 import "../../styles/LoginPage.css";
+import { authenticateRegisteredUser } from "../../services/authService";
 
 type UserRole = "freight-owner" | "transporter" | "admin";
 
@@ -29,6 +30,11 @@ const roleRoutes: Record<UserRole, string> = {
   transporter: ROUTES.transporter,
   admin: ROUTES.admin,
 };
+
+interface LoginLocationState {
+  registrationSuccess?: boolean;
+  email?: string;
+}
 
 interface MockUser {
   id: string;
@@ -62,6 +68,17 @@ const authenticateUser = async (
   email: string,
   password: string,
 ): Promise<UserSession> => {
+  const registeredUser = await authenticateRegisteredUser(email, password);
+
+  if (registeredUser) {
+    return registeredUser;
+  }
+
+  /*
+   * Temporary seeded users are retained for
+   * the frontend MVP, particularly the Admin
+   * demonstration account.
+   */
   const normalizedEmail = email.trim().toLowerCase();
 
   const user = mockUsers.find(
@@ -84,9 +101,12 @@ const authenticateUser = async (
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const locationState = location.state as LoginLocationState | null;
 
   const [formData, setFormData] = useState<LoginPageFormData>({
-    email: "",
+    email: locationState?.email ?? "",
     password: "",
     rememberMe: false,
   });
@@ -94,8 +114,11 @@ function LoginPage() {
   const [errors, setErrors] = useState<LoginPageFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notice, setNotice] = useState("");
-
+  const [notice, setNotice] = useState(
+    locationState?.registrationSuccess
+      ? "Account created successfully. Sign in to continue."
+      : "",
+  );
   const clearError = (field: keyof LoginPageFormErrors) => {
     setErrors((current) => ({
       ...current,
