@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-
+import RegisterPage from "../pages/auth/RegisterPage";
 import { RoleLayout } from "../layouts/RoleLayout";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
-import Login from "../pages/auth/LoginPage";
+import LoginPage from "../pages/auth/LoginPage";
 import { FreightOwnerDashboardPage } from "../pages/freight-owner/FreightOwnerDashboardPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { TransporterDashboardPage } from "../pages/transporter/TransporterDashboardPage";
@@ -36,8 +36,9 @@ export function AppRoutes() {
         path={ROUTES.home}
         element={<Navigate to={ROUTES.login} replace />}
       />
+      <Route path={ROUTES.login} element={<LoginPage />} />
 
-      <Route path={ROUTES.login} element={<Login />} />
+      <Route path={ROUTES.register} element={<RegisterPage />} />
 
       <Route
         path={ROUTES.freightOwner}
