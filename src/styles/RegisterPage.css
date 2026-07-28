@@ -28,26 +28,27 @@
    ========================================================= */
 
 .register-page__hero {
-  position: sticky;
-  top: 0;
+  position: relative;
 
   min-width: 0;
-  height: 100vh;
-  height: 100svh;
-
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
 
   color: var(--register-white);
   background: var(--register-navy);
 }
 
 .register-page__hero-inner {
+  position: sticky;
+  top: 0;
+
   display: flex;
   flex-direction: column;
 
   width: 100%;
   max-width: 720px;
-  height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
 
   margin-left: auto;
 
@@ -779,13 +780,15 @@
    Smaller desktops / tablets
    ========================================================= */
 
-@media (max-width: 1100px) {
+@media (min-width: 768px) and (max-width: 1100px) {
   .register-page {
-    grid-template-columns: minmax(320px, 0.8fr) minmax(500px, 1.2fr);
+    grid-template-columns:
+      minmax(280px, 0.75fr)
+      minmax(0, 1.25fr);
   }
 
   .register-page__hero-inner {
-    padding-inline: 2.5rem;
+    padding-inline: 2rem;
   }
 
   .register-page__benefits {
@@ -793,7 +796,25 @@
   }
 
   .register-page__panel {
-    padding-inline: 2.5rem;
+    padding-inline: 2rem;
+  }
+}
+
+/* =========================================================
+   Narrow tablets
+   ========================================================= */
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .register-page__form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-page__field--full {
+    grid-column: auto;
+  }
+
+  .register-page__role-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -825,13 +846,11 @@
 
   .register-page__form-shell {
     max-width: 520px;
-
     margin-inline: auto;
   }
 
   .register-page__mobile-brand {
     display: block;
-
     margin-bottom: 3rem;
   }
 
