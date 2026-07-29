@@ -39,7 +39,9 @@ function cloneSeedData(): TampDatabase {
 }
 
 function hasBrowserStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readStorage(key: string): string | null {
@@ -134,7 +136,7 @@ export function resetMockDb(): TampDatabase {
 
 /**
  * Completely removes the local mock database.
- * The next read will initialise it from the JSON seed again.
+ * The next read will initialize it from the JSON seed again.
  */
 export function clearMockDb(): void {
   removeStorage(STORAGE_KEY);
@@ -384,10 +386,7 @@ export function getLoadsByOwner(ownerId: EntityId): Load[] {
   return getDb().loads.filter((load) => load.ownerId === ownerId);
 }
 
-export function createLoad(
-  ownerId: EntityId,
-  input: CreateLoadInput,
-): Load {
+export function createLoad(ownerId: EntityId, input: CreateLoadInput): Load {
   const db = getDb();
   const owner = requireUser(db, ownerId);
 
@@ -579,8 +578,7 @@ export function evaluateMatch(load: Load, truck: Truck): MatchEvaluation {
   const capacityPassed =
     truck.capacityKg >= load.weightKg && truck.capacityM3 >= load.volumeM3;
 
-  const compatibilityPassed =
-    truck.vehicleType === load.requiredVehicleType;
+  const compatibilityPassed = truck.vehicleType === load.requiredVehicleType;
 
   const availabilityPassed = windowsOverlap(
     load.pickupWindow,
@@ -588,11 +586,9 @@ export function evaluateMatch(load: Load, truck: Truck): MatchEvaluation {
   );
 
   const locationPassed =
-    truck.currentLocation.city.toLowerCase() ===
-    load.origin.city.toLowerCase();
+    truck.currentLocation.city.toLowerCase() === load.origin.city.toLowerCase();
 
-  const eligible =
-    capacityPassed && compatibilityPassed && availabilityPassed;
+  const eligible = capacityPassed && compatibilityPassed && availabilityPassed;
 
   let score = 0;
 
@@ -701,9 +697,7 @@ export function generateMatchesForLoad(loadId: EntityId): Match[] {
 
     appendAuditEvent(db, {
       actorId: "SYSTEM",
-      action: evaluation.eligible
-        ? "MATCH_RECOMMENDED"
-        : "MATCH_RULE_REJECTED",
+      action: evaluation.eligible ? "MATCH_RECOMMENDED" : "MATCH_RULE_REJECTED",
       entityType: "match",
       entityId: match.id,
       metadata: {
@@ -830,10 +824,7 @@ export function acceptMatch(
   };
 }
 
-export function rejectMatch(
-  matchId: EntityId,
-  actorId: EntityId,
-): Match {
+export function rejectMatch(matchId: EntityId, actorId: EntityId): Match {
   const db = getDb();
   const actor = requireUser(db, actorId);
   const match = requireMatch(db, matchId);
@@ -874,9 +865,7 @@ export function getReceipts(): Receipt[] {
   return [...getDb().receipts];
 }
 
-export function getReceiptByMatchId(
-  matchId: EntityId,
-): Receipt | undefined {
+export function getReceiptByMatchId(matchId: EntityId): Receipt | undefined {
   return getDb().receipts.find((receipt) => receipt.matchId === matchId);
 }
 
@@ -906,8 +895,8 @@ export function getTripByMatchId(matchId: EntityId): Trip | undefined {
 }
 
 export function getTrackingEvents(tripId: EntityId): TrackingEvent[] {
-  return getDb().trackingEvents
-    .filter((event) => event.tripId === tripId)
+  return getDb()
+    .trackingEvents.filter((event) => event.tripId === tripId)
     .sort(
       (a, b) =>
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
@@ -994,9 +983,7 @@ export function getRatings(): Rating[] {
 }
 
 export function getRatingsForUser(userId: EntityId): Rating[] {
-  return getDb().ratings.filter(
-    (rating) => rating.reviewedUserId === userId,
-  );
+  return getDb().ratings.filter((rating) => rating.reviewedUserId === userId);
 }
 
 export function createRating(input: CreateRatingInput): Rating {
@@ -1017,8 +1004,7 @@ export function createRating(input: CreateRatingInput): Rating {
 
   const existingRating = db.ratings.find(
     (rating) =>
-      rating.tripId === input.tripId &&
-      rating.reviewerId === input.reviewerId,
+      rating.tripId === input.tripId && rating.reviewerId === input.reviewerId,
   );
 
   if (existingRating) {
@@ -1183,9 +1169,7 @@ export interface AdminKpis {
   activeTrips: number;
 }
 
-export function getFreightOwnerKpis(
-  ownerId: EntityId,
-): FreightOwnerKpis {
+export function getFreightOwnerKpis(ownerId: EntityId): FreightOwnerKpis {
   const db = getDb();
 
   const ownerLoads = db.loads.filter((load) => load.ownerId === ownerId);
@@ -1197,29 +1181,22 @@ export function getFreightOwnerKpis(
 
   const ownerMatchIds = new Set(ownerMatches.map((match) => match.id));
 
-  const ownerTrips = db.trips.filter((trip) =>
-    ownerMatchIds.has(trip.matchId),
-  );
+  const ownerTrips = db.trips.filter((trip) => ownerMatchIds.has(trip.matchId));
 
   return {
     totalLoads: ownerLoads.length,
     openLoads: ownerLoads.filter((load) => load.status === "open").length,
     activeMatches: ownerMatches.filter(
-      (match) =>
-        match.status === "recommended" || match.status === "accepted",
+      (match) => match.status === "recommended" || match.status === "accepted",
     ).length,
-    tripsInTransit: ownerTrips.filter(
-      (trip) => trip.status === "in_transit",
-    ).length,
-    completedTrips: ownerTrips.filter(
-      (trip) => trip.status === "completed",
-    ).length,
+    tripsInTransit: ownerTrips.filter((trip) => trip.status === "in_transit")
+      .length,
+    completedTrips: ownerTrips.filter((trip) => trip.status === "completed")
+      .length,
   };
 }
 
-export function getTransporterKpis(
-  transporterId: EntityId,
-): TransporterKpis {
+export function getTransporterKpis(transporterId: EntityId): TransporterKpis {
   const db = getDb();
 
   const trucks = db.trucks.filter(
@@ -1228,9 +1205,7 @@ export function getTransporterKpis(
 
   const truckIds = new Set(trucks.map((truck) => truck.id));
 
-  const matches = db.matches.filter((match) =>
-    truckIds.has(match.truckId),
-  );
+  const matches = db.matches.filter((match) => truckIds.has(match.truckId));
 
   const matchIds = new Set(matches.map((match) => match.id));
 
@@ -1240,15 +1215,12 @@ export function getTransporterKpis(
 
   return {
     totalTrucks: trucks.length,
-    availableTrucks: trucks.filter(
-      (truck) => truck.status === "available",
-    ).length,
-    recommendedLoads: matches.filter(
-      (match) => match.status === "recommended",
-    ).length,
+    availableTrucks: trucks.filter((truck) => truck.status === "available")
+      .length,
+    recommendedLoads: matches.filter((match) => match.status === "recommended")
+      .length,
     activeTrips: trips.filter(
-      (trip) =>
-        trip.status !== "completed" && trip.status !== "confirmed",
+      (trip) => trip.status !== "completed" && trip.status !== "confirmed",
     ).length,
     averageRating: transporter.rating,
   };
@@ -1265,17 +1237,13 @@ export function getAdminKpis(): AdminKpis {
     pendingComplianceReviews: db.complianceDocuments.filter(
       (document) => document.status === "under_review",
     ).length,
-    openDisputes: db.disputes.filter(
-      (dispute) => dispute.status === "open",
-    ).length,
+    openDisputes: db.disputes.filter((dispute) => dispute.status === "open")
+      .length,
     loadsPosted: db.loads.length,
     trucksPosted: db.trucks.length,
     eligibleMatches: db.matches.filter((match) => match.eligible).length,
-    acceptedMatches: db.matches.filter(
-      (match) => match.status === "accepted",
-    ).length,
-    activeTrips: db.trips.filter(
-      (trip) => trip.status !== "completed",
-    ).length,
+    acceptedMatches: db.matches.filter((match) => match.status === "accepted")
+      .length,
+    activeTrips: db.trips.filter((trip) => trip.status !== "completed").length,
   };
 }
