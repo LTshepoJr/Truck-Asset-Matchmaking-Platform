@@ -2,113 +2,251 @@
 
 TAMP is a front-end MVP for a digital freight marketplace that connects **Freight Owners** with cargo to move and **Transporters** with available truck capacity.
 
-This repository is being developed for the Industrial Computing Engineering (Pty) Ltd TAMP MVP assessment. The current implementation focuses on the authentication foundation, role-based routing, browser-side persistence, password recovery, and initial role dashboard scaffolding.
+This project is being developed for the Industrial Computing Engineering (Pty) Ltd TAMP MVP assessment. The application uses React, TypeScript and browser-based mock persistence to demonstrate the platform workflow without requiring a production backend.
 
-> **Current status:** Authentication and account-recovery flows are functional in the browser. The main freight workflow (load/truck posting, matchmaking, acceptance, tracking, ratings, and admin management/analytics) is still to be implemented.
+> **Development branch:** `freight-owner`
+>
+> **Current status:** Authentication and account recovery are functional. The repository now also contains the TAMP domain model, South African mock dataset, browser-persisted mock database, rule-based matchmaking logic, audit events, receipt/trip creation, tracking, ratings, disputes and KPI calculations. Freight Owner routes for loads, posting, matches and tracking are present, but the role-facing UI is still being connected to the underlying mock services.
 
 ## Table of Contents
 
+- [Project Objective](#project-objective)
 - [Current MVP Status](#current-mvp-status)
 - [Technology Stack](#technology-stack)
 - [Implemented Features](#implemented-features)
+- [Mock Data and Local Persistence](#mock-data-and-local-persistence)
+- [Matchmaking Rules](#matchmaking-rules)
 - [Application Routes](#application-routes)
 - [Getting Started](#getting-started)
 - [Available Scripts](#available-scripts)
-- [Demo Accounts and Test Data](#demo-accounts-and-test-data)
+- [Demo Account](#demo-account)
 - [Project Structure](#project-structure)
-- [Authentication and Browser Storage](#authentication-and-browser-storage)
+- [Browser Storage](#browser-storage)
 - [Demo Guide](#demo-guide)
 - [Requirements Traceability](#requirements-traceability)
 - [Testing Status](#testing-status)
 - [Known Limitations](#known-limitations)
-- [Planned Next Steps](#planned-next-steps)
+- [Next Development Priorities](#next-development-priorities)
+
+## Project Objective
+
+The Truck Asset Matchmaking Platform is intended to support a simplified freight journey between three platform roles:
+
+- **Freight Owner** — posts cargo loads, reviews suitable trucks, accepts or rejects matches and monitors trips.
+- **Transporter** — posts available trucks, reviews suitable loads, accepts or rejects matches and updates delivery progress.
+- **Administrator** — oversees users, compliance, disputes, audit activity and platform metrics.
+
+For this assessment, the project uses synthetic/mock data and browser storage rather than production APIs, live GPS integrations or external services.
 
 ## Current MVP Status
 
-The project currently provides the authentication and routing foundation for the three TAMP user roles:
+### Authentication foundation
 
-- **Freight Owner** — can register, sign in, recover/reset a password, and access the Freight Owner dashboard.
-- **Transporter** — can register, sign in, recover/reset a password, and access the Transporter dashboard.
-- **Administrator** — can sign in using the seeded demonstration account and access the Admin dashboard.
+The application currently supports:
 
-The three dashboards currently contain introductory placeholder content. The operational TAMP modules have not yet been connected to them.
+- Freight Owner registration.
+- Transporter registration.
+- Login for locally registered users.
+- Seeded Administrator login.
+- Role-based protected routes.
+- Remember-me session behavior.
+- Forgot-password flow.
+- Browser-based password reset with a temporary token.
+- Password hashing for registered demo users using the Web Crypto API.
+
+### Freight Owner branch
+
+The `freight-owner` branch now contains dedicated routes/pages for:
+
+- Freight Owner dashboard.
+- My Loads.
+- Post Load.
+- Matches.
+- Tracking.
+
+The role layout also includes responsive navigation, the signed-in user's name/email, profile initial and sign-out behavior.
+
+The Freight Owner screens are still being developed. The underlying service/data layer is ahead of some of the visible page implementations, so features should only be considered complete once their UI is wired to the mock database and demonstrated end-to-end.
+
+### TAMP mock domain layer
+
+The project now has a reusable local data layer that models the main MVP entities and actions:
+
+- Users.
+- Compliance-document data.
+- Loads.
+- Trucks.
+- Matches.
+- Receipts.
+- Trips.
+- Tracking events.
+- Ratings.
+- Disputes.
+- Audit events.
+- Platform lookup values and KPI calculations.
+
+This layer is implemented in `src/services/mockDb.ts` and backed by the South African JSON seed dataset.
 
 ## Technology Stack
 
-| Technology                        | Purpose                                                        |
-| --------------------------------- | -------------------------------------------------------------- |
-| React 19                          | User-interface components                                      |
-| TypeScript                        | Static typing                                                  |
-| React Router DOM 7                | Client-side routing and protected role routes                  |
-| Vite 8                            | Development server and production build tooling                |
-| CSS                               | Responsive page styling                                        |
-| Web Crypto API                    | Browser-side PBKDF2 password hashing for registered demo users |
-| `localStorage` / `sessionStorage` | Browser-side MVP persistence and session management            |
-| Oxlint                            | Source linting                                                 |
+| Technology                        | Purpose                                                              |
+| --------------------------------- | -------------------------------------------------------------------- |
+| React 19                          | User interface and reusable components                               |
+| TypeScript                        | Static typing and TAMP domain contracts                              |
+| React Router DOM 7                | Client-side routing and role protection                              |
+| Vite 8                            | Development server and production build                              |
+| CSS                               | Responsive styling                                                   |
+| Web Crypto API                    | PBKDF2/SHA-256 password hashing for browser-registered demo accounts |
+| `localStorage` / `sessionStorage` | Mock persistence and authentication session state                    |
+| JSON fixtures                     | Synthetic South African MVP seed data                                |
+| Oxlint                            | Source linting                                                       |
 
-This is currently a **front-end-only MVP**. There is no production API or database connected to the application.
+This remains a **front-end-only MVP**. There is no production backend API or database connected to the application.
 
 ## Implemented Features
 
 ### Authentication
 
 - Freight Owner and Transporter account registration.
-- Email and form validation.
-- Password validation requiring:
-  - 8–15 characters;
-  - at least one uppercase letter;
-  - at least one number;
-  - at least one symbol.
+- Form and email validation.
 - Duplicate registered-email protection.
-- Login for browser-registered Freight Owners and Transporters.
+- Password validation.
+- Salted PBKDF2/SHA-256 password hashing using the browser Web Crypto API.
+- Login for registered Freight Owners and Transporters.
 - Seeded Admin demonstration login.
-- "Remember me" support:
-  - remembered sessions use `localStorage`;
-  - non-remembered sessions use `sessionStorage`.
-- Role-based redirect after login.
+- Remember-me behavior using browser storage.
+- Role-based redirects after login.
+- Protected role routes.
+- Forgot-password and password-reset flow.
+- Password-reset token expiry after 15 minutes.
+- New salt and password hash generated after reset.
+- Newly registered Freight Owner and Transporter profiles are synchronized into the TAMP mock database.
 
-### Browser-side password storage
+### Role layout
 
-For newly registered Freight Owner and Transporter accounts, the password is not stored as plain text. The browser implementation:
+`RoleLayout.tsx` provides the shared authenticated application shell:
 
-1. creates a random salt;
-2. derives a password hash using PBKDF2 with SHA-256;
-3. stores the hash and salt with the locally persisted user record.
+- Responsive sidebar/navigation.
+- Mobile navigation overlay.
+- Role-specific navigation.
+- Signed-in user's name.
+- Signed-in user's email.
+- User initial/avatar placeholder.
+- Sign-out action.
+- Nested route rendering through React Router.
 
-This is suitable only for the current browser-based assessment MVP and is **not a replacement for server-side authentication in production**.
+### Domain types
 
-### Password recovery
+`src/types/tamp.ts` defines the main TAMP contracts and statuses, including:
 
-- Forgot-password page.
-- Registered-account lookup by email.
-- Temporary password-reset request stored in the current browser session.
-- Reset token with a 15-minute lifetime.
-- New salt and password hash generated after a successful reset.
-- Successful reset redirects back to login.
+- `User`
+- `Load`
+- `Truck`
+- `Match`
+- `Receipt`
+- `Trip`
+- `TrackingEvent`
+- `Rating`
+- `Dispute`
+- `AuditEvent`
+- Lookup/location types
+- South African province types
+- Load, truck, match and trip status types
 
-No real email, OTP, or external recovery service is used.
+### Mock database service
 
-### Role-based routing
+`src/services/mockDb.ts` provides the browser-side MVP data operations.
 
-Protected routes prevent unauthenticated users from opening role dashboards directly. Authenticated users who attempt to open another role's dashboard are redirected to their own role area.
+Implemented service capabilities include:
 
-### Responsive authentication UI
+- Initialize/reset the mock database from JSON seed data.
+- Persist the mock database to `localStorage`.
+- Add registered users to the TAMP domain database.
+- Read users by ID or role.
+- Create and list loads.
+- Update load status.
+- Create and list trucks.
+- Update truck status.
+- Generate and rank load/truck matches.
+- Accept or reject a recommended match.
+- Create an acceptance receipt.
+- Create a trip when a match is accepted.
+- Store and advance mock tracking events.
+- Complete trips and update related load/truck/match state.
+- Submit post-trip ratings.
+- Recalculate a user's average rating.
+- Create and resolve disputes.
+- Write audit events for important platform actions.
+- Calculate Freight Owner, Transporter and Admin KPIs.
 
-The Login, Registration, Forgot Password, and Reset Password pages include desktop/tablet/mobile layouts and form accessibility features such as labels, error messages, focus handling, and ARIA state where applicable.
+## Mock Data and Local Persistence
+
+The project uses a synthetic South African dataset loaded from:
+
+```text
+src/data/tamp-mock-data-za.json
+```
+
+The data contracts are defined in:
+
+```text
+src/types/tamp.ts
+```
+
+The browser persistence layer is implemented in:
+
+```text
+src/services/mockDb.ts
+```
+
+The mock database is stored locally and automatically re-seeded when the fixture version changes.
+
+This approach gives the front-end a backend-like data source while remaining within the assessment requirement to use mock/sample data.
+
+## Matchmaking Rules
+
+The current local matchmaking service uses transparent rules rather than AI.
+
+A truck must satisfy the following hard requirements to be considered eligible:
+
+1. **Capacity** — truck weight and volume capacity must cover the load.
+2. **Vehicle compatibility** — the truck type must match the load's required vehicle type.
+3. **Availability** — truck availability must overlap the load pickup window.
+
+Location is currently used as a ranking preference:
+
+- same pickup city adds to the match score;
+- a different current city does not automatically reject an otherwise compatible truck.
+
+### Current score
+
+| Rule                         |   Score |
+| ---------------------------- | ------: |
+| Capacity passes              |      30 |
+| Vehicle compatibility passes |      35 |
+| Availability overlaps        |      25 |
+| Same-city location           |      10 |
+| **Maximum**                  | **100** |
+
+Each generated match stores readable rule-check reasons so the UI can explain why the match was recommended or rejected.
 
 ## Application Routes
 
-| Route              | Access        | Current purpose                                          |
-| ------------------ | ------------- | -------------------------------------------------------- |
-| `/`                | Public        | Redirects to `/login`                                    |
-| `/login`           | Public        | Sign in                                                  |
-| `/register`        | Public        | Register Freight Owner or Transporter account            |
-| `/forgot-password` | Public        | Start browser-based password recovery                    |
-| `/reset-password`  | Recovery flow | Reset password using the temporary browser-session token |
-| `/freight-owner`   | Freight Owner | Freight Owner dashboard                                  |
-| `/transporter`     | Transporter   | Transporter dashboard                                    |
-| `/admin`           | Admin         | Administrator dashboard                                  |
-| `*`                | Public        | Not-found page                                           |
+| Route                      | Access        | Purpose                                 |
+| -------------------------- | ------------- | --------------------------------------- |
+| `/`                        | Public        | Redirects to login                      |
+| `/login`                   | Public        | Sign in                                 |
+| `/register`                | Public        | Register a Freight Owner or Transporter |
+| `/forgot-password`         | Public        | Start password recovery                 |
+| `/reset-password`          | Recovery flow | Reset a locally registered password     |
+| `/freight-owner`           | Freight Owner | Freight Owner dashboard                 |
+| `/freight-owner/loads`     | Freight Owner | Freight Owner loads                     |
+| `/freight-owner/loads/new` | Freight Owner | Post a new load                         |
+| `/freight-owner/matches`   | Freight Owner | Freight Owner match area                |
+| `/freight-owner/tracking`  | Freight Owner | Freight Owner tracking area             |
+| `/transporter`             | Transporter   | Transporter dashboard                   |
+| `/admin`                   | Admin         | Administrator dashboard                 |
+| `*`                        | Public        | Not-found page                          |
 
 ## Getting Started
 
@@ -116,54 +254,67 @@ The Login, Registration, Forgot Password, and Reset Password pages include deskt
 
 Install:
 
-- **Node.js 20.19+ or 22.12+**
-- **npm**
+- Node.js
+- npm
+- A modern browser
 
-Vite 8 requires Node.js 20.19+ or 22.12+.
-
-### 1. Clone the repository
+### Clone the Freight Owner branch
 
 ```bash
-git clone https://github.com/LTshepoJr/Truck-Asset-Matchmaking-Platform.git
+git clone --branch freight-owner https://github.com/LTshepoJr/Truck-Asset-Matchmaking-Platform.git
 cd Truck-Asset-Matchmaking-Platform
 ```
 
-### 2. Install dependencies
+If the repository is already cloned:
+
+```bash
+git fetch
+git switch freight-owner
+git pull
+```
+
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start the development server
+### Start the development server
 
 ```bash
 npm run dev
 ```
 
-Vite will print the local development URL in the terminal. Open that URL in a modern browser.
+Open the local URL printed by Vite.
 
-### 4. Create an account or use the Admin demo account
+### Production build check
 
-For Freight Owner or Transporter testing, use `/register` to create a browser-local account.
+```bash
+npm run build
+```
 
-For Admin testing, use the seeded demonstration credentials in the section below.
+### Lint
+
+```bash
+npm run lint
+```
 
 ## Available Scripts
 
-| Command           | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| `npm run dev`     | Starts the Vite development server                     |
-| `npm run build`   | Type-checks the project and creates a production build |
-| `npm run lint`    | Runs Oxlint                                            |
-| `npm run preview` | Serves the production build locally for preview        |
+| Command           | Description                                                   |
+| ----------------- | ------------------------------------------------------------- |
+| `npm run dev`     | Starts the Vite development server                            |
+| `npm run build`   | Runs the TypeScript build and creates a Vite production build |
+| `npm run lint`    | Runs Oxlint                                                   |
+| `npm run preview` | Serves the production build locally                           |
 
 There is currently no automated `test` script configured in `package.json`.
 
-## Demo Accounts and Test Data
+## Demo Account
 
-### Seeded Admin account
+### Administrator
 
-> Demo credentials only. Do not reuse this password for any real account.
+> Demonstration credentials only.
 
 ```text
 Email:    tshepojr@kortestalkstech.co.za
@@ -171,20 +322,19 @@ Password: Password123!
 Role:     Admin
 ```
 
-Freight Owner and Transporter accounts are created through the Registration page and stored in the browser that created them.
-
-Because the current MVP uses browser storage, accounts created in one browser/profile are not automatically available in another browser/profile or device.
+Freight Owner and Transporter accounts are created from the registration page and persisted in the browser.
 
 ## Project Structure
 
-The main application structure currently follows this pattern:
+The repository currently contains the following major front-end areas:
 
 ```text
 Truck-Asset-Matchmaking-Platform/
 ├── public/
 ├── src/
 │   ├── assets/
-│   │   └── TAMP — Full Product Design & Developer Handoff_3.png
+│   ├── data/
+│   │   └── tamp-mock-data-za.json
 │   ├── layouts/
 │   │   └── RoleLayout.tsx
 │   ├── pages/
@@ -196,7 +346,11 @@ Truck-Asset-Matchmaking-Platform/
 │   │   │   ├── RegisterPage.tsx
 │   │   │   └── ResetPasswordPage.tsx
 │   │   ├── freight-owner/
-│   │   │   └── FreightOwnerDashboardPage.tsx
+│   │   │   ├── CreateLoadPage.tsx
+│   │   │   ├── FreightOwnerDashboardPage.tsx
+│   │   │   ├── FreightOwnerLoadsPage.tsx
+│   │   │   ├── FreightOwnerMatchesPage.tsx
+│   │   │   └── FreightOwnerTrackingPage.tsx
 │   │   ├── transporter/
 │   │   │   └── TransporterDashboardPage.tsx
 │   │   └── NotFoundPage.tsx
@@ -205,11 +359,11 @@ Truck-Asset-Matchmaking-Platform/
 │   │   ├── paths.ts
 │   │   └── ProtectedRoute.tsx
 │   ├── services/
-│   │   └── authService.ts
+│   │   ├── authService.ts
+│   │   └── mockDb.ts
 │   ├── styles/
-│   │   ├── LoginPage.css
-│   │   ├── PasswordRecoveryPage.css
-│   │   └── RegisterPage.css
+│   ├── types/
+│   │   └── tamp.ts
 │   ├── App.css
 │   ├── App.tsx
 │   ├── index.css
@@ -222,140 +376,158 @@ Truck-Asset-Matchmaking-Platform/
 └── vite.config.ts
 ```
 
-## Authentication and Browser Storage
+## Browser Storage
 
-The current front-end MVP uses the following browser-storage keys:
+The current MVP uses browser storage for both identity/session data and mock platform data.
 
-| Key                   | Storage                            | Purpose                                                  |
-| --------------------- | ---------------------------------- | -------------------------------------------------------- |
-| `tamp-users`          | `localStorage`                     | Registered Freight Owner and Transporter account records |
-| `tamp-session`        | `sessionStorage` or `localStorage` | Current authenticated session                            |
-| `tamp-password-reset` | `sessionStorage`                   | Temporary password-reset request                         |
+| Key                   | Storage                            | Purpose                                                                 |
+| --------------------- | ---------------------------------- | ----------------------------------------------------------------------- |
+| `tamp-users`          | `localStorage`                     | Locally registered Freight Owner and Transporter accounts               |
+| `tamp-session`        | `sessionStorage` or `localStorage` | Current authenticated session                                           |
+| `tamp-password-reset` | `sessionStorage`                   | Temporary password-reset request                                        |
+| `tamp_db`             | `localStorage`                     | TAMP domain/mock database                                               |
+| `tamp_db_version`     | `localStorage`                     | Seed fixture version used to determine when the mock DB must be rebuilt |
 
 ### Session behavior
 
-- If **Remember me** is selected, the session is stored in `localStorage`.
-- Otherwise, the session is stored in `sessionStorage`.
-- `ProtectedRoute` reads the active session before rendering a role area.
-- A user attempting to access the wrong role route is redirected to the dashboard that matches the session role.
+- Selecting **Remember me** stores the session in `localStorage`.
+- Otherwise, the session is kept in `sessionStorage`.
+- `ProtectedRoute` checks the active session before rendering protected role pages.
+- Cross-role navigation redirects the user to the dashboard associated with their own role.
+
+### Mock DB behavior
+
+On first use, `mockDb.ts` clones the JSON fixture into browser storage.
+
+If the seed data version changes, the stored mock database is replaced with a fresh copy of the new seed. This is useful while the schema and fixture data are evolving during MVP development.
 
 ## Demo Guide
 
-### Freight Owner / Transporter registration and login
+### 1. Register and sign in as a Freight Owner
 
 1. Open `/register`.
-2. Select **Freight Owner** or **Transporter**.
+2. Select **Freight Owner**.
 3. Complete the organization and account fields.
-4. Create a password that meets the displayed rules.
-5. Accept the terms checkbox.
+4. Create a valid password.
+5. Accept the required terms.
 6. Submit the form.
-7. The application redirects to `/login`.
-8. Sign in using the newly created account.
-9. Confirm that the application redirects to the correct role dashboard.
+7. Sign in using the account you created.
+8. Confirm that TAMP redirects to `/freight-owner`.
 
-### Password recovery Page
+The account is stored in `tamp-users` and the corresponding TAMP user profile is also created in the local mock database.
 
-1. Register a Freight Owner or Transporter account.
-2. Sign out/end the session or return to `/login`.
-3. Select **Forgot password?**
-4. Enter the email address of the registered browser-local account.
-5. Continue to the reset page.
-6. Enter and confirm a valid new password.
-7. Submit the reset.
-8. Sign in using the new password.
+### 2. Explore the Freight Owner workspace
 
-The recovery process is simulated entirely in the browser. No recovery email is sent.
+After login, use the Freight Owner navigation to access:
 
-### Admin login
+- Dashboard
+- My Loads
+- Post Load
+- Matches
+- Tracking
 
-1. Open `/login`.
-2. Enter the seeded Admin credentials.
-3. Submit the login form.
-4. Confirm that the application opens `/admin`.
+These routes are protected and only available to authenticated Freight Owner sessions.
+
+> The visible Freight Owner feature screens are still under development. The service layer already supports the related load, matching, receipt, trip and tracking operations, but those operations should not be considered complete from a user-flow perspective until each page is connected and tested.
+
+### 3. Password recovery
+
+1. Return to `/login`.
+2. Select **Forgot password?**
+3. Enter the email address of a locally registered Freight Owner or Transporter.
+4. Continue to the reset page.
+5. Enter a valid new password.
+6. Submit the reset.
+7. Sign in with the new password.
+
+The reset token exists only in the current browser session and expires after 15 minutes.
+
+### 4. Admin login
+
+Use the seeded Administrator credentials and confirm that the account is redirected to `/admin`.
 
 ## Requirements Traceability
 
-The table below reflects the **current repository state**, not the final intended MVP.
+The table below describes the state visible in the current `freight-owner` branch. A requirement is marked **Partial** where the underlying mock service exists but the complete role-facing UI has not yet been demonstrated.
 
-| Requirement | Assessment requirement                                                       | Current status      | Current implementation/evidence                                                                                                                                |
-| ----------- | ---------------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-01       | Role-based registration/login for Freight Owner, Transporter and Admin       | **Partial**         | Freight Owner and Transporter registration/login implemented; seeded Admin login implemented; Admin self-registration is not implemented                       |
-| FR-02       | Basic identity/compliance information and simulated document upload/metadata | **Partial**         | Registration captures organization, name, email and phone; new users receive a `pending` compliance status; compliance-document UI/metadata is not implemented |
-| FR-03       | Freight Owner can create and view cargo loads                                | **Not implemented** | Freight Owner dashboard is currently a placeholder                                                                                                             |
-| FR-04       | Transporter can create and view available trucks                             | **Not implemented** | Transporter dashboard is currently a placeholder                                                                                                               |
-| FR-05       | Rule-based matching using compatibility, location and availability           | **Not implemented** | Matching module not yet present                                                                                                                                |
-| FR-06       | Accept/reject a match and log the decision                                   | **Not implemented** | Match decision workflow not yet present                                                                                                                        |
-| FR-07       | Accepted match produces a digital confirmation receipt                       | **Not implemented** | Confirmation/receipt module not yet present                                                                                                                    |
-| FR-08       | Simulated trip tracking                                                      | **Not implemented** | Tracking module not yet present                                                                                                                                |
-| FR-09       | Parties can rate/review after completion                                     | **Not implemented** | Rating workflow not yet present                                                                                                                                |
-| FR-10       | Admin manages users, compliance and flags/disputes                           | **Not implemented** | Admin dashboard currently contains placeholder copy only                                                                                                       |
-| FR-11       | Admin views basic platform metrics                                           | **Not implemented** | KPI/analytics UI not yet present                                                                                                                               |
-| FR-12       | Key actions are available in an audit trail                                  | **Not implemented** | Audit-trail module not yet present                                                                                                                             |
+| Requirement | Assessment requirement                                                 | Status      | Current evidence                                                                                                                                                                                                 |
+| ----------- | ---------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-01       | Role-based registration/login for Freight Owner, Transporter and Admin | **Partial** | Freight Owner and Transporter registration/login, seeded Admin login, protected routes and role redirects are implemented. Admin self-registration is not provided.                                              |
+| FR-02       | Identity/compliance information and simulated document metadata        | **Partial** | Registration captures organization/profile information and creates a pending TAMP user profile. The data model contains compliance information, but complete user-facing compliance management is not yet wired. |
+| FR-03       | Freight Owner can create and view cargo loads                          | **Partial** | Freight Owner load routes/pages exist and `mockDb.ts` supports `createLoad`, load queries and status updates. The current Post Load UI still needs full integration with the service layer.                      |
+| FR-04       | Transporter can create and view available trucks                       | **Partial** | `mockDb.ts` supports truck creation, lookup and status updates. Transporter posting UI is not yet implemented.                                                                                                   |
+| FR-05       | Rule-based matching uses compatibility, location and availability      | **Partial** | Transparent matching rules, scoring, eligibility checks and match generation are implemented in `mockDb.ts`. Complete match UI integration remains in progress.                                                  |
+| FR-06       | Users can accept or reject a match and decision is logged              | **Partial** | Service functions support accept/reject decisions and create audit events. End-to-end role UI is not yet complete.                                                                                               |
+| FR-07       | Accepted match produces a digital confirmation receipt                 | **Partial** | Accepting a match creates a contract/receipt and a trip in the mock database. A complete receipt screen is not yet implemented.                                                                                  |
+| FR-08       | Trip tracking uses mock coordinates or status progression              | **Partial** | Tracking events and trip progression are supported in `mockDb.ts`, and a Freight Owner tracking route exists. Full tracking UI integration is still in progress.                                                 |
+| FR-09       | Parties can rate/review one another after completion                   | **Partial** | Rating creation, validation and average-rating recalculation exist in the service layer. Rating UI is not yet implemented.                                                                                       |
+| FR-10       | Admin can manage users, compliance and flagged/disputed items          | **Partial** | User/dispute data operations and dispute resolution logic exist, but the Admin management UI is not complete.                                                                                                    |
+| FR-11       | Admin can view basic platform metrics                                  | **Partial** | Admin KPI calculations are implemented in the mock service. The Admin KPI dashboard is not yet connected.                                                                                                        |
+| FR-12       | Key actions are available in an audit trail                            | **Partial** | Audit events are generated for registration/profile creation, loads, trucks, matching, acceptance/rejection, tracking, ratings and disputes. Audit-trail UI is not yet implemented.                              |
 
 ## Testing Status
 
-The repository currently defines build and lint commands but does not define an automated test suite.
+The project currently has no automated test suite configured.
 
-Recommended checks before each submission/demo:
+Before committing or demonstrating changes, run:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-Manual happy-path checks should currently cover:
+Current manual checks should include:
 
 - Freight Owner registration.
 - Transporter registration.
-- Duplicate-email rejection.
-- Invalid form input handling.
-- Successful login.
-- Invalid login.
-- Remember-me session behavior.
-- Role-route protection.
-- Cross-role redirect protection.
-- Forgot-password lookup.
-- Successful password reset.
-- Invalid/expired reset handling.
-- Responsive authentication pages on desktop and mobile-sized viewports.
+- Duplicate email rejection.
+- Password validation.
+- Successful and failed login.
+- Remember-me behavior.
+- Protected routes.
+- Cross-role route protection.
+- Password recovery.
+- Password reset expiry/error handling.
+- Freight Owner navigation.
+- Browser persistence after reload.
+- Mock database reset after a fixture version change.
+- Match rule behavior at the service layer.
+- Responsive behavior on desktop and mobile-sized screens.
 
 ## Known Limitations
 
-This repository is still an in-progress assessment MVP.
+This is still an in-progress front-end assessment MVP.
 
-- No backend API is connected.
-- No database is connected.
-- Registered user records exist only in browser `localStorage`.
-- Authentication is simulated on the client and is not production-grade identity management.
-- The seeded Admin demonstration password is present in front-end source code.
+- No production backend API is connected.
+- No production database is connected.
+- Authentication and role sessions are browser-based.
+- The seeded Admin demonstration password is stored in front-end source code.
 - Password recovery does not send a real email or OTP.
-- The temporary password-reset request exists only in the active browser session.
-- Freight Owner load posting is not yet implemented.
-- Transporter truck posting is not yet implemented.
-- Rule-based matchmaking is not yet implemented.
-- Accept/reject decisions and confirmation receipts are not yet implemented.
-- Trip tracking is not yet implemented.
-- Ratings/reviews are not yet implemented.
-- Admin user/compliance/dispute management and KPI views are not yet implemented.
-- Audit logging is not yet implemented.
-- No automated test framework/test suite is currently configured.
+- User and platform state is local to the current browser/profile.
+- The mock database is not appropriate for multi-user or production use.
+- Freight Owner feature routes exist, but not every page is fully connected to the service layer yet.
+- Transporter truck-posting UI is not yet implemented.
+- Complete match recommendation/decision UI is not yet implemented.
+- A dedicated digital receipt screen is not yet implemented.
+- Tracking UI is still incomplete.
+- Ratings/reviews UI is not yet implemented.
+- Admin compliance/dispute/KPI/audit screens are not yet complete.
+- There is no automated test framework/test suite configured.
 
-These limitations are acceptable only while the project is being developed as a simplified front-end demonstration. A production implementation should move identity, authorization, persistence, audit data, recovery, and business rules to trusted backend services.
+The mock service deliberately contains more of the domain workflow than the current visible UI. This lets the remaining role screens use a common, typed data layer instead of introducing separate hard-coded page data.
 
-## Planned Next Steps
+## Next Development Priorities
 
-The remaining work should be implemented in the order that completes the core TAMP journey:
-
-1. Build the Freight Owner dashboard and cargo-load posting flow.
-2. Build the Transporter dashboard and available-truck posting flow.
-3. Add browser-side data models/storage for loads and trucks.
-4. Implement transparent rule-based match recommendations using capacity, compatibility, location, and availability.
-5. Add match Accept/Reject actions and audit events.
-6. Generate a digital confirmation/receipt for accepted matches.
-7. Add mock trip status/coordinate tracking.
-8. Add post-completion ratings and comments.
-9. Build Admin user/compliance, flag/dispute, KPI, and audit views.
-10. Add automated tests for critical flows and validation/permission/error cases.
+1. Connect the Freight Owner Post Load form to `createLoad`.
+2. Render the signed-in owner's saved loads from the local mock DB.
+3. Connect Freight Owner match recommendations to the matching service.
+4. Implement Accept/Reject actions and display the resulting receipt.
+5. Connect the Freight Owner tracking page to trip/tracking data.
+6. Complete the Freight Owner dashboard using the implemented KPI helpers.
+7. Build Transporter truck posting and load-match workflows.
+8. Build ratings/reviews after trip completion.
+9. Build Admin compliance, dispute, KPI and audit-trail screens.
+10. Add automated tests for critical happy paths, validation and role permissions.
 
 ---
 
