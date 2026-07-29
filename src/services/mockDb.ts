@@ -370,6 +370,57 @@ export function getUsersByRole(role: UserRole): User[] {
   return getDb().users.filter((user) => user.role === role);
 }
 
+export interface EnsureRegisteredUserProfileInput {
+  id: EntityId;
+  name: string;
+  email: string;
+  role: "freight_owner" | "transporter";
+  company: string;
+  createdAt: string;
+}
+
+export function ensureRegisteredUserProfile(
+  input: EnsureRegisteredUserProfileInput,
+): User {
+  const db = getDb();
+
+  const existingUser = db.users.find((user) => user.id === input.id);
+
+  if (existingUser) {
+    return existingUser;
+  }
+
+  const user: User = {
+    id: input.id,
+    name: input.name.trim(),
+    email: input.email.trim().toLowerCase(),
+    role: input.role,
+    company: input.company.trim(),
+    verificationStatus: "pending",
+    complianceStatus: "pending",
+    rating: null,
+    createdAt: input.createdAt,
+  };
+
+  db.users.unshift(user);
+
+  appendAuditEvent(db, {
+    actorId: user.id,
+    action: "USER_PROFILE_CREATED",
+    entityType: "user",
+    entityId: user.id,
+    metadata: {
+      role: user.role,
+      company: user.company,
+      source: "browser_registration",
+    },
+  });
+
+  saveDb(db);
+
+  return user;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Loads                                                                       */
 /* -------------------------------------------------------------------------- */

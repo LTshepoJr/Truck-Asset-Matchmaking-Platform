@@ -1,3 +1,4 @@
+import { ensureRegisteredUserProfile } from "./mockDb";
 export type UserRole = "freight-owner" | "transporter" | "admin";
 
 export type RegistrationRole = "freight-owner" | "transporter";
@@ -141,6 +142,17 @@ const saveUsers = (users: StoredUser[]) => {
   localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
 };
 
+const ensureStoredUserInMockDb = (user: StoredUser): void => {
+  ensureRegisteredUserProfile({
+    id: user.id,
+    name: user.fullName,
+    email: user.email,
+    role: user.role === "freight-owner" ? "freight_owner" : "transporter",
+    company: user.organizationName,
+    createdAt: user.createdAt,
+  });
+};
+
 export const registerUser = async (input: RegisterUserInput): Promise<void> => {
   const users = getStoredUsers();
 
@@ -181,8 +193,8 @@ export const registerUser = async (input: RegisterUserInput): Promise<void> => {
 
     createdAt: new Date().toISOString(),
   };
-
   saveUsers([...users, newUser]);
+  ensureStoredUserInMockDb(newUser);
 };
 
 export const authenticateRegisteredUser = async (
@@ -206,7 +218,7 @@ export const authenticateRegisteredUser = async (
   if (enteredPasswordHash !== user.passwordHash) {
     return null;
   }
-
+  ensureStoredUserInMockDb(user);
   return {
     id: user.id,
     email: user.email,
