@@ -1,0 +1,1234 @@
+{
+  "meta": {
+    "project": "TAMP",
+    "datasetName": "South Africa MVP Mock Data",
+    "version": "1.0.0",
+    "generatedFor": "Frontend demonstration only",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "currency": "ZAR",
+    "timeZone": "Africa/Johannesburg",
+    "syntheticDataNotice": "All people, companies, emails, compliance references, vehicle identifiers, transactions and operational events in this file are fictional demo data. Real South African place names and selected city-centre coordinates are used only to make the MVP realistic.",
+    "sourceReferences": [
+      {
+        "name": "South African Government - South Africa at a glance",
+        "url": "https://www.gov.za/about-sa/south-africa-glance-0",
+        "usedFor": "Province names, ZAR currency, South Africa context"
+      },
+      {
+        "name": "South African Government - Local government",
+        "url": "https://www.gov.za/about-government/government-system/local-government",
+        "usedFor": "Official metropolitan city names"
+      },
+      {
+        "name": "Transnet National Ports Authority - Our Ports",
+        "url": "https://www.transnetnationalportsauthority.net/OURPORTS/Pages/default.aspx/1000",
+        "usedFor": "South African port locations used in routes"
+      },
+      {
+        "name": "GeoNames - South Africa",
+        "url": "https://www.geonames.org/advanced-search.html?country=ZA",
+        "usedFor": "Selected city-centre latitude/longitude reference points"
+      }
+    ]
+  },
+  "lookups": {
+    "provinces": [
+      "Eastern Cape",
+      "Free State",
+      "Gauteng",
+      "KwaZulu-Natal",
+      "Limpopo",
+      "Mpumalanga",
+      "Northern Cape",
+      "North West",
+      "Western Cape"
+    ],
+    "locations": [
+      {
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "lat": -26.20227,
+        "lng": 28.04363,
+        "type": "metro"
+      },
+      {
+        "city": "Pretoria",
+        "province": "Gauteng",
+        "lat": -25.74485858,
+        "lng": 28.18782806,
+        "type": "metro"
+      },
+      {
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "lat": -29.8579,
+        "lng": 31.0292,
+        "type": "metro_port"
+      },
+      {
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "lat": -33.92584,
+        "lng": 18.42322,
+        "type": "metro_port"
+      },
+      {
+        "city": "Gqeberha",
+        "province": "Eastern Cape",
+        "lat": -33.96109,
+        "lng": 25.61494,
+        "type": "metro_port"
+      },
+      {
+        "city": "Bloemfontein",
+        "province": "Free State",
+        "lat": -29.12107,
+        "lng": 26.214,
+        "type": "metro"
+      },
+      {
+        "city": "Polokwane",
+        "province": "Limpopo",
+        "lat": -23.90449,
+        "lng": 29.46885,
+        "type": "city"
+      },
+      {
+        "city": "Mbombela",
+        "province": "Mpumalanga",
+        "lat": -25.47512,
+        "lng": 30.96935,
+        "type": "city"
+      },
+      {
+        "city": "Kimberley",
+        "province": "Northern Cape",
+        "lat": -28.73226,
+        "lng": 24.76232,
+        "type": "city"
+      },
+      {
+        "city": "Rustenburg",
+        "province": "North West",
+        "lat": -25.66756,
+        "lng": 27.24208,
+        "type": "city"
+      },
+      {
+        "city": "Richards Bay",
+        "province": "KwaZulu-Natal",
+        "lat": -28.78300639,
+        "lng": 32.03767776,
+        "type": "port"
+      }
+    ],
+    "vehicleTypes": [
+      {
+        "id": "reefer",
+        "label": "Refrigerated truck",
+        "compatibleCargo": [
+          "Fresh produce",
+          "Frozen food",
+          "Dairy"
+        ]
+      },
+      {
+        "id": "tautliner",
+        "label": "Tautliner / curtain-side",
+        "compatibleCargo": [
+          "Packaged food",
+          "Palletised goods",
+          "Automotive parts",
+          "General freight"
+        ]
+      },
+      {
+        "id": "flatbed",
+        "label": "Flatbed",
+        "compatibleCargo": [
+          "Timber",
+          "Steel",
+          "Machinery",
+          "Containerised cargo"
+        ]
+      },
+      {
+        "id": "side_tipper",
+        "label": "Side tipper",
+        "compatibleCargo": [
+          "Minerals",
+          "Coal",
+          "Aggregate"
+        ]
+      },
+      {
+        "id": "box_body",
+        "label": "Box body",
+        "compatibleCargo": [
+          "Retail goods",
+          "Electronics",
+          "Packaged food",
+          "General freight"
+        ]
+      }
+    ],
+    "cargoTypes": [
+      "Fresh produce",
+      "Frozen food",
+      "Packaged food",
+      "Automotive parts",
+      "Timber",
+      "Minerals",
+      "Retail goods",
+      "Electronics",
+      "General freight",
+      "Containerised cargo"
+    ],
+    "statuses": {
+      "user": [
+        "pending",
+        "verified",
+        "suspended"
+      ],
+      "load": [
+        "draft",
+        "open",
+        "matched",
+        "in_transit",
+        "completed",
+        "cancelled"
+      ],
+      "truck": [
+        "available",
+        "reserved",
+        "in_transit",
+        "unavailable"
+      ],
+      "match": [
+        "recommended",
+        "accepted",
+        "rejected",
+        "expired",
+        "completed"
+      ],
+      "trip": [
+        "confirmed",
+        "at_pickup",
+        "loaded",
+        "in_transit",
+        "at_delivery",
+        "completed"
+      ]
+    }
+  },
+  "users": [
+    {
+      "id": "USR-ADM-001",
+      "name": "Naledi Admin",
+      "email": "admin@tamp-demo.example.com",
+      "role": "admin",
+      "company": "TAMP Demo Operations",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": null,
+      "createdAt": "2026-07-24T09:00:00+02:00"
+    },
+    {
+      "id": "USR-FO-001",
+      "name": "Thabo Mokoena",
+      "email": "thabo.mokoena@example.com",
+      "role": "freight_owner",
+      "company": "Ubuntu Fresh Produce Demo",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": 4.7,
+      "createdAt": "2026-07-24T09:15:00+02:00"
+    },
+    {
+      "id": "USR-FO-002",
+      "name": "Ayesha Khan",
+      "email": "ayesha.khan@example.com",
+      "role": "freight_owner",
+      "company": "Cape Trade Foods Demo",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": 4.5,
+      "createdAt": "2026-07-24T09:25:00+02:00"
+    },
+    {
+      "id": "USR-FO-003",
+      "name": "Sipho Ndlovu",
+      "email": "sipho.ndlovu@example.com",
+      "role": "freight_owner",
+      "company": "Lowveld Supply Demo",
+      "verificationStatus": "pending",
+      "complianceStatus": "review",
+      "rating": 4.2,
+      "createdAt": "2026-07-25T10:20:00+02:00"
+    },
+    {
+      "id": "USR-TR-001",
+      "name": "Lerato Molefe",
+      "email": "lerato.molefe@example.com",
+      "role": "transporter",
+      "company": "Mzansi Haulage Demo",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": 4.8,
+      "createdAt": "2026-07-24T10:00:00+02:00"
+    },
+    {
+      "id": "USR-TR-002",
+      "name": "Johan Botha",
+      "email": "johan.botha@example.com",
+      "role": "transporter",
+      "company": "Karoo Freight Demo",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": 4.4,
+      "createdAt": "2026-07-24T10:05:00+02:00"
+    },
+    {
+      "id": "USR-TR-003",
+      "name": "Zanele Khumalo",
+      "email": "zanele.khumalo@example.com",
+      "role": "transporter",
+      "company": "CoastLink Transport Demo",
+      "verificationStatus": "verified",
+      "complianceStatus": "approved",
+      "rating": 4.6,
+      "createdAt": "2026-07-25T11:10:00+02:00"
+    }
+  ],
+  "complianceDocuments": [
+    {
+      "id": "DOC-001",
+      "userId": "USR-TR-001",
+      "documentType": "operator_permit",
+      "reference": "DEMO-OP-001",
+      "fileName": "operator-permit-demo.pdf",
+      "status": "approved",
+      "reviewedBy": "USR-ADM-001",
+      "reviewedAt": "2026-07-25T08:45:00+02:00"
+    },
+    {
+      "id": "DOC-002",
+      "userId": "USR-TR-002",
+      "documentType": "vehicle_compliance",
+      "reference": "DEMO-VC-002",
+      "fileName": "vehicle-compliance-demo.pdf",
+      "status": "approved",
+      "reviewedBy": "USR-ADM-001",
+      "reviewedAt": "2026-07-25T08:55:00+02:00"
+    },
+    {
+      "id": "DOC-003",
+      "userId": "USR-FO-003",
+      "documentType": "company_registration",
+      "reference": "DEMO-COMP-003",
+      "fileName": "company-registration-demo.pdf",
+      "status": "under_review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    }
+  ],
+  "loads": [
+    {
+      "id": "LOAD-001",
+      "ownerId": "USR-FO-001",
+      "origin": {
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "lat": -26.20227,
+        "lng": 28.04363
+      },
+      "destination": {
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "lat": -29.8579,
+        "lng": 31.0292
+      },
+      "cargoType": "Fresh produce",
+      "description": "Palletised mixed fresh produce for cold-chain transport.",
+      "weightKg": 18000,
+      "volumeM3": 52,
+      "requiredVehicleType": "reefer",
+      "pickupWindow": {
+        "start": "2026-07-29T07:00:00+02:00",
+        "end": "2026-07-29T10:00:00+02:00"
+      },
+      "status": "matched",
+      "createdAt": "2026-07-28T11:00:00+02:00"
+    },
+    {
+      "id": "LOAD-002",
+      "ownerId": "USR-FO-002",
+      "origin": {
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "lat": -33.92584,
+        "lng": 18.42322
+      },
+      "destination": {
+        "city": "Bloemfontein",
+        "province": "Free State",
+        "lat": -29.12107,
+        "lng": 26.214
+      },
+      "cargoType": "Packaged food",
+      "description": "Palletised dry packaged food.",
+      "weightKg": 12500,
+      "volumeM3": 44,
+      "requiredVehicleType": "tautliner",
+      "pickupWindow": {
+        "start": "2026-07-30T06:00:00+02:00",
+        "end": "2026-07-30T12:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T12:15:00+02:00"
+    },
+    {
+      "id": "LOAD-003",
+      "ownerId": "USR-FO-002",
+      "origin": {
+        "city": "Gqeberha",
+        "province": "Eastern Cape",
+        "lat": -33.96109,
+        "lng": 25.61494
+      },
+      "destination": {
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "lat": -26.20227,
+        "lng": 28.04363
+      },
+      "cargoType": "Automotive parts",
+      "description": "Crated automotive components.",
+      "weightKg": 9800,
+      "volumeM3": 36,
+      "requiredVehicleType": "tautliner",
+      "pickupWindow": {
+        "start": "2026-07-30T08:00:00+02:00",
+        "end": "2026-07-30T14:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T13:10:00+02:00"
+    },
+    {
+      "id": "LOAD-004",
+      "ownerId": "USR-FO-003",
+      "origin": {
+        "city": "Mbombela",
+        "province": "Mpumalanga",
+        "lat": -25.47512,
+        "lng": 30.96935
+      },
+      "destination": {
+        "city": "Pretoria",
+        "province": "Gauteng",
+        "lat": -25.74485858,
+        "lng": 28.18782806
+      },
+      "cargoType": "Timber",
+      "description": "Bundled treated timber.",
+      "weightKg": 22000,
+      "volumeM3": 48,
+      "requiredVehicleType": "flatbed",
+      "pickupWindow": {
+        "start": "2026-07-31T07:00:00+02:00",
+        "end": "2026-07-31T13:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T14:00:00+02:00"
+    },
+    {
+      "id": "LOAD-005",
+      "ownerId": "USR-FO-001",
+      "origin": {
+        "city": "Rustenburg",
+        "province": "North West",
+        "lat": -25.66756,
+        "lng": 27.24208
+      },
+      "destination": {
+        "city": "Richards Bay",
+        "province": "KwaZulu-Natal",
+        "lat": -28.78300639,
+        "lng": 32.03767776
+      },
+      "cargoType": "Minerals",
+      "description": "Bulk mineral product for demo freight flow.",
+      "weightKg": 28000,
+      "volumeM3": 30,
+      "requiredVehicleType": "side_tipper",
+      "pickupWindow": {
+        "start": "2026-07-31T05:00:00+02:00",
+        "end": "2026-07-31T11:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T14:30:00+02:00"
+    },
+    {
+      "id": "LOAD-006",
+      "ownerId": "USR-FO-001",
+      "origin": {
+        "city": "Polokwane",
+        "province": "Limpopo",
+        "lat": -23.90449,
+        "lng": 29.46885
+      },
+      "destination": {
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "lat": -26.20227,
+        "lng": 28.04363
+      },
+      "cargoType": "Fresh produce",
+      "description": "Palletised citrus.",
+      "weightKg": 15500,
+      "volumeM3": 46,
+      "requiredVehicleType": "reefer",
+      "pickupWindow": {
+        "start": "2026-07-30T05:30:00+02:00",
+        "end": "2026-07-30T09:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T15:00:00+02:00"
+    },
+    {
+      "id": "LOAD-007",
+      "ownerId": "USR-FO-003",
+      "origin": {
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "lat": -29.8579,
+        "lng": 31.0292
+      },
+      "destination": {
+        "city": "Gqeberha",
+        "province": "Eastern Cape",
+        "lat": -33.96109,
+        "lng": 25.61494
+      },
+      "cargoType": "Containerised cargo",
+      "description": "Demo container movement between coastal logistics nodes.",
+      "weightKg": 24000,
+      "volumeM3": 60,
+      "requiredVehicleType": "flatbed",
+      "pickupWindow": {
+        "start": "2026-07-30T09:00:00+02:00",
+        "end": "2026-07-30T15:00:00+02:00"
+      },
+      "status": "open",
+      "createdAt": "2026-07-28T16:20:00+02:00"
+    }
+  ],
+  "trucks": [
+    {
+      "id": "TRK-001",
+      "transporterId": "USR-TR-001",
+      "vehicleType": "reefer",
+      "displayName": "Reefer 28T - Demo 01",
+      "registrationDisplay": "DEMO-GP-01",
+      "capacityKg": 28000,
+      "capacityM3": 68,
+      "currentLocation": {
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "lat": -26.20227,
+        "lng": 28.04363
+      },
+      "availabilityWindow": {
+        "start": "2026-07-29T06:00:00+02:00",
+        "end": "2026-07-29T18:00:00+02:00"
+      },
+      "status": "reserved"
+    },
+    {
+      "id": "TRK-002",
+      "transporterId": "USR-TR-002",
+      "vehicleType": "tautliner",
+      "displayName": "Tautliner 34T - Demo 02",
+      "registrationDisplay": "DEMO-WC-02",
+      "capacityKg": 34000,
+      "capacityM3": 82,
+      "currentLocation": {
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "lat": -33.92584,
+        "lng": 18.42322
+      },
+      "availabilityWindow": {
+        "start": "2026-07-30T05:00:00+02:00",
+        "end": "2026-07-30T18:00:00+02:00"
+      },
+      "status": "available"
+    },
+    {
+      "id": "TRK-003",
+      "transporterId": "USR-TR-003",
+      "vehicleType": "tautliner",
+      "displayName": "Tautliner 30T - Demo 03",
+      "registrationDisplay": "DEMO-EC-03",
+      "capacityKg": 30000,
+      "capacityM3": 78,
+      "currentLocation": {
+        "city": "Gqeberha",
+        "province": "Eastern Cape",
+        "lat": -33.96109,
+        "lng": 25.61494
+      },
+      "availabilityWindow": {
+        "start": "2026-07-30T07:00:00+02:00",
+        "end": "2026-07-30T20:00:00+02:00"
+      },
+      "status": "available"
+    },
+    {
+      "id": "TRK-004",
+      "transporterId": "USR-TR-001",
+      "vehicleType": "flatbed",
+      "displayName": "Flatbed 32T - Demo 04",
+      "registrationDisplay": "DEMO-MP-04",
+      "capacityKg": 32000,
+      "capacityM3": 55,
+      "currentLocation": {
+        "city": "Mbombela",
+        "province": "Mpumalanga",
+        "lat": -25.47512,
+        "lng": 30.96935
+      },
+      "availabilityWindow": {
+        "start": "2026-07-31T06:00:00+02:00",
+        "end": "2026-07-31T18:00:00+02:00"
+      },
+      "status": "available"
+    },
+    {
+      "id": "TRK-005",
+      "transporterId": "USR-TR-002",
+      "vehicleType": "side_tipper",
+      "displayName": "Side Tipper 34T - Demo 05",
+      "registrationDisplay": "DEMO-NW-05",
+      "capacityKg": 34000,
+      "capacityM3": 36,
+      "currentLocation": {
+        "city": "Rustenburg",
+        "province": "North West",
+        "lat": -25.66756,
+        "lng": 27.24208
+      },
+      "availabilityWindow": {
+        "start": "2026-07-31T04:00:00+02:00",
+        "end": "2026-07-31T16:00:00+02:00"
+      },
+      "status": "available"
+    },
+    {
+      "id": "TRK-006",
+      "transporterId": "USR-TR-003",
+      "vehicleType": "reefer",
+      "displayName": "Reefer 26T - Demo 06",
+      "registrationDisplay": "DEMO-LP-06",
+      "capacityKg": 26000,
+      "capacityM3": 64,
+      "currentLocation": {
+        "city": "Polokwane",
+        "province": "Limpopo",
+        "lat": -23.90449,
+        "lng": 29.46885
+      },
+      "availabilityWindow": {
+        "start": "2026-07-30T05:00:00+02:00",
+        "end": "2026-07-30T14:00:00+02:00"
+      },
+      "status": "available"
+    },
+    {
+      "id": "TRK-007",
+      "transporterId": "USR-TR-001",
+      "vehicleType": "flatbed",
+      "displayName": "Flatbed 30T - Demo 07",
+      "registrationDisplay": "DEMO-KZN-07",
+      "capacityKg": 30000,
+      "capacityM3": 58,
+      "currentLocation": {
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "lat": -29.8579,
+        "lng": 31.0292
+      },
+      "availabilityWindow": {
+        "start": "2026-07-30T08:00:00+02:00",
+        "end": "2026-07-30T19:00:00+02:00"
+      },
+      "status": "available"
+    }
+  ],
+  "matches": [
+    {
+      "id": "MATCH-001",
+      "loadId": "LOAD-001",
+      "truckId": "TRK-001",
+      "score": 97,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "28,000 kg truck capacity covers 18,000 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Refrigerated truck is compatible with fresh produce."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Johannesburg."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Truck availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Correct cold-chain vehicle type",
+        "Sufficient weight and volume capacity",
+        "Truck is already in Johannesburg",
+        "Availability overlaps pickup window"
+      ],
+      "status": "accepted",
+      "createdAt": "2026-07-28T11:05:00+02:00",
+      "decision": {
+        "actorId": "USR-FO-001",
+        "decision": "accepted",
+        "timestamp": "2026-07-28T11:20:00+02:00"
+      }
+    },
+    {
+      "id": "MATCH-002",
+      "loadId": "LOAD-002",
+      "truckId": "TRK-002",
+      "score": 95,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "34,000 kg truck capacity covers 12,500 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Tautliner is compatible with palletised packaged food."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Cape Town."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Correct vehicle type",
+        "Large spare capacity",
+        "Truck is in Cape Town",
+        "Availability overlaps pickup window"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T12:20:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-003",
+      "loadId": "LOAD-003",
+      "truckId": "TRK-003",
+      "score": 96,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "30,000 kg truck capacity covers 9,800 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Tautliner is compatible with automotive parts."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Gqeberha."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Correct vehicle type",
+        "Truck located in Gqeberha",
+        "Availability overlaps pickup window"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T13:15:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-004",
+      "loadId": "LOAD-004",
+      "truckId": "TRK-004",
+      "score": 94,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "32,000 kg capacity covers 22,000 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Flatbed is compatible with bundled timber."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Mbombela."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Suitable flatbed",
+        "Truck in Mbombela",
+        "Pickup availability overlap"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T14:05:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-005",
+      "loadId": "LOAD-005",
+      "truckId": "TRK-005",
+      "score": 98,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "34,000 kg capacity covers 28,000 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Side tipper is compatible with bulk minerals."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Rustenburg."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Correct bulk-haul vehicle type",
+        "Truck in Rustenburg",
+        "Availability overlaps pickup window"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T14:35:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-006",
+      "loadId": "LOAD-006",
+      "truckId": "TRK-006",
+      "score": 97,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "26,000 kg capacity covers 15,500 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Refrigerated truck is compatible with fresh produce."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Polokwane."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Correct cold-chain vehicle",
+        "Truck in Polokwane",
+        "Availability overlaps pickup window"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T15:05:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-007",
+      "loadId": "LOAD-007",
+      "truckId": "TRK-007",
+      "score": 93,
+      "eligible": true,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "30,000 kg capacity covers 24,000 kg load."
+        },
+        "compatibility": {
+          "passed": true,
+          "reason": "Flatbed is configured for demo containerised cargo."
+        },
+        "location": {
+          "passed": true,
+          "reason": "Truck and load origin are both Durban."
+        },
+        "availability": {
+          "passed": true,
+          "reason": "Availability overlaps the pickup window."
+        }
+      },
+      "reasons": [
+        "Suitable flatbed",
+        "Truck in Durban",
+        "Availability overlap"
+      ],
+      "status": "recommended",
+      "createdAt": "2026-07-28T16:25:00+02:00",
+      "decision": null
+    },
+    {
+      "id": "MATCH-008",
+      "loadId": "LOAD-001",
+      "truckId": "TRK-002",
+      "score": 28,
+      "eligible": false,
+      "ruleChecks": {
+        "capacity": {
+          "passed": true,
+          "reason": "34,000 kg capacity covers 18,000 kg load."
+        },
+        "compatibility": {
+          "passed": false,
+          "reason": "Tautliner does not satisfy the refrigerated requirement."
+        },
+        "location": {
+          "passed": false,
+          "reason": "Truck is in Cape Town while pickup is in Johannesburg."
+        },
+        "availability": {
+          "passed": false,
+          "reason": "Truck availability begins after the pickup window."
+        }
+      },
+      "reasons": [
+        "Rejected: vehicle/cargo compatibility failed",
+        "Rejected: pickup location mismatch",
+        "Rejected: availability window does not overlap"
+      ],
+      "status": "rejected",
+      "createdAt": "2026-07-28T11:06:00+02:00",
+      "decision": {
+        "actorId": "SYSTEM",
+        "decision": "rule_rejected",
+        "timestamp": "2026-07-28T11:06:00+02:00"
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "contractId": "TAMP-ZA-2026-0001",
+      "matchId": "MATCH-001",
+      "decision": "accepted",
+      "actorId": "USR-FO-001",
+      "timestamp": "2026-07-28T11:20:00+02:00",
+      "ipAddress": "192.0.2.10",
+      "userAgent": "TAMP-Demo-Browser/1.0",
+      "status": "confirmed"
+    }
+  ],
+  "trips": [
+    {
+      "id": "TRIP-001",
+      "matchId": "MATCH-001",
+      "contractId": "TAMP-ZA-2026-0001",
+      "status": "in_transit",
+      "progressPercent": 62,
+      "origin": "Johannesburg",
+      "destination": "Durban",
+      "lastUpdatedAt": "2026-07-29T13:30:00+02:00"
+    }
+  ],
+  "trackingEvents": [
+    {
+      "id": "TE-001",
+      "tripId": "TRIP-001",
+      "status": "confirmed",
+      "lat": -26.20227,
+      "lng": 28.04363,
+      "label": "Johannesburg - trip confirmed",
+      "timestamp": "2026-07-29T06:30:00+02:00",
+      "coordinateType": "real_city_reference"
+    },
+    {
+      "id": "TE-002",
+      "tripId": "TRIP-001",
+      "status": "loaded",
+      "lat": -26.265,
+      "lng": 28.12,
+      "label": "Demo departure point east of Johannesburg",
+      "timestamp": "2026-07-29T08:20:00+02:00",
+      "coordinateType": "mock_route_point"
+    },
+    {
+      "id": "TE-003",
+      "tripId": "TRIP-001",
+      "status": "in_transit",
+      "lat": -27.25,
+      "lng": 29.1,
+      "label": "Mock route progress",
+      "timestamp": "2026-07-29T10:30:00+02:00",
+      "coordinateType": "mock_route_point"
+    },
+    {
+      "id": "TE-004",
+      "tripId": "TRIP-001",
+      "status": "in_transit",
+      "lat": -28.275,
+      "lng": 29.9,
+      "label": "Mock route progress near the Free State / KZN corridor",
+      "timestamp": "2026-07-29T12:00:00+02:00",
+      "coordinateType": "mock_route_point"
+    },
+    {
+      "id": "TE-005",
+      "tripId": "TRIP-001",
+      "status": "in_transit",
+      "lat": -29.1,
+      "lng": 30.4,
+      "label": "Mock route progress toward Durban",
+      "timestamp": "2026-07-29T13:30:00+02:00",
+      "coordinateType": "mock_route_point"
+    },
+    {
+      "id": "TE-006",
+      "tripId": "TRIP-001",
+      "status": "at_delivery",
+      "lat": -29.8579,
+      "lng": 31.0292,
+      "label": "Durban - destination reference",
+      "timestamp": "2026-07-29T16:30:00+02:00",
+      "coordinateType": "real_city_reference",
+      "demoFutureEvent": true
+    }
+  ],
+  "ratings": [
+    {
+      "id": "RATING-001",
+      "tripId": "TRIP-DEMO-COMPLETE-001",
+      "reviewerId": "USR-FO-002",
+      "reviewedUserId": "USR-TR-003",
+      "score": 5,
+      "comment": "Good communication and the demo delivery was completed on time.",
+      "timestamp": "2026-07-27T15:00:00+02:00"
+    },
+    {
+      "id": "RATING-002",
+      "tripId": "TRIP-DEMO-COMPLETE-001",
+      "reviewerId": "USR-TR-003",
+      "reviewedUserId": "USR-FO-002",
+      "score": 4,
+      "comment": "Pickup process was clear and documentation was ready.",
+      "timestamp": "2026-07-27T15:10:00+02:00"
+    }
+  ],
+  "disputes": [
+    {
+      "id": "DSP-001",
+      "tripId": "TRIP-DEMO-ARCHIVE-002",
+      "raisedBy": "USR-FO-001",
+      "againstUserId": "USR-TR-002",
+      "category": "delivery_delay",
+      "summary": "Demo dispute: delivery status update was later than expected.",
+      "status": "open",
+      "priority": "medium",
+      "createdAt": "2026-07-28T09:30:00+02:00",
+      "assignedTo": "USR-ADM-001"
+    },
+    {
+      "id": "DSP-002",
+      "tripId": "TRIP-DEMO-ARCHIVE-003",
+      "raisedBy": "USR-TR-001",
+      "againstUserId": "USR-FO-003",
+      "category": "documentation",
+      "summary": "Demo flag: supporting pickup documentation requires review.",
+      "status": "resolved",
+      "priority": "low",
+      "createdAt": "2026-07-26T13:00:00+02:00",
+      "resolvedAt": "2026-07-27T10:00:00+02:00",
+      "assignedTo": "USR-ADM-001"
+    }
+  ],
+  "auditEvents": [
+    {
+      "id": "AUD-001",
+      "actorId": "USR-FO-001",
+      "action": "LOAD_CREATED",
+      "entityType": "load",
+      "entityId": "LOAD-001",
+      "timestamp": "2026-07-28T11:00:00+02:00",
+      "metadata": {
+        "origin": "Johannesburg",
+        "destination": "Durban"
+      }
+    },
+    {
+      "id": "AUD-002",
+      "actorId": "SYSTEM",
+      "action": "MATCH_RECOMMENDED",
+      "entityType": "match",
+      "entityId": "MATCH-001",
+      "timestamp": "2026-07-28T11:05:00+02:00",
+      "metadata": {
+        "score": 97
+      }
+    },
+    {
+      "id": "AUD-003",
+      "actorId": "SYSTEM",
+      "action": "MATCH_RULE_REJECTED",
+      "entityType": "match",
+      "entityId": "MATCH-008",
+      "timestamp": "2026-07-28T11:06:00+02:00",
+      "metadata": {
+        "failedRules": [
+          "compatibility",
+          "location",
+          "availability"
+        ]
+      }
+    },
+    {
+      "id": "AUD-004",
+      "actorId": "USR-FO-001",
+      "action": "MATCH_ACCEPTED",
+      "entityType": "match",
+      "entityId": "MATCH-001",
+      "timestamp": "2026-07-28T11:20:00+02:00",
+      "metadata": {
+        "contractId": "TAMP-ZA-2026-0001"
+      }
+    },
+    {
+      "id": "AUD-005",
+      "actorId": "SYSTEM",
+      "action": "RECEIPT_CREATED",
+      "entityType": "receipt",
+      "entityId": "TAMP-ZA-2026-0001",
+      "timestamp": "2026-07-28T11:20:01+02:00",
+      "metadata": {
+        "matchId": "MATCH-001"
+      }
+    },
+    {
+      "id": "AUD-006",
+      "actorId": "USR-FO-002",
+      "action": "LOAD_CREATED",
+      "entityType": "load",
+      "entityId": "LOAD-002",
+      "timestamp": "2026-07-28T12:15:00+02:00",
+      "metadata": {
+        "origin": "Cape Town",
+        "destination": "Bloemfontein"
+      }
+    },
+    {
+      "id": "AUD-007",
+      "actorId": "SYSTEM",
+      "action": "MATCH_RECOMMENDED",
+      "entityType": "match",
+      "entityId": "MATCH-002",
+      "timestamp": "2026-07-28T12:20:00+02:00",
+      "metadata": {
+        "score": 95
+      }
+    },
+    {
+      "id": "AUD-008",
+      "actorId": "USR-TR-001",
+      "action": "TRUCK_POSTED",
+      "entityType": "truck",
+      "entityId": "TRK-004",
+      "timestamp": "2026-07-28T13:45:00+02:00",
+      "metadata": {
+        "city": "Mbombela",
+        "vehicleType": "flatbed"
+      }
+    },
+    {
+      "id": "AUD-009",
+      "actorId": "USR-ADM-001",
+      "action": "COMPLIANCE_REVIEWED",
+      "entityType": "compliance_document",
+      "entityId": "DOC-002",
+      "timestamp": "2026-07-25T08:55:00+02:00",
+      "metadata": {
+        "status": "approved"
+      }
+    },
+    {
+      "id": "AUD-010",
+      "actorId": "USR-FO-001",
+      "action": "DISPUTE_CREATED",
+      "entityType": "dispute",
+      "entityId": "DSP-001",
+      "timestamp": "2026-07-28T09:30:00+02:00",
+      "metadata": {
+        "priority": "medium"
+      }
+    },
+    {
+      "id": "AUD-011",
+      "actorId": "USR-ADM-001",
+      "action": "DISPUTE_RESOLVED",
+      "entityType": "dispute",
+      "entityId": "DSP-002",
+      "timestamp": "2026-07-27T10:00:00+02:00",
+      "metadata": {
+        "status": "resolved"
+      }
+    }
+  ],
+  "dashboardSeed": {
+    "freightOwner": {
+      "openLoads": 6,
+      "activeMatches": 1,
+      "tripsInTransit": 1,
+      "completedTrips": 3
+    },
+    "transporter": {
+      "availableTrucks": 6,
+      "recommendedLoads": 6,
+      "activeTrips": 1,
+      "averageRating": 4.6
+    },
+    "admin": {
+      "totalUsers": 7,
+      "verifiedUsers": 6,
+      "pendingComplianceReviews": 1,
+      "openDisputes": 1,
+      "loadsPosted": 7,
+      "trucksPosted": 7,
+      "eligibleMatches": 7,
+      "acceptedMatches": 1,
+      "activeTrips": 1
+    }
+  }
+}
