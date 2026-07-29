@@ -10,11 +10,31 @@ import { ROUTES } from "./paths";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import { CreateLoadPage } from "../pages/freight-owner/CreateLoadPage";
+import { FreightOwnerLoadsPage } from "../pages/freight-owner/FreightOwnerLoadsPage";
+import { FreightOwnerMatchesPage } from "../pages/freight-owner/FreightOwnerMatchesPage";
+import { FreightOwnerTrackingPage } from "../pages/freight-owner/FreightOwnerTrackingPage";
 
 const freightOwnerNavigation = [
   {
     label: "Dashboard",
     to: ROUTES.freightOwner,
+  },
+  {
+    label: "My Loads",
+    to: ROUTES.freightOwnerLoads,
+  },
+  {
+    label: "Post Load",
+    to: ROUTES.freightOwnerNewLoad,
+  },
+  {
+    label: "Matches",
+    to: ROUTES.freightOwnerMatches,
+  },
+  {
+    label: "Tracking",
+    to: ROUTES.freightOwnerTracking,
   },
 ];
 
@@ -59,6 +79,14 @@ export function AppRoutes() {
           }
         >
           <Route index element={<FreightOwnerDashboardPage />} />
+
+          <Route path="loads" element={<FreightOwnerLoadsPage />} />
+
+          <Route path="loads/new" element={<CreateLoadPage />} />
+
+          <Route path="matches" element={<FreightOwnerMatchesPage />} />
+
+          <Route path="tracking" element={<FreightOwnerTrackingPage />} />
         </Route>
       </Route>
 
