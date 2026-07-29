@@ -23,6 +23,9 @@ import type {
   TruckStatus,
   User,
   UserRole,
+  CargoType,
+  LookupLocation,
+  VehicleTypeLookup,
 } from "../types/tamp";
 
 const STORAGE_KEY = "tamp_db";
@@ -352,6 +355,27 @@ export function addAuditEvent(input: AddAuditEventInput): AuditEvent {
 
 export function getAuditEvents(): AuditEvent[] {
   return [...getDb().auditEvents];
+}
+
+/* -------------------------------------------------------------------------- */
+/* Lookups                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export function getLookupLocations(): LookupLocation[] {
+  return getDb().lookups.locations.map((location) => ({
+    ...location,
+  }));
+}
+
+export function getCargoTypes(): CargoType[] {
+  return [...getDb().lookups.cargoTypes];
+}
+
+export function getVehicleTypes(): VehicleTypeLookup[] {
+  return getDb().lookups.vehicleTypes.map((vehicleType) => ({
+    ...vehicleType,
+    compatibleCargo: [...vehicleType.compatibleCargo],
+  }));
 }
 
 /* -------------------------------------------------------------------------- */
