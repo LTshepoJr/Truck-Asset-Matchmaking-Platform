@@ -293,17 +293,6 @@ export function CreateLoadPage() {
 
   return (
     <section className="create-load-page" aria-labelledby="create-load-title">
-      <header className="create-load-page__header">
-        <p className="create-load-page__eyebrow">Freight Owner</p>
-
-        <h2 id="create-load-title">Post a new load</h2>
-
-        <p>
-          Enter the cargo, route and pickup requirements. TAMP will use these
-          details when finding compatible available trucks.
-        </p>
-      </header>
-
       {createdLoad ? (
         <article className="create-load-page__success" aria-live="polite">
           <div className="create-load-page__success-heading">
@@ -382,393 +371,417 @@ export function CreateLoadPage() {
           </div>
         </article>
       ) : (
-        <form
-          className="create-load-page__form"
-          onSubmit={handleSubmit}
-          noValidate
-        >
-          {errors.general && (
-            <div className="create-load-page__alert" role="alert">
-              {errors.general}
-            </div>
-          )}
+        <>
+          <header className="create-load-page__header">
+            <h2 id="create-load-title">Post a new load</h2>
 
-          <fieldset className="create-load-page__section">
-            <legend>Route</legend>
-
-            <p className="create-load-page__section-description">
-              Where should the cargo be collected and delivered?
+            <p>
+              Enter the cargo, route and pickup requirements. TAMP will use
+              these details when finding compatible available trucks.
             </p>
+          </header>
 
-            <div className="create-load-page__grid">
-              <div className="create-load-page__field">
-                <label htmlFor="load-origin">Origin</label>
+          <form
+            className="create-load-page__form"
+            onSubmit={handleSubmit}
+            noValidate
+          >
+            {errors.general && (
+              <div className="create-load-page__alert" role="alert">
+                {errors.general}
+              </div>
+            )}
 
-                <select
-                  id="load-origin"
-                  value={formData.originCity}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      originCity: event.target.value,
-                    }));
+            <fieldset className="create-load-page__section">
+              <legend>Route</legend>
 
-                    clearError("originCity");
-                  }}
-                  aria-invalid={Boolean(errors.originCity)}
-                  aria-describedby={
-                    errors.originCity ? "load-origin-error" : undefined
-                  }
-                  required
-                >
-                  <option value="">Select origin</option>
+              <p className="create-load-page__section-description">
+                Where should the cargo be collected and delivered?
+              </p>
 
-                  {locations.map((location) => (
-                    <option
-                      key={`${location.city}-${location.province}`}
-                      value={location.city}
+              <div className="create-load-page__grid">
+                <div className="create-load-page__field">
+                  <label htmlFor="load-origin">Origin</label>
+
+                  <select
+                    id="load-origin"
+                    value={formData.originCity}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        originCity: event.target.value,
+                      }));
+
+                      clearError("originCity");
+                    }}
+                    aria-invalid={Boolean(errors.originCity)}
+                    aria-describedby={
+                      errors.originCity ? "load-origin-error" : undefined
+                    }
+                    required
+                  >
+                    <option value="">Select origin</option>
+
+                    {locations.map((location) => (
+                      <option
+                        key={`${location.city}-${location.province}`}
+                        value={location.city}
+                      >
+                        {location.city} — {location.province}
+                      </option>
+                    ))}
+                  </select>
+
+                  {errors.originCity && (
+                    <p
+                      id="load-origin-error"
+                      className="create-load-page__error"
                     >
-                      {location.city} — {location.province}
-                    </option>
-                  ))}
-                </select>
+                      {errors.originCity}
+                    </p>
+                  )}
+                </div>
 
-                {errors.originCity && (
-                  <p id="load-origin-error" className="create-load-page__error">
-                    {errors.originCity}
-                  </p>
-                )}
-              </div>
+                <div className="create-load-page__field">
+                  <label htmlFor="load-destination">Destination</label>
 
-              <div className="create-load-page__field">
-                <label htmlFor="load-destination">Destination</label>
+                  <select
+                    id="load-destination"
+                    value={formData.destinationCity}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        destinationCity: event.target.value,
+                      }));
 
-                <select
-                  id="load-destination"
-                  value={formData.destinationCity}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      destinationCity: event.target.value,
-                    }));
+                      clearError("destinationCity");
+                    }}
+                    aria-invalid={Boolean(errors.destinationCity)}
+                    aria-describedby={
+                      errors.destinationCity
+                        ? "load-destination-error"
+                        : undefined
+                    }
+                    required
+                  >
+                    <option value="">Select destination</option>
 
-                    clearError("destinationCity");
-                  }}
-                  aria-invalid={Boolean(errors.destinationCity)}
-                  aria-describedby={
-                    errors.destinationCity
-                      ? "load-destination-error"
-                      : undefined
-                  }
-                  required
-                >
-                  <option value="">Select destination</option>
+                    {locations.map((location) => (
+                      <option
+                        key={`${location.city}-${location.province}`}
+                        value={location.city}
+                      >
+                        {location.city} — {location.province}
+                      </option>
+                    ))}
+                  </select>
 
-                  {locations.map((location) => (
-                    <option
-                      key={`${location.city}-${location.province}`}
-                      value={location.city}
+                  {errors.destinationCity && (
+                    <p
+                      id="load-destination-error"
+                      className="create-load-page__error"
                     >
-                      {location.city} — {location.province}
+                      {errors.destinationCity}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="create-load-page__section">
+              <legend>Cargo details</legend>
+
+              <p className="create-load-page__section-description">
+                Describe the cargo and the transport capacity it requires.
+              </p>
+
+              <div className="create-load-page__grid">
+                <div className="create-load-page__field">
+                  <label htmlFor="load-cargo-type">Cargo type</label>
+
+                  <select
+                    id="load-cargo-type"
+                    value={formData.cargoType}
+                    onChange={(event) =>
+                      handleCargoTypeChange(
+                        event.target.value as CargoType | "",
+                      )
+                    }
+                    aria-invalid={Boolean(errors.cargoType)}
+                    aria-describedby={
+                      errors.cargoType ? "load-cargo-type-error" : undefined
+                    }
+                    required
+                  >
+                    <option value="">Select cargo type</option>
+
+                    {cargoTypes.map((cargoType) => (
+                      <option key={cargoType} value={cargoType}>
+                        {cargoType}
+                      </option>
+                    ))}
+                  </select>
+
+                  {errors.cargoType && (
+                    <p
+                      id="load-cargo-type-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.cargoType}
+                    </p>
+                  )}
+                </div>
+
+                <div className="create-load-page__field">
+                  <label htmlFor="load-vehicle-type">
+                    Required vehicle type
+                  </label>
+
+                  <select
+                    id="load-vehicle-type"
+                    value={formData.requiredVehicleType}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        requiredVehicleType: event.target.value as
+                          | VehicleTypeId
+                          | "",
+                      }));
+
+                      clearError("requiredVehicleType");
+                    }}
+                    disabled={!formData.cargoType}
+                    aria-invalid={Boolean(errors.requiredVehicleType)}
+                    aria-describedby={
+                      errors.requiredVehicleType
+                        ? "load-vehicle-type-error"
+                        : "load-vehicle-type-help"
+                    }
+                    required
+                  >
+                    <option value="">
+                      {formData.cargoType
+                        ? "Select vehicle type"
+                        : "Select cargo type first"}
                     </option>
-                  ))}
-                </select>
 
-                {errors.destinationCity && (
+                    {compatibleVehicleTypes.map((vehicleType) => (
+                      <option key={vehicleType.id} value={vehicleType.id}>
+                        {vehicleType.label}
+                      </option>
+                    ))}
+                  </select>
+
                   <p
-                    id="load-destination-error"
-                    className="create-load-page__error"
+                    id="load-vehicle-type-help"
+                    className="create-load-page__helper"
                   >
-                    {errors.destinationCity}
+                    Vehicle options are filtered using cargo compatibility.
                   </p>
-                )}
+
+                  {errors.requiredVehicleType && (
+                    <p
+                      id="load-vehicle-type-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.requiredVehicleType}
+                    </p>
+                  )}
+                </div>
+
+                <div className="create-load-page__field">
+                  <label htmlFor="load-weight">Weight (kg)</label>
+
+                  <input
+                    id="load-weight"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={formData.weightKg}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        weightKg: event.target.value,
+                      }));
+
+                      clearError("weightKg");
+                    }}
+                    placeholder="e.g. 18000"
+                    aria-invalid={Boolean(errors.weightKg)}
+                    aria-describedby={
+                      errors.weightKg ? "load-weight-error" : undefined
+                    }
+                    required
+                  />
+
+                  {errors.weightKg && (
+                    <p
+                      id="load-weight-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.weightKg}
+                    </p>
+                  )}
+                </div>
+
+                <div className="create-load-page__field">
+                  <label htmlFor="load-volume">Volume (m³)</label>
+
+                  <input
+                    id="load-volume"
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    value={formData.volumeM3}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        volumeM3: event.target.value,
+                      }));
+
+                      clearError("volumeM3");
+                    }}
+                    placeholder="e.g. 52"
+                    aria-invalid={Boolean(errors.volumeM3)}
+                    aria-describedby={
+                      errors.volumeM3 ? "load-volume-error" : undefined
+                    }
+                    required
+                  />
+
+                  {errors.volumeM3 && (
+                    <p
+                      id="load-volume-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.volumeM3}
+                    </p>
+                  )}
+                </div>
+
+                <div className="create-load-page__field create-load-page__field--full">
+                  <label htmlFor="load-description">Cargo description</label>
+
+                  <textarea
+                    id="load-description"
+                    value={formData.description}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        description: event.target.value,
+                      }));
+
+                      clearError("description");
+                    }}
+                    placeholder="Briefly describe the cargo, packaging or handling requirements."
+                    aria-invalid={Boolean(errors.description)}
+                    aria-describedby={
+                      errors.description ? "load-description-error" : undefined
+                    }
+                    required
+                  />
+
+                  {errors.description && (
+                    <p
+                      id="load-description-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.description}
+                    </p>
+                  )}
+                </div>
               </div>
+            </fieldset>
+
+            <fieldset className="create-load-page__section">
+              <legend>Pickup window</legend>
+
+              <p className="create-load-page__section-description">
+                Specify when the cargo will be ready for collection.
+              </p>
+
+              <div className="create-load-page__grid">
+                <div className="create-load-page__field">
+                  <label htmlFor="load-pickup-start">Pickup from</label>
+
+                  <input
+                    id="load-pickup-start"
+                    type="datetime-local"
+                    value={formData.pickupStart}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        pickupStart: event.target.value,
+                      }));
+
+                      clearError("pickupStart");
+                      clearError("pickupEnd");
+                    }}
+                    aria-invalid={Boolean(errors.pickupStart)}
+                    aria-describedby={
+                      errors.pickupStart ? "load-pickup-start-error" : undefined
+                    }
+                    required
+                  />
+
+                  {errors.pickupStart && (
+                    <p
+                      id="load-pickup-start-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.pickupStart}
+                    </p>
+                  )}
+                </div>
+
+                <div className="create-load-page__field">
+                  <label htmlFor="load-pickup-end">Pickup until</label>
+
+                  <input
+                    id="load-pickup-end"
+                    type="datetime-local"
+                    value={formData.pickupEnd}
+                    onChange={(event) => {
+                      setFormData((current) => ({
+                        ...current,
+                        pickupEnd: event.target.value,
+                      }));
+
+                      clearError("pickupEnd");
+                    }}
+                    aria-invalid={Boolean(errors.pickupEnd)}
+                    aria-describedby={
+                      errors.pickupEnd ? "load-pickup-end-error" : undefined
+                    }
+                    required
+                  />
+
+                  {errors.pickupEnd && (
+                    <p
+                      id="load-pickup-end-error"
+                      className="create-load-page__error"
+                    >
+                      {errors.pickupEnd}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </fieldset>
+
+            <div className="create-load-page__actions">
+              <Link
+                className="create-load-page__secondary-action"
+                to={ROUTES.freightOwnerLoads}
+              >
+                Cancel
+              </Link>
+
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating load..." : "Create load"}
+              </button>
             </div>
-          </fieldset>
-
-          <fieldset className="create-load-page__section">
-            <legend>Cargo details</legend>
-
-            <p className="create-load-page__section-description">
-              Describe the cargo and the transport capacity it requires.
-            </p>
-
-            <div className="create-load-page__grid">
-              <div className="create-load-page__field">
-                <label htmlFor="load-cargo-type">Cargo type</label>
-
-                <select
-                  id="load-cargo-type"
-                  value={formData.cargoType}
-                  onChange={(event) =>
-                    handleCargoTypeChange(event.target.value as CargoType | "")
-                  }
-                  aria-invalid={Boolean(errors.cargoType)}
-                  aria-describedby={
-                    errors.cargoType ? "load-cargo-type-error" : undefined
-                  }
-                  required
-                >
-                  <option value="">Select cargo type</option>
-
-                  {cargoTypes.map((cargoType) => (
-                    <option key={cargoType} value={cargoType}>
-                      {cargoType}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.cargoType && (
-                  <p
-                    id="load-cargo-type-error"
-                    className="create-load-page__error"
-                  >
-                    {errors.cargoType}
-                  </p>
-                )}
-              </div>
-
-              <div className="create-load-page__field">
-                <label htmlFor="load-vehicle-type">Required vehicle type</label>
-
-                <select
-                  id="load-vehicle-type"
-                  value={formData.requiredVehicleType}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      requiredVehicleType: event.target.value as
-                        | VehicleTypeId
-                        | "",
-                    }));
-
-                    clearError("requiredVehicleType");
-                  }}
-                  disabled={!formData.cargoType}
-                  aria-invalid={Boolean(errors.requiredVehicleType)}
-                  aria-describedby={
-                    errors.requiredVehicleType
-                      ? "load-vehicle-type-error"
-                      : "load-vehicle-type-help"
-                  }
-                  required
-                >
-                  <option value="">
-                    {formData.cargoType
-                      ? "Select vehicle type"
-                      : "Select cargo type first"}
-                  </option>
-
-                  {compatibleVehicleTypes.map((vehicleType) => (
-                    <option key={vehicleType.id} value={vehicleType.id}>
-                      {vehicleType.label}
-                    </option>
-                  ))}
-                </select>
-
-                <p
-                  id="load-vehicle-type-help"
-                  className="create-load-page__helper"
-                >
-                  Vehicle options are filtered using cargo compatibility.
-                </p>
-
-                {errors.requiredVehicleType && (
-                  <p
-                    id="load-vehicle-type-error"
-                    className="create-load-page__error"
-                  >
-                    {errors.requiredVehicleType}
-                  </p>
-                )}
-              </div>
-
-              <div className="create-load-page__field">
-                <label htmlFor="load-weight">Weight (kg)</label>
-
-                <input
-                  id="load-weight"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={formData.weightKg}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      weightKg: event.target.value,
-                    }));
-
-                    clearError("weightKg");
-                  }}
-                  placeholder="e.g. 18000"
-                  aria-invalid={Boolean(errors.weightKg)}
-                  aria-describedby={
-                    errors.weightKg ? "load-weight-error" : undefined
-                  }
-                  required
-                />
-
-                {errors.weightKg && (
-                  <p id="load-weight-error" className="create-load-page__error">
-                    {errors.weightKg}
-                  </p>
-                )}
-              </div>
-
-              <div className="create-load-page__field">
-                <label htmlFor="load-volume">Volume (m³)</label>
-
-                <input
-                  id="load-volume"
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  value={formData.volumeM3}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      volumeM3: event.target.value,
-                    }));
-
-                    clearError("volumeM3");
-                  }}
-                  placeholder="e.g. 52"
-                  aria-invalid={Boolean(errors.volumeM3)}
-                  aria-describedby={
-                    errors.volumeM3 ? "load-volume-error" : undefined
-                  }
-                  required
-                />
-
-                {errors.volumeM3 && (
-                  <p id="load-volume-error" className="create-load-page__error">
-                    {errors.volumeM3}
-                  </p>
-                )}
-              </div>
-
-              <div className="create-load-page__field create-load-page__field--full">
-                <label htmlFor="load-description">Cargo description</label>
-
-                <textarea
-                  id="load-description"
-                  value={formData.description}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      description: event.target.value,
-                    }));
-
-                    clearError("description");
-                  }}
-                  placeholder="Briefly describe the cargo, packaging or handling requirements."
-                  aria-invalid={Boolean(errors.description)}
-                  aria-describedby={
-                    errors.description ? "load-description-error" : undefined
-                  }
-                  required
-                />
-
-                {errors.description && (
-                  <p
-                    id="load-description-error"
-                    className="create-load-page__error"
-                  >
-                    {errors.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="create-load-page__section">
-            <legend>Pickup window</legend>
-
-            <p className="create-load-page__section-description">
-              Specify when the cargo will be ready for collection.
-            </p>
-
-            <div className="create-load-page__grid">
-              <div className="create-load-page__field">
-                <label htmlFor="load-pickup-start">Pickup from</label>
-
-                <input
-                  id="load-pickup-start"
-                  type="datetime-local"
-                  value={formData.pickupStart}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      pickupStart: event.target.value,
-                    }));
-
-                    clearError("pickupStart");
-                    clearError("pickupEnd");
-                  }}
-                  aria-invalid={Boolean(errors.pickupStart)}
-                  aria-describedby={
-                    errors.pickupStart ? "load-pickup-start-error" : undefined
-                  }
-                  required
-                />
-
-                {errors.pickupStart && (
-                  <p
-                    id="load-pickup-start-error"
-                    className="create-load-page__error"
-                  >
-                    {errors.pickupStart}
-                  </p>
-                )}
-              </div>
-
-              <div className="create-load-page__field">
-                <label htmlFor="load-pickup-end">Pickup until</label>
-
-                <input
-                  id="load-pickup-end"
-                  type="datetime-local"
-                  value={formData.pickupEnd}
-                  onChange={(event) => {
-                    setFormData((current) => ({
-                      ...current,
-                      pickupEnd: event.target.value,
-                    }));
-
-                    clearError("pickupEnd");
-                  }}
-                  aria-invalid={Boolean(errors.pickupEnd)}
-                  aria-describedby={
-                    errors.pickupEnd ? "load-pickup-end-error" : undefined
-                  }
-                  required
-                />
-
-                {errors.pickupEnd && (
-                  <p
-                    id="load-pickup-end-error"
-                    className="create-load-page__error"
-                  >
-                    {errors.pickupEnd}
-                  </p>
-                )}
-              </div>
-            </div>
-          </fieldset>
-
-          <div className="create-load-page__actions">
-            <Link
-              className="create-load-page__secondary-action"
-              to={ROUTES.freightOwnerLoads}
-            >
-              Cancel
-            </Link>
-
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating load..." : "Create load"}
-            </button>
-          </div>
-        </form>
+          </form>
+        </>
       )}
     </section>
   );

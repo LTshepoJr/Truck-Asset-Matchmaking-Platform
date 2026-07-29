@@ -18,15 +18,6 @@
   color: var(--color-text-secondary);
 }
 
-.create-load-page__eyebrow {
-  margin-bottom: var(--space-2);
-  color: var(--color-primary);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .create-load-page__form,
 .create-load-page__success {
   padding: var(--space-8);
