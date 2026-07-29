@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-
 import "../styles/RoleLayout.css";
-
+import { getUserById } from "../services/mockDb";
 import {
   clearCurrentSession,
   getCurrentSession,
 } from "../services/authService";
-
 import { ROUTES } from "../routes/paths";
 
 interface NavigationItem {
@@ -27,6 +25,8 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
   const session = getCurrentSession();
+  const signedInUser = session ? getUserById(session.id) : undefined;
+  const userFullName = signedInUser?.name ?? "User";
 
   const handleLogout = () => {
     clearCurrentSession();
@@ -37,9 +37,7 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
     setIsNavigationOpen(false);
   };
 
-  const userInitial = session?.email
-    ? session.email.charAt(0).toUpperCase()
-    : "U";
+  const userInitial = userFullName.charAt(0).toUpperCase();
 
   return (
     <div className="role-layout">
@@ -71,7 +69,6 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
 
         <div className="role-layout__role">
           <span>Workspace</span>
-          <strong>{roleName}</strong>
         </div>
 
         <nav
@@ -163,11 +160,9 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
           </div>
 
           <div className="role-layout__topbar-user">
-            <div>
-              <span>{roleName}</span>
-
-              {session?.email && <small>{session.email}</small>}
-            </div>
+            <span className="role-layout__topbar-user-name">
+              {userFullName}
+            </span>
 
             <div className="role-layout__avatar" aria-hidden="true">
               {userInitial}
