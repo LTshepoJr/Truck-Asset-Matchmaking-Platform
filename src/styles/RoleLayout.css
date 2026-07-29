@@ -3,6 +3,10 @@
    ========================================================= */
 
 .role-layout {
+  --login-navy: #172033;
+  --login-red: #c8102e;
+  --login-text: #172033;
+
   min-height: 100vh;
   background: var(--color-background);
 }
@@ -40,21 +44,58 @@
   border-bottom: 1px solid rgb(255 255 255 / 0.08);
 }
 
+.role-layout__brand--dark {
+  --brand-cutout: var(--login-navy);
+
+  color: var(--login-text);
+}
+
 .role-layout__brand-mark {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  position: relative;
 
-  place-items: center;
+  display: block;
+  flex: 0 0 auto;
 
-  color: var(--color-white);
-  background: var(--color-primary);
+  width: 42px;
+  height: 42px;
 
-  border-radius: var(--radius-lg);
+  border-radius: 50%;
 
-  font-size: var(--font-size-xl);
-  font-weight: 800;
+  background: conic-gradient(
+    from -35deg,
+    var(--login-red) 0deg 74deg,
+    #080d17 74deg 135deg,
+    var(--login-red) 135deg 220deg,
+    #080d17 220deg 285deg,
+    var(--login-red) 285deg 360deg
+  );
+}
+
+.role-layout__brand-mark::before {
+  position: absolute;
+  inset: 7px;
+
+  content: "";
+
+  border-radius: 50%;
+
+  background: var(--brand-cutout);
+}
+
+.role-layout__brand-mark::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 13px;
+  height: 13px;
+
+  content: "";
+
+  border-bottom: 5px solid var(--login-red);
+  border-left: 5px solid var(--login-red);
+
+  transform: translate(-38%, -50%) rotate(45deg);
 }
 
 .role-layout__brand-copy {

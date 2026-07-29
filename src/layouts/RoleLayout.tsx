@@ -48,8 +48,8 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
           isNavigationOpen ? "role-layout__sidebar--open" : ""
         }`}
       >
-        <div className="role-layout__brand">
-          <div className="role-layout__brand-mark">T</div>
+        <div className="role-layout__brand role-layout__brand--dark">
+          <span className="role-layout__brand-mark" aria-hidden="true" />
 
           <div className="role-layout__brand-copy">
             <span className="role-layout__brand-name">TAMP</span>
