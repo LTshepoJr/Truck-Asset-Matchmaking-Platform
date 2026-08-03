@@ -1,0 +1,695 @@
+.freight-dashboard {
+  width: min(100%, 1180px);
+  margin-inline: auto;
+}
+
+.freight-dashboard__alert {
+  padding: var(--space-4);
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border: 1px solid rgb(185 28 28 / 0.2);
+  border-radius: var(--radius-md);
+}
+
+.freight-dashboard__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-7);
+  margin-bottom: var(--space-7);
+  padding: var(--space-7);
+  color: var(--color-white);
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgb(255 255 255 / 0.14),
+      transparent 28%
+    ),
+    linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.freight-dashboard__hero h2 {
+  margin-bottom: var(--space-2);
+  color: var(--color-white);
+}
+
+.freight-dashboard__hero > div > p:last-child {
+  max-width: 680px;
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.freight-dashboard__eyebrow,
+.freight-dashboard__section-kicker {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.freight-dashboard__eyebrow {
+  color: #fca5a5;
+}
+
+.freight-dashboard__section-kicker {
+  color: var(--color-primary);
+}
+
+.freight-dashboard__primary-action {
+  display: inline-flex;
+  min-height: 46px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.8rem 1.05rem;
+  color: #7f1d1d;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-weight: 800;
+}
+
+.freight-dashboard__primary-action:hover {
+  color: #7f1d1d;
+  background: #fff7ed;
+}
+
+.freight-dashboard__primary-action span {
+  font-size: var(--font-size-lg);
+  line-height: 1;
+}
+
+.freight-dashboard__kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+}
+
+.freight-dashboard__kpi-card {
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-dashboard__kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.freight-dashboard__kpi-top > span:first-child {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.freight-dashboard__kpi-symbol {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 900;
+}
+
+.freight-dashboard__kpi-card > strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-text);
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.freight-dashboard__kpi-card > p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-dashboard__quick-actions {
+  margin-bottom: var(--space-7);
+}
+
+.freight-dashboard__section-heading,
+.freight-dashboard__panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.freight-dashboard__section-heading {
+  margin-bottom: var(--space-4);
+}
+
+.freight-dashboard__section-heading h3,
+.freight-dashboard__panel-heading h3 {
+  margin: 0;
+}
+
+.freight-dashboard__action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.freight-dashboard__quick-action {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.freight-dashboard__quick-action:hover {
+  color: var(--color-text);
+  border-color: rgb(185 28 28 / 0.35);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.freight-dashboard__quick-action-symbol {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 12px;
+  font-weight: 900;
+}
+
+.freight-dashboard__quick-action > span:nth-child(2) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-dashboard__quick-action strong {
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__quick-action small {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.freight-dashboard__quick-action-arrow {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.freight-dashboard__main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.freight-dashboard__panel {
+  min-width: 0;
+  padding: var(--space-6);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-dashboard__panel-heading {
+  margin-bottom: var(--space-5);
+}
+
+.freight-dashboard__panel-heading > a {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.freight-dashboard__panel-heading > span {
+  padding: 0.35rem 0.65rem;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-dashboard__load-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.freight-dashboard__load-row {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-dashboard__load-row:first-child {
+  padding-top: 0;
+}
+
+.freight-dashboard__load-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.freight-dashboard__load-date {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.freight-dashboard__load-date strong {
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__load-date span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.freight-dashboard__load-main {
+  min-width: 0;
+}
+
+.freight-dashboard__load-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.freight-dashboard__load-title > strong {
+  overflow: hidden;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-dashboard__load-main p {
+  margin: var(--space-1) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__load-main small {
+  color: var(--color-text-muted);
+}
+
+.freight-dashboard__status {
+  flex: 0 0 auto;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.freight-dashboard__status--draft,
+.freight-dashboard__status--cancelled {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.freight-dashboard__status--open {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.freight-dashboard__status--matched {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.freight-dashboard__status--in-transit {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.freight-dashboard__status--completed {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.freight-dashboard__trip-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+}
+
+.freight-dashboard__trip-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  color: var(--color-white);
+  background: #0f172a;
+}
+
+.freight-dashboard__trip-header > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.freight-dashboard__trip-header > div > span {
+  color: #94a3b8;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-dashboard__trip-header > div > strong {
+  overflow: hidden;
+  color: var(--color-white);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-dashboard__trip-status {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.65rem;
+  color: #bbf7d0;
+  background: rgb(22 163 74 / 0.18);
+  border: 1px solid rgb(134 239 172 / 0.28);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+}
+
+.freight-dashboard__trip-progress-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__trip-progress-copy strong {
+  color: var(--color-primary);
+}
+
+.freight-dashboard__progress {
+  height: 9px;
+  margin: 0 var(--space-5) var(--space-5);
+  overflow: hidden;
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+.freight-dashboard__progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: inherit;
+}
+
+.freight-dashboard__trip-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-4);
+  margin: 0;
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+.freight-dashboard__trip-details div {
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.freight-dashboard__trip-details dt {
+  margin-bottom: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.freight-dashboard__trip-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-dashboard__empty {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  flex-direction: column;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.freight-dashboard__empty--trip {
+  min-height: 320px;
+}
+
+.freight-dashboard__empty-symbol {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--space-3);
+  place-items: center;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.freight-dashboard__empty strong {
+  color: var(--color-text);
+}
+
+.freight-dashboard__empty p {
+  max-width: 440px;
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__empty a {
+  color: #1d4ed8;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.freight-dashboard__activity-panel {
+  margin-bottom: var(--space-4);
+}
+
+.freight-dashboard__activity-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.freight-dashboard__activity-list li {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-dashboard__activity-list li:last-child {
+  border-bottom: 0;
+}
+
+.freight-dashboard__activity-list a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  color: var(--color-text);
+}
+
+.freight-dashboard__activity-list li:first-child a {
+  padding-top: 0;
+}
+
+.freight-dashboard__activity-list li:last-child a {
+  padding-bottom: 0;
+}
+
+.freight-dashboard__activity-list a:hover {
+  color: var(--color-text);
+}
+
+.freight-dashboard__activity-symbol {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 900;
+}
+
+.freight-dashboard__activity-symbol--load {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.freight-dashboard__activity-symbol--match {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.freight-dashboard__activity-symbol--trip {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.freight-dashboard__activity-symbol--rating {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.freight-dashboard__activity-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.freight-dashboard__activity-copy strong {
+  font-size: var(--font-size-sm);
+}
+
+.freight-dashboard__activity-copy > span {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-dashboard__activity-list time {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-align: right;
+}
+
+@media (max-width: 1050px) {
+  .freight-dashboard__kpis,
+  .freight-dashboard__action-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .freight-dashboard__main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-dashboard__empty--trip {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 720px) {
+  .freight-dashboard__hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .freight-dashboard__primary-action {
+    width: 100%;
+  }
+
+  .freight-dashboard__panel {
+    padding: var(--space-5);
+  }
+
+  .freight-dashboard__activity-list a {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .freight-dashboard__activity-list time {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .freight-dashboard__hero {
+    padding: var(--space-5);
+  }
+
+  .freight-dashboard__kpis,
+  .freight-dashboard__action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-dashboard__load-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .freight-dashboard__load-date {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .freight-dashboard__load-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .freight-dashboard__trip-header {
+    flex-direction: column;
+  }
+
+  .freight-dashboard__trip-details {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-dashboard__panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .freight-dashboard__activity-list a {
+    align-items: flex-start;
+  }
+}

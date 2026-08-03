@@ -1,5 +1,6 @@
 export const ROUTES = {
   home: "/",
+
   login: "/login",
   register: "/register",
 
@@ -7,6 +8,14 @@ export const ROUTES = {
   resetPassword: "/reset-password",
 
   freightOwner: "/freight-owner",
+  freightOwnerLoads: "/freight-owner/loads",
+  freightOwnerNewLoad: "/freight-owner/loads/new",
+  freightOwnerMatches: "/freight-owner/matches",
+  freightOwnerReceipts: "/freight-owner/receipts",
+  freightOwnerTracking: "/freight-owner/tracking",
+  freightOwnerRatings: "/freight-owner/ratings",
+  freightOwnerSettings: "/freight-owner/settings",
+
   transporter: "/transporter",
   admin: "/admin",
 } as const;

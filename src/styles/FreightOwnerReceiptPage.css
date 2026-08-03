@@ -1,0 +1,394 @@
+.freight-receipt-page {
+  width: min(100%, 980px);
+  margin-inline: auto;
+}
+
+.freight-receipt-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-7);
+}
+
+.freight-receipt-page__header h2 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-receipt-page__header > div:first-child > p:last-child {
+  max-width: 650px;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.freight-receipt-page__eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--color-success);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.freight-receipt-page__header-actions,
+.freight-receipt-page__bottom-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-3);
+}
+
+.freight-receipt-page__primary-action,
+.freight-receipt-page__secondary-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.freight-receipt-page__primary-action {
+  color: var(--color-white);
+  background: var(--color-primary);
+}
+
+.freight-receipt-page__primary-action:hover {
+  color: var(--color-white);
+  background: var(--color-primary-hover);
+}
+
+.freight-receipt-page__secondary-action {
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+}
+
+.freight-receipt-page__secondary-action:hover {
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+button.freight-receipt-page__secondary-action:hover {
+  color: var(--color-white);
+}
+
+.freight-receipt-page__alert {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border: 1px solid rgb(185 28 28 / 0.2);
+  border-radius: var(--radius-md);
+}
+
+.freight-receipt-page__receipt {
+  overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.freight-receipt-page__receipt-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-7);
+  color: var(--color-white);
+  background: #0f172a;
+}
+
+.freight-receipt-page__brand {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-2xl);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.freight-receipt-page__receipt-top p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: var(--font-size-sm);
+}
+
+.freight-receipt-page__confirmed {
+  display: inline-flex;
+  padding: 0.45rem 0.8rem;
+  color: #bbf7d0;
+  background: rgb(22 101 52 / 0.45);
+  border: 1px solid rgb(187 247 208 / 0.24);
+  border-radius: 999px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.freight-receipt-page__contract {
+  padding: var(--space-7);
+  text-align: center;
+  background: var(--color-surface-muted);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-receipt-page__contract span {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.freight-receipt-page__contract strong {
+  color: var(--color-text);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  letter-spacing: 0.03em;
+}
+
+.freight-receipt-page__decision-grid,
+.freight-receipt-page__details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.freight-receipt-page__decision-grid {
+  padding: var(--space-6) var(--space-7);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-receipt-page__decision-grid div,
+.freight-receipt-page__details-grid div {
+  min-width: 0;
+}
+
+.freight-receipt-page dt {
+  margin-bottom: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.freight-receipt-page dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.freight-receipt-page__accepted {
+  color: var(--color-success);
+  text-transform: capitalize;
+}
+
+.freight-receipt-page__section {
+  padding: var(--space-7);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-receipt-page__section h3 {
+  margin-bottom: var(--space-5);
+}
+
+.freight-receipt-page__section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.freight-receipt-page__section-heading h3 {
+  margin: 0;
+}
+
+.freight-receipt-page__section-heading span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.freight-receipt-page__route {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 1fr)
+    minmax(80px, 180px)
+    minmax(160px, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-lg);
+}
+
+.freight-receipt-page__route > div:not(.freight-receipt-page__route-line) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-receipt-page__destination {
+  text-align: right;
+}
+
+.freight-receipt-page__route span {
+  margin-bottom: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.freight-receipt-page__route strong {
+  font-size: var(--font-size-lg);
+}
+
+.freight-receipt-page__route small {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+}
+
+.freight-receipt-page__route-line {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.freight-receipt-page__route-line > span {
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+
+.freight-receipt-page__route-line > div {
+  height: 2px;
+  background: var(--color-border);
+}
+
+.freight-receipt-page__evidence {
+  background: var(--color-surface-muted);
+}
+
+.freight-receipt-page__receipt-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-7);
+  color: var(--color-text-muted);
+  background: #f8fafc;
+  font-size: var(--font-size-xs);
+}
+
+.freight-receipt-page__receipt-footer p {
+  margin: 0;
+}
+
+.freight-receipt-page__bottom-actions {
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+@media (max-width: 800px) {
+  .freight-receipt-page__header {
+    flex-direction: column;
+  }
+
+  .freight-receipt-page__header-actions {
+    width: 100%;
+  }
+
+  .freight-receipt-page__header-actions > * {
+    flex: 1;
+  }
+
+  .freight-receipt-page__decision-grid,
+  .freight-receipt-page__details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .freight-receipt-page__header-actions,
+  .freight-receipt-page__bottom-actions {
+    flex-direction: column;
+  }
+
+  .freight-receipt-page__header-actions > *,
+  .freight-receipt-page__bottom-actions > * {
+    width: 100%;
+  }
+
+  .freight-receipt-page__receipt-top,
+  .freight-receipt-page__contract,
+  .freight-receipt-page__decision-grid,
+  .freight-receipt-page__section,
+  .freight-receipt-page__receipt-footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .freight-receipt-page__decision-grid,
+  .freight-receipt-page__details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-receipt-page__route {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-receipt-page__route-line {
+    width: 2px;
+    height: 34px;
+    margin-left: 3px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .freight-receipt-page__route-line > div {
+    width: 2px;
+    height: 100%;
+    margin-left: 3px;
+  }
+
+  .freight-receipt-page__destination {
+    text-align: left;
+  }
+
+  .freight-receipt-page__receipt-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .role-layout__sidebar,
+  .role-layout__topbar,
+  .freight-receipt-page__header,
+  .freight-receipt-page__bottom-actions {
+    display: none !important;
+  }
+
+  .role-layout__workspace {
+    margin-left: 0 !important;
+  }
+
+  .role-layout__content {
+    padding: 0 !important;
+  }
+
+  .freight-receipt-page__receipt {
+    border: 0;
+    box-shadow: none;
+  }
+}

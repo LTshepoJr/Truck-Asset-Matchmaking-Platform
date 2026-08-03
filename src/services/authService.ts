@@ -1,4 +1,5 @@
-import { ensureRegisteredUserProfile } from "./mockDb";
+import type { User } from "../types/tamp";
+import { ensureRegisteredUserProfile, updateUserProfile } from "./mockDb";
 export type UserRole = "freight-owner" | "transporter" | "admin";
 
 export type RegistrationRole = "freight-owner" | "transporter";
@@ -33,6 +34,25 @@ interface StoredUser {
   complianceStatus: "pending";
   rating: number;
   createdAt: string;
+}
+
+export interface RegisteredUserAccount {
+  id: string;
+  role: RegistrationRole;
+  organizationName: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  createdAt: string;
+}
+
+export interface UpdateRegisteredUserAccountInput {
+  userId: string;
+  organizationName: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  profileImage: string | null;
 }
 
 interface StoredPasswordResetRequest {
@@ -142,6 +162,26 @@ const saveUsers = (users: StoredUser[]) => {
   localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
 };
 
+export const getRegisteredUserAccount = (
+  userId: string,
+): RegisteredUserAccount | null => {
+  const user = getStoredUsers().find((candidate) => candidate.id === userId);
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    id: user.id,
+    role: user.role,
+    organizationName: user.organizationName,
+    fullName: user.fullName,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    createdAt: user.createdAt,
+  };
+};
+
 const ensureStoredUserInMockDb = (user: StoredUser): void => {
   ensureRegisteredUserProfile({
     id: user.id,
@@ -149,6 +189,7 @@ const ensureStoredUserInMockDb = (user: StoredUser): void => {
     email: user.email,
     role: user.role === "freight-owner" ? "freight_owner" : "transporter",
     company: user.organizationName,
+    phoneNumber: user.phoneNumber,
     createdAt: user.createdAt,
   });
 };
@@ -268,6 +309,71 @@ export const getCurrentSession = (): UserSession | null => {
     localStorage.getItem(SESSION_STORAGE_KEY);
 
   return parseSession(sessionValue);
+};
+
+export const updateRegisteredUserAccount = (
+  input: UpdateRegisteredUserAccountInput,
+): User => {
+  const users = getStoredUsers();
+
+  const userIndex = users.findIndex((user) => user.id === input.userId);
+
+  if (userIndex === -1) {
+    throw new Error("The registered account could not be found.");
+  }
+
+  const email = normalizeEmail(input.email);
+
+  const duplicateEmail = users.some(
+    (user, index) => index !== userIndex && user.email === email,
+  );
+
+  if (duplicateEmail) {
+    throw new Error("An account with this email address already exists.");
+  }
+
+  /*
+   * mockDb validates the complete profile and saves
+   * the values used across Freight Owner components.
+   */
+  const updatedProfile = updateUserProfile(input.userId, {
+    name: input.fullName,
+    company: input.organizationName,
+    email,
+    phoneNumber: input.phoneNumber,
+    profileImage: input.profileImage,
+  });
+
+  users[userIndex] = {
+    ...users[userIndex],
+    fullName: updatedProfile.name,
+    organizationName: updatedProfile.company,
+    email: updatedProfile.email,
+    phoneNumber: updatedProfile.phoneNumber ?? input.phoneNumber.trim(),
+  };
+
+  saveUsers(users);
+
+  /*
+   * Preserve whether the user chose session storage
+   * or "Remember me" local storage while updating the
+   * session email shown by the application.
+   */
+  for (const storage of [sessionStorage, localStorage]) {
+    const storedSession = parseSession(storage.getItem(SESSION_STORAGE_KEY));
+
+    if (storedSession?.id === input.userId) {
+      storage.setItem(
+        SESSION_STORAGE_KEY,
+        JSON.stringify({
+          ...storedSession,
+          email: updatedProfile.email,
+        }),
+      );
+    }
+  }
+
+  return updatedProfile;
 };
 
 export const clearCurrentSession = (): void => {

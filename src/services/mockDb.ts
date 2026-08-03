@@ -23,6 +23,9 @@ import type {
   TruckStatus,
   User,
   UserRole,
+  CargoType,
+  LookupLocation,
+  VehicleTypeLookup,
 } from "../types/tamp";
 
 const STORAGE_KEY = "tamp_db";
@@ -30,6 +33,7 @@ const DB_VERSION_KEY = "tamp_db_version";
 
 const CURRENT_DB_VERSION = seedData.meta.version;
 
+export const USER_PROFILE_UPDATED_EVENT = "tamp:user-profile-updated";
 /* -------------------------------------------------------------------------- */
 /* Storage helpers                                                             */
 /* -------------------------------------------------------------------------- */
@@ -141,6 +145,18 @@ export function resetMockDb(): TampDatabase {
 export function clearMockDb(): void {
   removeStorage(STORAGE_KEY);
   removeStorage(DB_VERSION_KEY);
+}
+
+function emitUserProfileUpdated(userId: EntityId): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(USER_PROFILE_UPDATED_EVENT, {
+      detail: { userId },
+    }),
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -355,6 +371,27 @@ export function getAuditEvents(): AuditEvent[] {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Lookups                                                                     */
+/* -------------------------------------------------------------------------- */
+
+export function getLookupLocations(): LookupLocation[] {
+  return getDb().lookups.locations.map((location) => ({
+    ...location,
+  }));
+}
+
+export function getCargoTypes(): CargoType[] {
+  return [...getDb().lookups.cargoTypes];
+}
+
+export function getVehicleTypes(): VehicleTypeLookup[] {
+  return getDb().lookups.vehicleTypes.map((vehicleType) => ({
+    ...vehicleType,
+    compatibleCargo: [...vehicleType.compatibleCargo],
+  }));
+}
+
+/* -------------------------------------------------------------------------- */
 /* Users                                                                       */
 /* -------------------------------------------------------------------------- */
 
@@ -376,6 +413,7 @@ export interface EnsureRegisteredUserProfileInput {
   email: string;
   role: "freight_owner" | "transporter";
   company: string;
+  phoneNumber?: string;
   createdAt: string;
 }
 
@@ -387,15 +425,26 @@ export function ensureRegisteredUserProfile(
   const existingUser = db.users.find((user) => user.id === input.id);
 
   if (existingUser) {
+    existingUser.name = input.name.trim();
+    existingUser.email = input.email.trim().toLowerCase();
+    existingUser.company = input.company.trim();
+
+    if (typeof input.phoneNumber === "string") {
+      existingUser.phoneNumber = input.phoneNumber.trim();
+    }
+
+    saveDb(db);
+
     return existingUser;
   }
-
   const user: User = {
     id: input.id,
     name: input.name.trim(),
     email: input.email.trim().toLowerCase(),
     role: input.role,
     company: input.company.trim(),
+    phoneNumber: input.phoneNumber?.trim() ?? "",
+    profileImage: null,
     verificationStatus: "pending",
     complianceStatus: "pending",
     rating: null,
@@ -419,6 +468,107 @@ export function ensureRegisteredUserProfile(
   saveDb(db);
 
   return user;
+}
+
+export interface UpdateUserProfileInput {
+  name: string;
+  email: string;
+  company: string;
+  phoneNumber: string;
+  profileImage: string | null;
+}
+
+export function updateUserProfile(
+  userId: EntityId,
+  input: UpdateUserProfileInput,
+): User {
+  const db = getDb();
+  const user = requireUser(db, userId);
+
+  const name = input.name.trim();
+  const company = input.company.trim();
+  const email = input.email.trim().toLowerCase();
+  const phoneNumber = input.phoneNumber.trim();
+  const profileImage = input.profileImage ?? null;
+
+  if (name.length < 2 || name.length > 100) {
+    throw new Error("Full name must contain between 2 and 100 characters.");
+  }
+
+  if (company.length < 2 || company.length > 120) {
+    throw new Error(
+      "Organization name must contain between 2 and 120 characters.",
+    );
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error("Enter a valid email address.");
+  }
+
+  const duplicateEmail = db.users.some(
+    (candidate) =>
+      candidate.id !== userId && candidate.email.toLowerCase() === email,
+  );
+
+  if (duplicateEmail) {
+    throw new Error("Another TAMP profile already uses this email address.");
+  }
+
+  if (!/^[+0-9() -]{7,30}$/.test(phoneNumber)) {
+    throw new Error("Enter a valid phone number.");
+  }
+
+  if (
+    profileImage &&
+    !/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(profileImage)
+  ) {
+    throw new Error(
+      "The profile picture must be a valid JPG, PNG or WEBP image.",
+    );
+  }
+
+  if (profileImage && profileImage.length > 1_000_000) {
+    throw new Error("The prepared profile picture is too large.");
+  }
+
+  const previousProfileImage = user.profileImage ?? null;
+
+  const profileImageAction =
+    previousProfileImage === profileImage
+      ? "unchanged"
+      : profileImage
+        ? "added_or_replaced"
+        : "removed";
+
+  const nameChanged = user.name !== name;
+  const companyChanged = user.company !== company;
+  const emailChanged = user.email.toLowerCase() !== email;
+  const phoneChanged = (user.phoneNumber ?? "") !== phoneNumber;
+
+  user.name = name;
+  user.company = company;
+  user.email = email;
+  user.phoneNumber = phoneNumber;
+  user.profileImage = profileImage;
+
+  appendAuditEvent(db, {
+    actorId: user.id,
+    action: "USER_PROFILE_UPDATED",
+    entityType: "user",
+    entityId: user.id,
+    metadata: {
+      nameChanged,
+      companyChanged,
+      emailChanged,
+      phoneChanged,
+      profileImageAction,
+    },
+  });
+
+  saveDb(db);
+  emitUserProfileUpdated(user.id);
+
+  return { ...user };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -704,7 +854,11 @@ export function getMatchesForTruck(truckId: EntityId): Match[] {
 export function generateMatchesForLoad(loadId: EntityId): Match[] {
   const db = getDb();
   const load = requireLoad(db, loadId);
-
+  if (load.status !== "open") {
+    throw new Error(
+      `Only open loads can generate matches. Current status: "${load.status}".`,
+    );
+  }
   const existingTruckIds = new Set(
     db.matches
       .filter((match) => match.loadId === loadId)
@@ -778,6 +932,23 @@ function setMatchDecision(
   };
 }
 
+function requireMatchDecisionAccess(
+  actor: User,
+  load: Load,
+  truck: Truck,
+): void {
+  const ownsLoad = actor.role === "freight_owner" && load.ownerId === actor.id;
+
+  const ownsTruck =
+    actor.role === "transporter" && truck.transporterId === actor.id;
+
+  if (!ownsLoad && !ownsTruck) {
+    throw new Error(
+      "You can only make decisions on matches connected to your own load or truck.",
+    );
+  }
+}
+
 export interface AcceptMatchResult {
   match: Match;
   receipt: Receipt;
@@ -789,6 +960,7 @@ export function acceptMatch(
   actorId: EntityId,
 ): AcceptMatchResult {
   const db = getDb();
+
   const actor = requireUser(db, actorId);
   const match = requireMatch(db, matchId);
 
@@ -805,17 +977,68 @@ export function acceptMatch(
   const load = requireLoad(db, match.loadId);
   const truck = requireTruck(db, match.truckId);
 
-  const actorCanAccept =
-    actor.role === "freight_owner" || actor.role === "transporter";
+  requireMatchDecisionAccess(actor, load, truck);
 
-  if (!actorCanAccept) {
-    throw new Error("Only Freight Owners or Transporters can accept a match.");
+  if (load.status !== "open") {
+    throw new Error(
+      `Only open loads can accept a match. Current status: "${load.status}".`,
+    );
+  }
+
+  if (truck.status !== "available") {
+    throw new Error(
+      `Only available trucks can be accepted. Current status: "${truck.status}".`,
+    );
   }
 
   setMatchDecision(db, match, actorId, "accepted", "accepted");
 
   load.status = "matched";
   truck.status = "reserved";
+
+  /*
+   * Once one engagement is accepted:
+   * - every other recommendation for this load expires;
+   * - every recommendation using the reserved truck expires.
+   */
+  for (const otherMatch of db.matches) {
+    if (otherMatch.id === match.id || otherMatch.status !== "recommended") {
+      continue;
+    }
+
+    const conflictsWithLoad = otherMatch.loadId === load.id;
+
+    const conflictsWithTruck = otherMatch.truckId === truck.id;
+
+    if (!conflictsWithLoad && !conflictsWithTruck) {
+      continue;
+    }
+
+    otherMatch.status = "expired";
+
+    let reason = "conflicting_match_accepted";
+
+    if (conflictsWithLoad && conflictsWithTruck) {
+      reason = "same_load_and_truck";
+    } else if (conflictsWithLoad) {
+      reason = "another_truck_accepted_for_load";
+    } else if (conflictsWithTruck) {
+      reason = "truck_reserved_for_another_load";
+    }
+
+    appendAuditEvent(db, {
+      actorId: "SYSTEM",
+      action: "MATCH_EXPIRED",
+      entityType: "match",
+      entityId: otherMatch.id,
+      metadata: {
+        reason,
+        acceptedMatchId: match.id,
+        loadId: otherMatch.loadId,
+        truckId: otherMatch.truckId,
+      },
+    });
+  }
 
   const receipt: Receipt = {
     contractId: createContractId(db),
@@ -877,18 +1100,20 @@ export function acceptMatch(
 
 export function rejectMatch(matchId: EntityId, actorId: EntityId): Match {
   const db = getDb();
+
   const actor = requireUser(db, actorId);
   const match = requireMatch(db, matchId);
-
-  if (actor.role !== "freight_owner" && actor.role !== "transporter") {
-    throw new Error("Only Freight Owners or Transporters can reject a match.");
-  }
 
   if (match.status !== "recommended") {
     throw new Error(
       `Only recommended matches can be rejected. Current status: "${match.status}".`,
     );
   }
+
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  requireMatchDecisionAccess(actor, load, truck);
 
   setMatchDecision(db, match, actorId, "rejected", "rejected");
 
@@ -898,8 +1123,8 @@ export function rejectMatch(matchId: EntityId, actorId: EntityId): Match {
     entityType: "match",
     entityId: match.id,
     metadata: {
-      loadId: match.loadId,
-      truckId: match.truckId,
+      loadId: load.id,
+      truckId: truck.id,
     },
   });
 
@@ -945,6 +1170,31 @@ export function getTripByMatchId(matchId: EntityId): Trip | undefined {
   return getDb().trips.find((trip) => trip.matchId === matchId);
 }
 
+export function getTripsByFreightOwner(ownerId: EntityId): Trip[] {
+  const db = getDb();
+
+  const owner = requireUser(db, ownerId);
+  requireRole(owner, "freight_owner");
+
+  const ownedLoadIds = new Set(
+    db.loads.filter((load) => load.ownerId === ownerId).map((load) => load.id),
+  );
+
+  const ownedMatchIds = new Set(
+    db.matches
+      .filter((match) => ownedLoadIds.has(match.loadId))
+      .map((match) => match.id),
+  );
+
+  return db.trips
+    .filter((trip) => ownedMatchIds.has(trip.matchId))
+    .sort(
+      (a, b) =>
+        new Date(b.lastUpdatedAt).getTime() -
+        new Date(a.lastUpdatedAt).getTime(),
+    );
+}
+
 export function getTrackingEvents(tripId: EntityId): TrackingEvent[] {
   return getDb()
     .trackingEvents.filter((event) => event.tripId === tripId)
@@ -952,6 +1202,50 @@ export function getTrackingEvents(tripId: EntityId): TrackingEvent[] {
       (a, b) =>
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
+}
+
+const TRIP_STATUS_SEQUENCE: TripStatus[] = [
+  "confirmed",
+  "at_pickup",
+  "loaded",
+  "in_transit",
+  "at_delivery",
+  "completed",
+];
+
+function requireTrackingEventAccess(
+  actor: User,
+  load: Load,
+  truck: Truck,
+): void {
+  const ownsLoad = actor.role === "freight_owner" && load.ownerId === actor.id;
+
+  const ownsTruck =
+    actor.role === "transporter" && truck.transporterId === actor.id;
+
+  if (!ownsLoad && !ownsTruck) {
+    throw new Error(
+      "You can only update tracking for a trip connected to your own load or truck.",
+    );
+  }
+}
+
+function validateTrackingCoordinates(lat: number, lng: number): void {
+  if (!Number.isFinite(lat)) {
+    throw new Error("Tracking latitude must be a valid number.");
+  }
+
+  if (!Number.isFinite(lng)) {
+    throw new Error("Tracking longitude must be a valid number.");
+  }
+
+  if (lat < -90 || lat > 90) {
+    throw new Error("Tracking latitude must be between -90 and 90.");
+  }
+
+  if (lng < -180 || lng > 180) {
+    throw new Error("Tracking longitude must be between -180 and 180.");
+  }
 }
 
 export interface AddTrackingEventInput {
@@ -967,9 +1261,57 @@ export function addTrackingEvent(
   input: AddTrackingEventInput,
 ): TrackingEvent {
   const db = getDb();
-  requireUser(db, actorId);
 
+  const actor = requireUser(db, actorId);
   const trip = requireTrip(db, tripId);
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  requireTrackingEventAccess(actor, load, truck);
+
+  if (trip.status === "completed") {
+    throw new Error(
+      "A completed trip cannot receive further tracking updates.",
+    );
+  }
+
+  if (match.status !== "accepted") {
+    throw new Error(
+      `Tracking can only be updated for an accepted match. Current match status: "${match.status}".`,
+    );
+  }
+
+  const currentStatusIndex = TRIP_STATUS_SEQUENCE.indexOf(trip.status);
+
+  const requestedStatusIndex = TRIP_STATUS_SEQUENCE.indexOf(input.status);
+
+  if (currentStatusIndex === -1 || requestedStatusIndex === -1) {
+    throw new Error("The current or requested trip status is invalid.");
+  }
+
+  const expectedStatus = TRIP_STATUS_SEQUENCE[currentStatusIndex + 1];
+
+  if (input.status !== expectedStatus) {
+    throw new Error(
+      `Trip status must progress from "${trip.status}" to "${expectedStatus}". Requested status: "${input.status}".`,
+    );
+  }
+
+  validateTrackingCoordinates(input.lat, input.lng);
+
+  const label = input.label.trim();
+
+  if (!label) {
+    throw new Error("A tracking update label is required.");
+  }
+
+  if (label.length > 200) {
+    throw new Error("Tracking update labels cannot exceed 200 characters.");
+  }
+
+  const previousStatus = trip.status;
+  const timestamp = nowIso();
 
   const event: TrackingEvent = {
     id: createTrackingEventId(db),
@@ -977,22 +1319,23 @@ export function addTrackingEvent(
     status: input.status,
     lat: input.lat,
     lng: input.lng,
-    label: input.label,
-    timestamp: nowIso(),
+    label,
+    timestamp,
     coordinateType: "mock_route_point",
   };
 
+  /*
+   * All validation has passed. State changes only begin
+   * after this point.
+   */
   db.trackingEvents.push(event);
 
   trip.status = input.status;
   trip.progressPercent = TRIP_PROGRESS[input.status];
-  trip.lastUpdatedAt = event.timestamp;
+
+  trip.lastUpdatedAt = timestamp;
 
   if (input.status === "completed") {
-    const match = requireMatch(db, trip.matchId);
-    const load = requireLoad(db, match.loadId);
-    const truck = requireTruck(db, match.truckId);
-
     match.status = "completed";
     load.status = "completed";
     truck.status = "available";
@@ -1001,10 +1344,6 @@ export function addTrackingEvent(
     input.status === "in_transit" ||
     input.status === "at_delivery"
   ) {
-    const match = requireMatch(db, trip.matchId);
-    const load = requireLoad(db, match.loadId);
-    const truck = requireTruck(db, match.truckId);
-
     load.status = "in_transit";
     truck.status = "in_transit";
   }
@@ -1015,14 +1354,92 @@ export function addTrackingEvent(
     entityType: "trip",
     entityId: trip.id,
     metadata: {
+      previousStatus,
       status: input.status,
       progressPercent: trip.progressPercent,
+      loadId: load.id,
+      truckId: truck.id,
+      matchId: match.id,
+      latitude: input.lat,
+      longitude: input.lng,
     },
   });
 
   saveDb(db);
 
   return event;
+}
+
+const DEMO_STATUS_LABELS: Record<TripStatus, string> = {
+  confirmed: "Trip confirmed",
+  at_pickup: "Arrived at pickup",
+  loaded: "Cargo loaded",
+  in_transit: "Mock route progress",
+  at_delivery: "Arrived at delivery",
+  completed: "Delivery completed",
+};
+
+const DEMO_ROUTE_FACTORS: Record<TripStatus, number> = {
+  confirmed: 0,
+  at_pickup: 0,
+  loaded: 0.05,
+  in_transit: 0.6,
+  at_delivery: 1,
+  completed: 1,
+};
+
+export function advanceTripDemo(
+  tripId: EntityId,
+  freightOwnerId: EntityId,
+): TrackingEvent {
+  const db = getDb();
+
+  const freightOwner = requireUser(db, freightOwnerId);
+
+  requireRole(freightOwner, "freight_owner");
+
+  const trip = requireTrip(db, tripId);
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+
+  if (load.ownerId !== freightOwnerId) {
+    throw new Error(
+      "You can only simulate tracking for trips connected to your own loads.",
+    );
+  }
+
+  const currentIndex = TRIP_STATUS_SEQUENCE.indexOf(trip.status);
+
+  if (currentIndex === -1 || currentIndex === TRIP_STATUS_SEQUENCE.length - 1) {
+    throw new Error("This trip has already reached its final status.");
+  }
+
+  const nextStatus = TRIP_STATUS_SEQUENCE[currentIndex + 1];
+
+  const routeFactor = DEMO_ROUTE_FACTORS[nextStatus];
+
+  const lat =
+    load.origin.lat + (load.destination.lat - load.origin.lat) * routeFactor;
+
+  const lng =
+    load.origin.lng + (load.destination.lng - load.origin.lng) * routeFactor;
+
+  let label = DEMO_STATUS_LABELS[nextStatus];
+
+  if (nextStatus === "at_pickup" || nextStatus === "loaded") {
+    label = `${load.origin.city} — ${label}`;
+  } else if (nextStatus === "at_delivery" || nextStatus === "completed") {
+    label = `${load.destination.city} — ${label}`;
+  } else if (nextStatus === "in_transit") {
+    label = `Mock route progress between ${load.origin.city} and ${load.destination.city}`;
+  }
+
+  return addTrackingEvent(tripId, freightOwnerId, {
+    status: nextStatus,
+    lat,
+    lng,
+    label,
+  });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1037,11 +1454,21 @@ export function getRatingsForUser(userId: EntityId): Rating[] {
   return getDb().ratings.filter((rating) => rating.reviewedUserId === userId);
 }
 
+export function getRatingsByReviewer(reviewerId: EntityId): Rating[] {
+  return getDb()
+    .ratings.filter((rating) => rating.reviewerId === reviewerId)
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
+}
+
 export function createRating(input: CreateRatingInput): Rating {
   const db = getDb();
 
-  requireUser(db, input.reviewerId);
-  requireUser(db, input.reviewedUserId);
+  const reviewer = requireUser(db, input.reviewerId);
+
+  const reviewedUser = requireUser(db, input.reviewedUserId);
 
   const trip = requireTrip(db, input.tripId);
 
@@ -1049,8 +1476,39 @@ export function createRating(input: CreateRatingInput): Rating {
     throw new Error("Ratings can only be submitted after a completed trip.");
   }
 
-  if (input.reviewerId === input.reviewedUserId) {
-    throw new Error("A user cannot rate themselves.");
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  let expectedReviewedUserId: EntityId;
+
+  if (reviewer.role === "freight_owner" && load.ownerId === reviewer.id) {
+    expectedReviewedUserId = truck.transporterId;
+  } else if (
+    reviewer.role === "transporter" &&
+    truck.transporterId === reviewer.id
+  ) {
+    expectedReviewedUserId = load.ownerId;
+  } else {
+    throw new Error(
+      "You can only rate a completed trip connected to your own load or truck.",
+    );
+  }
+
+  if (input.reviewedUserId !== expectedReviewedUserId) {
+    throw new Error(
+      "The reviewed user must be the other party in this completed trip.",
+    );
+  }
+
+  if (!Number.isInteger(input.score) || input.score < 1 || input.score > 5) {
+    throw new Error("Rating score must be a whole number from 1 to 5.");
+  }
+
+  const comment = input.comment?.trim() ?? "";
+
+  if (comment.length > 500) {
+    throw new Error("Rating comments cannot exceed 500 characters.");
   }
 
   const existingRating = db.ratings.find(
@@ -1059,7 +1517,7 @@ export function createRating(input: CreateRatingInput): Rating {
   );
 
   if (existingRating) {
-    throw new Error("This user has already rated this trip.");
+    throw new Error("You have already rated this trip.");
   }
 
   const rating: Rating = {
@@ -1068,15 +1526,14 @@ export function createRating(input: CreateRatingInput): Rating {
     reviewerId: input.reviewerId,
     reviewedUserId: input.reviewedUserId,
     score: input.score,
-    comment: input.comment?.trim() ?? "",
+    comment,
     timestamp: nowIso(),
   };
 
   db.ratings.unshift(rating);
 
-  const reviewedUser = requireUser(db, input.reviewedUserId);
   const reviewedUserRatings = db.ratings.filter(
-    (item) => item.reviewedUserId === input.reviewedUserId,
+    (item) => item.reviewedUserId === reviewedUser.id,
   );
 
   reviewedUser.rating =
@@ -1087,14 +1544,17 @@ export function createRating(input: CreateRatingInput): Rating {
     ) / 10;
 
   appendAuditEvent(db, {
-    actorId: input.reviewerId,
+    actorId: reviewer.id,
     action: "RATING_SUBMITTED",
     entityType: "rating",
     entityId: rating.id,
     metadata: {
-      tripId: input.tripId,
-      reviewedUserId: input.reviewedUserId,
-      score: input.score,
+      tripId: trip.id,
+      matchId: match.id,
+      loadId: load.id,
+      truckId: truck.id,
+      reviewedUserId: reviewedUser.id,
+      score: rating.score,
     },
   });
 

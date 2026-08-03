@@ -10,11 +10,38 @@ import { ROUTES } from "./paths";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import { CreateLoadPage } from "../pages/freight-owner/CreateLoadPage";
+import { FreightOwnerLoadsPage } from "../pages/freight-owner/FreightOwnerLoadsPage";
+import { FreightOwnerMatchesPage } from "../pages/freight-owner/FreightOwnerMatchesPage";
+import { FreightOwnerReceiptPage } from "../pages/freight-owner/FreightOwnerReceiptPage";
+import { FreightOwnerTrackingPage } from "../pages/freight-owner/FreightOwnerTrackingPage";
+import { FreightOwnerRatingsPage } from "../pages/freight-owner/FreightOwnerRatingsPage";
+import { FreightOwnerSettingsPage } from "../pages/freight-owner/FreightOwnerSettingsPage";
 
 const freightOwnerNavigation = [
   {
     label: "Dashboard",
     to: ROUTES.freightOwner,
+  },
+  {
+    label: "My Loads",
+    to: ROUTES.freightOwnerLoads,
+  },
+  {
+    label: "Post Load",
+    to: ROUTES.freightOwnerNewLoad,
+  },
+  {
+    label: "Matches",
+    to: ROUTES.freightOwnerMatches,
+  },
+  {
+    label: "Tracking",
+    to: ROUTES.freightOwnerTracking,
+  },
+  {
+    label: "Ratings",
+    to: ROUTES.freightOwnerRatings,
   },
 ];
 
@@ -59,6 +86,23 @@ export function AppRoutes() {
           }
         >
           <Route index element={<FreightOwnerDashboardPage />} />
+
+          <Route path="loads" element={<FreightOwnerLoadsPage />} />
+
+          <Route path="loads/new" element={<CreateLoadPage />} />
+
+          <Route path="matches" element={<FreightOwnerMatchesPage />} />
+
+          <Route
+            path="receipts/:matchId"
+            element={<FreightOwnerReceiptPage />}
+          />
+
+          <Route path="tracking" element={<FreightOwnerTrackingPage />} />
+
+          <Route path="ratings" element={<FreightOwnerRatingsPage />} />
+
+          <Route path="settings" element={<FreightOwnerSettingsPage />} />
         </Route>
       </Route>
 

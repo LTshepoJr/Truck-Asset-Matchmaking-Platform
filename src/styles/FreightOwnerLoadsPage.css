@@ -1,0 +1,557 @@
+.freight-loads-page {
+  width: min(100%, 1120px);
+  margin-inline: auto;
+}
+
+.freight-loads-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+
+  margin-bottom: var(--space-8);
+}
+
+.freight-loads-page__header h2 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-loads-page__header p {
+  max-width: 650px;
+  margin: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.freight-loads-page__primary-action {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.75rem 1rem;
+
+  color: var(--color-white);
+  background: var(--color-primary);
+
+  border-radius: var(--radius-md);
+
+  font-weight: 600;
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.freight-loads-page__primary-action:hover {
+  color: var(--color-white);
+  background: var(--color-primary-hover);
+}
+
+.freight-loads-page__primary-action:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   Summary
+   ========================================================= */
+
+.freight-loads-page__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  margin-bottom: var(--space-6);
+}
+
+.freight-loads-page__summary-card {
+  padding: var(--space-5);
+
+  background: var(--color-white);
+
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-loads-page__summary-card span {
+  display: block;
+
+  margin-bottom: var(--space-2);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.freight-loads-page__summary-card strong {
+  color: var(--color-text);
+
+  font-size: var(--font-size-2xl);
+}
+
+/* =========================================================
+   Toolbar
+   ========================================================= */
+
+.freight-loads-page__toolbar {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1fr)
+    minmax(150px, 190px)
+    minmax(150px, 190px);
+
+  gap: var(--space-4);
+
+  margin-bottom: var(--space-4);
+
+  padding: var(--space-5);
+
+  background: var(--color-white);
+
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-loads-page__search label,
+.freight-loads-page__filter label {
+  display: block;
+
+  margin-bottom: var(--space-2);
+}
+
+.freight-loads-page__results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: var(--space-3);
+}
+
+.freight-loads-page__results-heading p {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-sm);
+}
+
+/* =========================================================
+   Loads
+   ========================================================= */
+
+.freight-loads-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.freight-loads-page__card {
+  overflow: hidden;
+
+  background: var(--color-white);
+
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.freight-loads-page__card:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.freight-loads-page__card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+
+  padding: var(--space-5) var(--space-6);
+
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-loads-page__load-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-1);
+}
+
+.freight-loads-page__load-identity h3 {
+  margin: 0;
+
+  font-size: var(--font-size-lg);
+}
+
+.freight-loads-page__created {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+}
+
+/* =========================================================
+   Status
+   ========================================================= */
+
+.freight-loads-page__status {
+  display: inline-flex;
+
+  padding: 0.25rem 0.625rem;
+
+  border-radius: 999px;
+
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-loads-page__status--open {
+  color: var(--color-success);
+  background: var(--color-success-background);
+}
+
+.freight-loads-page__status--draft {
+  color: var(--color-warning);
+  background: var(--color-warning-background);
+}
+
+.freight-loads-page__status--matched {
+  color: var(--color-info);
+  background: var(--color-info-background);
+}
+
+.freight-loads-page__status--in-transit {
+  color: #6d28d9;
+  background: #f5f3ff;
+}
+
+.freight-loads-page__status--completed {
+  color: #334155;
+  background: #f1f5f9;
+}
+
+.freight-loads-page__status--cancelled {
+  color: var(--color-error);
+  background: var(--color-error-background);
+}
+
+/* =========================================================
+   Route
+   ========================================================= */
+
+.freight-loads-page__route {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(80px, 180px)
+    minmax(150px, 1fr);
+
+  align-items: center;
+  gap: var(--space-4);
+
+  padding: var(--space-6);
+}
+
+.freight-loads-page__route-location {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-loads-page__route-location--destination {
+  text-align: right;
+}
+
+.freight-loads-page__route-location > span {
+  margin-bottom: var(--space-1);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.freight-loads-page__route-location strong {
+  overflow: hidden;
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-lg);
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-loads-page__route-location small {
+  margin-top: var(--space-1);
+
+  color: var(--color-text-muted);
+}
+
+.freight-loads-page__route-line {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+
+  align-items: center;
+}
+
+.freight-loads-page__route-line > span {
+  width: 8px;
+  height: 8px;
+
+  background: var(--color-primary);
+
+  border-radius: 50%;
+}
+
+.freight-loads-page__route-line > div {
+  height: 2px;
+
+  background: var(--color-border);
+}
+
+/* =========================================================
+   Details
+   ========================================================= */
+
+.freight-loads-page__details {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.freight-loads-page__details > div,
+.freight-loads-page__pickup > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-loads-page__details span,
+.freight-loads-page__pickup span,
+.freight-loads-page__description > span {
+  margin-bottom: var(--space-1);
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.freight-loads-page__details strong,
+.freight-loads-page__pickup strong {
+  overflow: hidden;
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-sm);
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-loads-page__pickup {
+  padding: var(--space-4) var(--space-6);
+
+  background: var(--color-surface-muted);
+
+  border-top: 1px solid var(--color-border-light);
+}
+
+.freight-loads-page__pickup small {
+  margin-top: var(--space-1);
+
+  color: var(--color-text-muted);
+}
+
+.freight-loads-page__description {
+  padding: var(--space-4) var(--space-6) var(--space-5);
+
+  background: var(--color-surface-muted);
+}
+
+.freight-loads-page__description p {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+}
+
+/* =========================================================
+   Empty/error states
+   ========================================================= */
+
+.freight-loads-page__empty,
+.freight-loads-page__no-results {
+  padding: var(--space-12) var(--space-6);
+
+  text-align: center;
+
+  background: var(--color-white);
+
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-loads-page__empty-icon {
+  display: grid;
+
+  width: 56px;
+  height: 56px;
+
+  margin: 0 auto var(--space-5);
+
+  place-items: center;
+
+  color: var(--color-primary);
+  background: var(--color-error-background);
+
+  border-radius: 50%;
+
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+.freight-loads-page__empty h3,
+.freight-loads-page__no-results h3 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-loads-page__empty p,
+.freight-loads-page__no-results p {
+  max-width: 520px;
+
+  margin: 0 auto var(--space-5);
+
+  color: var(--color-text-muted);
+}
+
+.freight-loads-page__alert {
+  padding: var(--space-4);
+
+  color: var(--color-error);
+  background: var(--color-error-background);
+
+  border: 1px solid rgb(185 28 28 / 0.2);
+  border-radius: var(--radius-md);
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .freight-loads-page__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .freight-loads-page__toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .freight-loads-page__search {
+    grid-column: 1 / -1;
+  }
+
+  .freight-loads-page__details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .freight-loads-page__header {
+    flex-direction: column;
+  }
+
+  .freight-loads-page__primary-action {
+    width: 100%;
+  }
+
+  .freight-loads-page__summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .freight-loads-page__toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-loads-page__search {
+    grid-column: auto;
+  }
+
+  .freight-loads-page__card-header,
+  .freight-loads-page__route,
+  .freight-loads-page__details,
+  .freight-loads-page__pickup,
+  .freight-loads-page__description {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .freight-loads-page__route {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-loads-page__route-line {
+    width: 2px;
+    height: 34px;
+
+    margin-left: 3px;
+
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .freight-loads-page__route-line > div {
+    width: 2px;
+    height: 100%;
+
+    margin-left: 3px;
+  }
+
+  .freight-loads-page__route-location--destination {
+    text-align: left;
+  }
+
+  .freight-loads-page__details {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .freight-loads-page__load-identity {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .freight-loads-page__summary,
+  .freight-loads-page__details {
+    grid-template-columns: 1fr;
+  }
+}
