@@ -16,6 +16,7 @@ import { FreightOwnerMatchesPage } from "../pages/freight-owner/FreightOwnerMatc
 import { FreightOwnerReceiptPage } from "../pages/freight-owner/FreightOwnerReceiptPage";
 import { FreightOwnerTrackingPage } from "../pages/freight-owner/FreightOwnerTrackingPage";
 import { FreightOwnerRatingsPage } from "../pages/freight-owner/FreightOwnerRatingsPage";
+import { FreightOwnerSettingsPage } from "../pages/freight-owner/FreightOwnerSettingsPage";
 
 const freightOwnerNavigation = [
   {
@@ -100,6 +101,8 @@ export function AppRoutes() {
           <Route path="tracking" element={<FreightOwnerTrackingPage />} />
 
           <Route path="ratings" element={<FreightOwnerRatingsPage />} />
+
+          <Route path="settings" element={<FreightOwnerSettingsPage />} />
         </Route>
       </Route>
 
