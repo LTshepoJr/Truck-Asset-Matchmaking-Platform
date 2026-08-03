@@ -14,6 +14,7 @@ export const ROUTES = {
   freightOwnerReceipts: "/freight-owner/receipts",
   freightOwnerTracking: "/freight-owner/tracking",
   freightOwnerRatings: "/freight-owner/ratings",
+  freightOwnerSettings: "/freight-owner/settings",
 
   transporter: "/transporter",
   admin: "/admin",
