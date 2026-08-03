@@ -1,9 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import "../../styles/FreightOwnerMatchesPage.css";
 
@@ -73,18 +69,13 @@ export function FreightOwnerMatchesPage() {
   const sessionId = session?.id;
   const sessionRole = session?.role;
 
-  const [ownerLoads, setOwnerLoads] = useState<Load[]>(
-    () => {
-      if (
-        !sessionId ||
-        sessionRole !== "freight-owner"
-      ) {
-        return [];
-      }
+  const [ownerLoads, setOwnerLoads] = useState<Load[]>(() => {
+    if (!sessionId || sessionRole !== "freight-owner") {
+      return [];
+    }
 
-      return getLoadsByOwner(sessionId);
-    },
-  );
+    return getLoadsByOwner(sessionId);
+  });
 
   const requestedLoadId = searchParams.get("loadId");
 
@@ -97,9 +88,7 @@ export function FreightOwnerMatchesPage() {
   const [selectedLoadId, setSelectedLoadId] = useState(initialLoadId);
 
   const [matches, setMatches] = useState<Match[]>(() =>
-    initialLoadId
-      ? sortMatches(getMatchesForLoad(initialLoadId))
-      : [],
+    initialLoadId ? sortMatches(getMatchesForLoad(initialLoadId)) : [],
   );
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -120,9 +109,7 @@ export function FreightOwnerMatchesPage() {
     [],
   );
 
-  const selectedLoad = ownerLoads.find(
-    (load) => load.id === selectedLoadId,
-  );
+  const selectedLoad = ownerLoads.find((load) => load.id === selectedLoadId);
 
   const matchCards = useMemo<MatchCardData[]>(() => {
     return matches.flatMap((match) => {
@@ -139,12 +126,9 @@ export function FreightOwnerMatchesPage() {
           match,
           truck,
           transporterName:
-            transporter?.company ??
-            transporter?.name ??
-            "Transporter",
+            transporter?.company ?? transporter?.name ?? "Transporter",
           vehicleLabel:
-            vehicleLabels.get(truck.vehicleType) ??
-            truck.vehicleType,
+            vehicleLabels.get(truck.vehicleType) ?? truck.vehicleType,
         },
       ];
     });
@@ -170,25 +154,16 @@ export function FreightOwnerMatchesPage() {
       return;
     }
 
-    setMatches(
-      sortMatches(getMatchesForLoad(selectedLoadId)),
-    );
+    setMatches(sortMatches(getMatchesForLoad(selectedLoadId)));
 
-    if (
-      sessionId &&
-      sessionRole === "freight-owner"
-    ) {
+    if (sessionId && sessionRole === "freight-owner") {
       setOwnerLoads(getLoadsByOwner(sessionId));
     }
   };
 
   const handleLoadChange = (loadId: string) => {
     setSelectedLoadId(loadId);
-    setMatches(
-      loadId
-        ? sortMatches(getMatchesForLoad(loadId))
-        : [],
-    );
+    setMatches(loadId ? sortMatches(getMatchesForLoad(loadId)) : []);
     setDecisionRequest(null);
     setError("");
     setNotice("");
@@ -202,9 +177,7 @@ export function FreightOwnerMatchesPage() {
 
   const handleGenerateMatches = () => {
     if (!selectedLoad) {
-      setError(
-        "Select a load before generating recommendations.",
-      );
+      setError("Select a load before generating recommendations.");
       return;
     }
 
@@ -220,18 +193,14 @@ export function FreightOwnerMatchesPage() {
     setNotice("");
 
     try {
-      const createdMatches = generateMatchesForLoad(
-        selectedLoad.id,
-      );
+      const createdMatches = generateMatchesForLoad(selectedLoad.id);
 
       refreshSelectedLoadData();
 
       setNotice(
         createdMatches.length > 0
           ? `${createdMatches.length} available truck${
-              createdMatches.length === 1
-                ? " was"
-                : "s were"
+              createdMatches.length === 1 ? " was" : "s were"
             } evaluated.`
           : "Recommendations are already up to date for the currently available trucks.",
       );
@@ -257,10 +226,7 @@ export function FreightOwnerMatchesPage() {
 
     try {
       if (decisionRequest.decision === "accept") {
-        const result = acceptMatch(
-          decisionRequest.match.id,
-          sessionId,
-        );
+        const result = acceptMatch(decisionRequest.match.id, sessionId);
 
         refreshSelectedLoadData();
         setDecisionRequest(null);
@@ -292,18 +258,11 @@ export function FreightOwnerMatchesPage() {
     }
   };
 
-  if (
-    !session ||
-    session.role !== "freight-owner"
-  ) {
+  if (!session || session.role !== "freight-owner") {
     return (
       <section className="freight-matches-page">
-        <div
-          className="freight-matches-page__alert"
-          role="alert"
-        >
-          Your Freight Owner session could not be found.
-          Please sign in again.
+        <div className="freight-matches-page__alert" role="alert">
+          Your Freight Owner session could not be found. Please sign in again.
         </div>
       </section>
     );
@@ -316,9 +275,8 @@ export function FreightOwnerMatchesPage() {
           <h2>Matches</h2>
 
           <p>
-            Compare available trucks using transparent
-            capacity, compatibility, availability and
-            location checks.
+            Compare available trucks using transparent capacity, compatibility,
+            availability and location checks.
           </p>
         </div>
 
@@ -331,10 +289,7 @@ export function FreightOwnerMatchesPage() {
       </header>
 
       {error && (
-        <div
-          className="freight-matches-page__alert"
-          role="alert"
-        >
+        <div className="freight-matches-page__alert" role="alert">
           {error}
         </div>
       )}
@@ -353,8 +308,8 @@ export function FreightOwnerMatchesPage() {
           <h3>No loads available for matching</h3>
 
           <p>
-            Post a cargo load first, then return here to
-            find compatible available trucks.
+            Post a cargo load first, then return here to find compatible
+            available trucks.
           </p>
 
           <Link
@@ -373,17 +328,11 @@ export function FreightOwnerMatchesPage() {
               <select
                 id="match-load"
                 value={selectedLoadId}
-                onChange={(event) =>
-                  handleLoadChange(event.target.value)
-                }
+                onChange={(event) => handleLoadChange(event.target.value)}
               >
                 {ownerLoads.map((load) => (
-                  <option
-                    key={load.id}
-                    value={load.id}
-                  >
-                    {load.id} — {load.origin.city} to{" "}
-                    {load.destination.city}
+                  <option key={load.id} value={load.id}>
+                    {load.id} — {load.origin.city} to {load.destination.city}
                   </option>
                 ))}
               </select>
@@ -393,29 +342,22 @@ export function FreightOwnerMatchesPage() {
               type="button"
               onClick={handleGenerateMatches}
               disabled={
-                isGenerating ||
-                !selectedLoad ||
-                selectedLoad.status !== "open"
+                isGenerating || !selectedLoad || selectedLoad.status !== "open"
               }
             >
-              {isGenerating
-                ? "Checking trucks..."
-                : "Generate recommendations"}
+              {isGenerating ? "Checking trucks..." : "Generate recommendations"}
             </button>
           </section>
 
-          {selectedLoad && (
-            <SelectedLoadSummary load={selectedLoad} />
-          )}
+          {selectedLoad && <SelectedLoadSummary load={selectedLoad} />}
 
           {matches.length === 0 ? (
             <div className="freight-matches-page__empty">
               <h3>No matching run has been completed</h3>
 
               <p>
-                Generate recommendations to compare this
-                load with the available trucks in the mock
-                database.
+                Generate recommendations to compare this load with the available
+                trucks in the mock database.
               </p>
 
               {selectedLoad?.status === "open" && (
@@ -446,9 +388,8 @@ export function FreightOwnerMatchesPage() {
                   <h3>No eligible trucks found</h3>
 
                   <p>
-                    The evaluated trucks failed one or more
-                    required matching rules. Review the
-                    rejected candidates below to see why.
+                    The evaluated trucks failed one or more required matching
+                    rules. Review the rejected candidates below to see why.
                   </p>
                 </div>
               ) : (
@@ -477,8 +418,8 @@ export function FreightOwnerMatchesPage() {
               {rejectedMatches.length > 0 && (
                 <details className="freight-matches-page__rejected">
                   <summary>
-                    Review {rejectedMatches.length} rejected
-                    or expired candidate
+                    Review {rejectedMatches.length} rejected or expired
+                    candidate
                     {rejectedMatches.length === 1 ? "" : "s"}
                   </summary>
 
@@ -512,11 +453,7 @@ export function FreightOwnerMatchesPage() {
   );
 }
 
-function SelectedLoadSummary({
-  load,
-}: {
-  load: Load;
-}) {
+function SelectedLoadSummary({ load }: { load: Load }) {
   return (
     <article className="freight-matches-page__load-summary">
       <div>
@@ -534,16 +471,13 @@ function SelectedLoadSummary({
       <div>
         <span>Required capacity</span>
         <strong>
-          {load.weightKg.toLocaleString("en-ZA")} kg /{" "}
-          {load.volumeM3} m³
+          {load.weightKg.toLocaleString("en-ZA")} kg / {load.volumeM3} m³
         </strong>
       </div>
 
       <div>
         <span>Pickup</span>
-        <strong>
-          {formatDateTime(load.pickupWindow.start)}
-        </strong>
+        <strong>{formatDateTime(load.pickupWindow.start)}</strong>
       </div>
 
       <div>
@@ -569,12 +503,7 @@ function MatchCard({
   onAccept,
   onReject,
 }: MatchCardProps) {
-  const {
-    match,
-    truck,
-    transporterName,
-    vehicleLabel,
-  } = card;
+  const { match, truck, transporterName, vehicleLabel } = card;
 
   const receiptPath = `${
     ROUTES.freightOwnerReceipts
@@ -584,9 +513,7 @@ function MatchCard({
     <article
       className={[
         "freight-matches-page__card",
-        isRejected
-          ? "freight-matches-page__card--rejected"
-          : "",
+        isRejected ? "freight-matches-page__card--rejected" : "",
         match.status === "accepted"
           ? "freight-matches-page__card--accepted"
           : "",
@@ -597,9 +524,7 @@ function MatchCard({
       <div className="freight-matches-page__card-header">
         <div>
           <div className="freight-matches-page__match-heading">
-            <p className="freight-matches-page__match-id">
-              {match.id}
-            </p>
+            <p className="freight-matches-page__match-id">{match.id}</p>
 
             <span
               className={`freight-matches-page__match-status freight-matches-page__match-status--${match.status}`}
@@ -611,8 +536,7 @@ function MatchCard({
           <h4>{truck.displayName}</h4>
 
           <p>
-            {transporterName} ·{" "}
-            {truck.registrationDisplay}
+            {transporterName} · {truck.registrationDisplay}
           </p>
         </div>
 
@@ -638,29 +562,23 @@ function MatchCard({
         <div>
           <dt>Capacity</dt>
           <dd>
-            {truck.capacityKg.toLocaleString("en-ZA")} kg
-            / {truck.capacityM3} m³
+            {truck.capacityKg.toLocaleString("en-ZA")} kg / {truck.capacityM3}{" "}
+            m³
           </dd>
         </div>
 
         <div>
           <dt>Current location</dt>
           <dd>
-            {truck.currentLocation.city},{" "}
-            {truck.currentLocation.province}
+            {truck.currentLocation.city}, {truck.currentLocation.province}
           </dd>
         </div>
 
         <div>
           <dt>Available</dt>
           <dd>
-            {formatDateTime(
-              truck.availabilityWindow.start,
-            )}{" "}
-            –{" "}
-            {formatDateTime(
-              truck.availabilityWindow.end,
-            )}
+            {formatDateTime(truck.availabilityWindow.start)} –{" "}
+            {formatDateTime(truck.availabilityWindow.end)}
           </dd>
         </div>
       </dl>
@@ -678,9 +596,7 @@ function MatchCard({
                   : "freight-matches-page__rule--failed"
               }`}
             >
-              <span aria-hidden="true">
-                {rule.passed ? "✓" : "×"}
-              </span>
+              <span aria-hidden="true">{rule.passed ? "✓" : "×"}</span>
 
               <div>
                 <strong>{label}</strong>
@@ -701,17 +617,13 @@ function MatchCard({
             Reject
           </button>
 
-          <button
-            type="button"
-            onClick={() => onAccept(match)}
-          >
+          <button type="button" onClick={() => onAccept(match)}>
             Accept match
           </button>
         </div>
       )}
 
-      {(match.status === "accepted" ||
-        match.status === "completed") && (
+      {(match.status === "accepted" || match.status === "completed") && (
         <div className="freight-matches-page__card-actions">
           <Link
             className="freight-matches-page__receipt-action"
@@ -745,10 +657,7 @@ function DecisionModal({
       className="freight-matches-page__modal-backdrop"
       role="presentation"
       onMouseDown={(event) => {
-        if (
-          event.target === event.currentTarget &&
-          !isSubmitting
-        ) {
+        if (event.target === event.currentTarget && !isSubmitting) {
           onCancel();
         }
       }}
@@ -772,15 +681,13 @@ function DecisionModal({
         </div>
 
         <h3 id="match-decision-title">
-          {isAccepting
-            ? "Accept this match?"
-            : "Reject this match?"}
+          {isAccepting ? "Accept this match?" : "Reject this match?"}
         </h3>
 
         <p id="match-decision-description">
           {isAccepting
             ? "Accepting reserves this truck, marks the load as matched and creates a digital confirmation receipt and trip."
-            : "Rejecting records your decision in the audit trail. This action cannot be accepted later without generating a new recommendation."}
+            : "Rejecting records your decision in the audit trail. This recommendation cannot be accepted afterwards."}
         </p>
 
         <dl className="freight-matches-page__modal-summary">
@@ -807,11 +714,7 @@ function DecisionModal({
 
           <button
             type="button"
-            className={
-              isAccepting
-                ? ""
-                : "freight-matches-page__danger-action"
-            }
+            className={isAccepting ? "" : "freight-matches-page__danger-action"}
             onClick={onConfirm}
             disabled={isSubmitting}
           >
