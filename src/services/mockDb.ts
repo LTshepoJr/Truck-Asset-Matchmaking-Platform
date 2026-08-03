@@ -1328,11 +1328,21 @@ export function getRatingsForUser(userId: EntityId): Rating[] {
   return getDb().ratings.filter((rating) => rating.reviewedUserId === userId);
 }
 
+export function getRatingsByReviewer(reviewerId: EntityId): Rating[] {
+  return getDb()
+    .ratings.filter((rating) => rating.reviewerId === reviewerId)
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
+}
+
 export function createRating(input: CreateRatingInput): Rating {
   const db = getDb();
 
-  requireUser(db, input.reviewerId);
-  requireUser(db, input.reviewedUserId);
+  const reviewer = requireUser(db, input.reviewerId);
+
+  const reviewedUser = requireUser(db, input.reviewedUserId);
 
   const trip = requireTrip(db, input.tripId);
 
@@ -1340,8 +1350,39 @@ export function createRating(input: CreateRatingInput): Rating {
     throw new Error("Ratings can only be submitted after a completed trip.");
   }
 
-  if (input.reviewerId === input.reviewedUserId) {
-    throw new Error("A user cannot rate themselves.");
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  let expectedReviewedUserId: EntityId;
+
+  if (reviewer.role === "freight_owner" && load.ownerId === reviewer.id) {
+    expectedReviewedUserId = truck.transporterId;
+  } else if (
+    reviewer.role === "transporter" &&
+    truck.transporterId === reviewer.id
+  ) {
+    expectedReviewedUserId = load.ownerId;
+  } else {
+    throw new Error(
+      "You can only rate a completed trip connected to your own load or truck.",
+    );
+  }
+
+  if (input.reviewedUserId !== expectedReviewedUserId) {
+    throw new Error(
+      "The reviewed user must be the other party in this completed trip.",
+    );
+  }
+
+  if (!Number.isInteger(input.score) || input.score < 1 || input.score > 5) {
+    throw new Error("Rating score must be a whole number from 1 to 5.");
+  }
+
+  const comment = input.comment?.trim() ?? "";
+
+  if (comment.length > 500) {
+    throw new Error("Rating comments cannot exceed 500 characters.");
   }
 
   const existingRating = db.ratings.find(
@@ -1350,7 +1391,7 @@ export function createRating(input: CreateRatingInput): Rating {
   );
 
   if (existingRating) {
-    throw new Error("This user has already rated this trip.");
+    throw new Error("You have already rated this trip.");
   }
 
   const rating: Rating = {
@@ -1359,15 +1400,14 @@ export function createRating(input: CreateRatingInput): Rating {
     reviewerId: input.reviewerId,
     reviewedUserId: input.reviewedUserId,
     score: input.score,
-    comment: input.comment?.trim() ?? "",
+    comment,
     timestamp: nowIso(),
   };
 
   db.ratings.unshift(rating);
 
-  const reviewedUser = requireUser(db, input.reviewedUserId);
   const reviewedUserRatings = db.ratings.filter(
-    (item) => item.reviewedUserId === input.reviewedUserId,
+    (item) => item.reviewedUserId === reviewedUser.id,
   );
 
   reviewedUser.rating =
@@ -1378,14 +1418,17 @@ export function createRating(input: CreateRatingInput): Rating {
     ) / 10;
 
   appendAuditEvent(db, {
-    actorId: input.reviewerId,
+    actorId: reviewer.id,
     action: "RATING_SUBMITTED",
     entityType: "rating",
     entityId: rating.id,
     metadata: {
-      tripId: input.tripId,
-      reviewedUserId: input.reviewedUserId,
-      score: input.score,
+      tripId: trip.id,
+      matchId: match.id,
+      loadId: load.id,
+      truckId: truck.id,
+      reviewedUserId: reviewedUser.id,
+      score: rating.score,
     },
   });
 
