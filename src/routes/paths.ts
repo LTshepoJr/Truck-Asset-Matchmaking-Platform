@@ -13,6 +13,7 @@ export const ROUTES = {
   freightOwnerMatches: "/freight-owner/matches",
   freightOwnerReceipts: "/freight-owner/receipts",
   freightOwnerTracking: "/freight-owner/tracking",
+  freightOwnerRatings: "/freight-owner/ratings",
 
   transporter: "/transporter",
   admin: "/admin",
