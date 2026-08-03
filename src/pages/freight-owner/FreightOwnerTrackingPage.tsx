@@ -1,8 +1,4 @@
-import {
-  useMemo,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import "../../styles/FreightOwnerTrackingPage.css";
@@ -71,18 +67,14 @@ function formatCoordinate(value: number): string {
 function sortTrips(trips: Trip[]): Trip[] {
   return [...trips].sort(
     (a, b) =>
-      new Date(b.lastUpdatedAt).getTime() -
-      new Date(a.lastUpdatedAt).getTime(),
+      new Date(b.lastUpdatedAt).getTime() - new Date(a.lastUpdatedAt).getTime(),
   );
 }
 
 function getNextStatus(status: TripStatus): TripStatus | null {
   const currentIndex = TRIP_STEPS.indexOf(status);
 
-  if (
-    currentIndex === -1 ||
-    currentIndex === TRIP_STEPS.length - 1
-  ) {
+  if (currentIndex === -1 || currentIndex === TRIP_STEPS.length - 1) {
     return null;
   }
 
@@ -112,13 +104,11 @@ export function FreightOwnerTrackingPage() {
     trips[0]?.id ??
     "";
 
-  const [selectedTripId, setSelectedTripId] =
-    useState(initialTripId);
+  const [selectedTripId, setSelectedTripId] = useState(initialTripId);
 
-  const [trackingEvents, setTrackingEvents] =
-    useState<TrackingEvent[]>(() =>
-      initialTripId ? getTrackingEvents(initialTripId) : [],
-    );
+  const [trackingEvents, setTrackingEvents] = useState<TrackingEvent[]>(() =>
+    initialTripId ? getTrackingEvents(initialTripId) : [],
+  );
 
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [error, setError] = useState("");
@@ -164,8 +154,7 @@ export function FreightOwnerTrackingPage() {
       truck,
       transporterName:
         transporter?.company ?? transporter?.name ?? "Transporter",
-      vehicleLabel:
-        vehicleLabels.get(truck.vehicleType) ?? truck.vehicleType,
+      vehicleLabel: vehicleLabels.get(truck.vehicleType) ?? truck.vehicleType,
     };
   }, [selectedTripId, trips, vehicleLabels]);
 
@@ -173,9 +162,7 @@ export function FreightOwnerTrackingPage() {
     (event) => !event.demoFutureEvent,
   );
 
-  const plannedEvents = trackingEvents.filter(
-    (event) => event.demoFutureEvent,
-  );
+  const plannedEvents = trackingEvents.filter((event) => event.demoFutureEvent);
 
   const currentEvent = completedEvents[completedEvents.length - 1];
 
@@ -228,9 +215,7 @@ export function FreightOwnerTrackingPage() {
 
       refreshTripData(tripDetails.trip.id);
 
-      setNotice(
-        `Demo tracking update saved: ${STATUS_LABELS[event.status]}.`,
-      );
+      setNotice(`Demo tracking update saved: ${STATUS_LABELS[event.status]}.`);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -361,6 +346,26 @@ export function FreightOwnerTrackingPage() {
                 plannedEvents={plannedEvents}
                 originCity={tripDetails.load.origin.city}
               />
+              {tripDetails.trip.status === "completed" && (
+                <section className="freight-tracking-page__rating-cta">
+                  <div>
+                    <strong>Delivery completed</strong>
+
+                    <p>
+                      Share feedback about the transporter who completed this
+                      trip.
+                    </p>
+                  </div>
+
+                  <Link
+                    to={`${ROUTES.freightOwnerRatings}?tripId=${encodeURIComponent(
+                      tripDetails.trip.id,
+                    )}`}
+                  >
+                    Rate transporter
+                  </Link>
+                </section>
+              )}
 
               <div className="freight-tracking-page__demo-note">
                 <div>
@@ -510,10 +515,7 @@ function RoutePanel({
     label: string;
   } | null;
 }) {
-  const progress = Math.min(
-    100,
-    Math.max(0, details.trip.progressPercent),
-  );
+  const progress = Math.min(100, Math.max(0, details.trip.progressPercent));
 
   const routeStyle = {
     "--route-progress": `${progress}%`,

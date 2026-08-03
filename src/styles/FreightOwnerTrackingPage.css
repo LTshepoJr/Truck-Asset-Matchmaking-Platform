@@ -263,7 +263,11 @@
   overflow: hidden;
   padding: var(--space-8) var(--space-6);
   background:
-    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.35), transparent 28%),
+    radial-gradient(
+      circle at 20% 30%,
+      rgb(255 255 255 / 0.35),
+      transparent 28%
+    ),
     linear-gradient(135deg, #e2e8f0, #f8fafc);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-lg);
@@ -614,6 +618,48 @@
   color: var(--color-text-muted);
 }
 
+.freight-tracking-page__rating-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  color: #713f12;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-lg);
+}
+
+.freight-tracking-page__rating-cta strong {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.freight-tracking-page__rating-cta p {
+  margin: 0;
+  color: #92400e;
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__rating-cta a {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  color: var(--color-white);
+  background: #d97706;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.freight-tracking-page__rating-cta a:hover {
+  color: var(--color-white);
+  background: #b45309;
+}
+
 @media (max-width: 980px) {
   .freight-tracking-page__summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -685,5 +731,14 @@
 
   .freight-tracking-page__route-cities strong {
     font-size: var(--font-size-base);
+  }
+
+  .freight-tracking-page__rating-cta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .freight-tracking-page__rating-cta a {
+    width: 100%;
   }
 }
