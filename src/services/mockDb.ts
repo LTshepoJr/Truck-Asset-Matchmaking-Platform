@@ -1044,6 +1044,31 @@ export function getTripByMatchId(matchId: EntityId): Trip | undefined {
   return getDb().trips.find((trip) => trip.matchId === matchId);
 }
 
+export function getTripsByFreightOwner(ownerId: EntityId): Trip[] {
+  const db = getDb();
+
+  const owner = requireUser(db, ownerId);
+  requireRole(owner, "freight_owner");
+
+  const ownedLoadIds = new Set(
+    db.loads.filter((load) => load.ownerId === ownerId).map((load) => load.id),
+  );
+
+  const ownedMatchIds = new Set(
+    db.matches
+      .filter((match) => ownedLoadIds.has(match.loadId))
+      .map((match) => match.id),
+  );
+
+  return db.trips
+    .filter((trip) => ownedMatchIds.has(trip.matchId))
+    .sort(
+      (a, b) =>
+        new Date(b.lastUpdatedAt).getTime() -
+        new Date(a.lastUpdatedAt).getTime(),
+    );
+}
+
 export function getTrackingEvents(tripId: EntityId): TrackingEvent[] {
   return getDb()
     .trackingEvents.filter((event) => event.tripId === tripId)
@@ -1122,6 +1147,87 @@ export function addTrackingEvent(
   saveDb(db);
 
   return event;
+}
+
+const TRIP_STATUS_SEQUENCE: TripStatus[] = [
+  "confirmed",
+  "at_pickup",
+  "loaded",
+  "in_transit",
+  "at_delivery",
+  "completed",
+];
+
+const DEMO_STATUS_LABELS: Record<TripStatus, string> = {
+  confirmed: "Trip confirmed",
+  at_pickup: "Arrived at pickup",
+  loaded: "Cargo loaded",
+  in_transit: "Mock route progress",
+  at_delivery: "Arrived at delivery",
+  completed: "Delivery completed",
+};
+
+const DEMO_ROUTE_FACTORS: Record<TripStatus, number> = {
+  confirmed: 0,
+  at_pickup: 0,
+  loaded: 0.05,
+  in_transit: 0.6,
+  at_delivery: 1,
+  completed: 1,
+};
+
+export function advanceTripDemo(
+  tripId: EntityId,
+  freightOwnerId: EntityId,
+): TrackingEvent {
+  const db = getDb();
+
+  const freightOwner = requireUser(db, freightOwnerId);
+
+  requireRole(freightOwner, "freight_owner");
+
+  const trip = requireTrip(db, tripId);
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+
+  if (load.ownerId !== freightOwnerId) {
+    throw new Error(
+      "You can only simulate tracking for trips connected to your own loads.",
+    );
+  }
+
+  const currentIndex = TRIP_STATUS_SEQUENCE.indexOf(trip.status);
+
+  if (currentIndex === -1 || currentIndex === TRIP_STATUS_SEQUENCE.length - 1) {
+    throw new Error("This trip has already reached its final status.");
+  }
+
+  const nextStatus = TRIP_STATUS_SEQUENCE[currentIndex + 1];
+
+  const routeFactor = DEMO_ROUTE_FACTORS[nextStatus];
+
+  const lat =
+    load.origin.lat + (load.destination.lat - load.origin.lat) * routeFactor;
+
+  const lng =
+    load.origin.lng + (load.destination.lng - load.origin.lng) * routeFactor;
+
+  let label = DEMO_STATUS_LABELS[nextStatus];
+
+  if (nextStatus === "at_pickup" || nextStatus === "loaded") {
+    label = `${load.origin.city} — ${label}`;
+  } else if (nextStatus === "at_delivery" || nextStatus === "completed") {
+    label = `${load.destination.city} — ${label}`;
+  } else if (nextStatus === "in_transit") {
+    label = `Mock route progress between ${load.origin.city} and ${load.destination.city}`;
+  }
+
+  return addTrackingEvent(tripId, freightOwnerId, {
+    status: nextStatus,
+    lat,
+    lng,
+    label,
+  });
 }
 
 /* -------------------------------------------------------------------------- */
