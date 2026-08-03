@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+
 import "../styles/RoleLayout.css";
-import { getUserById } from "../services/mockDb";
+
+import { getUserById, USER_PROFILE_UPDATED_EVENT } from "../services/mockDb";
 import {
   clearCurrentSession,
   getCurrentSession,
@@ -18,6 +20,30 @@ interface RoleLayoutProps {
   navigation: NavigationItem[];
 }
 
+interface ProfileUpdatedEventDetail {
+  userId?: string;
+}
+
+function ProfileAvatar({
+  name,
+  profileImage,
+}: {
+  name: string;
+  profileImage?: string | null;
+}) {
+  const initial = name.trim().charAt(0).toUpperCase() || "U";
+
+  return (
+    <div className="role-layout__avatar" aria-hidden="true">
+      {profileImage ? (
+        <img className="role-layout__avatar-image" src={profileImage} alt="" />
+      ) : (
+        initial
+      )}
+    </div>
+  );
+}
+
 export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,19 +51,68 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
   const session = getCurrentSession();
-  const signedInUser = session ? getUserById(session.id) : undefined;
+  const sessionId = session?.id;
+
+  const [signedInUser, setSignedInUser] = useState(() =>
+    sessionId ? getUserById(sessionId) : undefined,
+  );
+
+  useEffect(() => {
+    if (!sessionId) {
+      setSignedInUser(undefined);
+      return;
+    }
+
+    const refreshSignedInUser = () => {
+      setSignedInUser(getUserById(sessionId));
+    };
+
+    const handleProfileUpdated = (event: Event) => {
+      const customEvent = event as CustomEvent<ProfileUpdatedEventDetail>;
+
+      if (
+        !customEvent.detail?.userId ||
+        customEvent.detail.userId === sessionId
+      ) {
+        refreshSignedInUser();
+      }
+    };
+
+    refreshSignedInUser();
+
+    window.addEventListener(USER_PROFILE_UPDATED_EVENT, handleProfileUpdated);
+
+    window.addEventListener("storage", refreshSignedInUser);
+
+    return () => {
+      window.removeEventListener(
+        USER_PROFILE_UPDATED_EVENT,
+        handleProfileUpdated,
+      );
+
+      window.removeEventListener("storage", refreshSignedInUser);
+    };
+  }, [sessionId, location.pathname]);
+
   const userFullName = signedInUser?.name ?? "User";
+
+  const userCompany = signedInUser?.company ?? session?.email ?? roleName;
+
+  const profileImage = signedInUser?.profileImage ?? null;
+
+  const settingsPath =
+    session?.role === "freight-owner" ? ROUTES.freightOwnerSettings : null;
 
   const handleLogout = () => {
     clearCurrentSession();
-    navigate(ROUTES.login, { replace: true });
+    navigate(ROUTES.login, {
+      replace: true,
+    });
   };
 
   const handleNavigation = () => {
     setIsNavigationOpen(false);
   };
-
-  const userInitial = userFullName.charAt(0).toUpperCase();
 
   return (
     <div className="role-layout">
@@ -100,21 +175,42 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
                 </NavLink>
               </li>
             ))}
+
+            {settingsPath && (
+              <li className="role-layout__navigation-settings">
+                <NavLink
+                  to={settingsPath}
+                  end
+                  onClick={handleNavigation}
+                  className={({ isActive }) =>
+                    [
+                      "role-layout__navigation-link",
+                      isActive ? "role-layout__navigation-link--active" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")
+                  }
+                >
+                  <span
+                    className="role-layout__navigation-indicator"
+                    aria-hidden="true"
+                  />
+
+                  <span>Settings</span>
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 
         <div className="role-layout__sidebar-footer">
           <div className="role-layout__sidebar-user">
-            <div className="role-layout__avatar" aria-hidden="true">
-              {userInitial}
-            </div>
+            <ProfileAvatar name={userFullName} profileImage={profileImage} />
 
             <div className="role-layout__sidebar-user-details">
-              <span>{roleName}</span>
+              <span title={userFullName}>{userFullName}</span>
 
-              {session?.email && (
-                <small title={session.email}>{session.email}</small>
-              )}
+              <small title={userCompany}>{userCompany}</small>
             </div>
           </div>
 
@@ -164,9 +260,7 @@ export function RoleLayout({ roleName, navigation }: RoleLayoutProps) {
               {userFullName}
             </span>
 
-            <div className="role-layout__avatar" aria-hidden="true">
-              {userInitial}
-            </div>
+            <ProfileAvatar name={userFullName} profileImage={profileImage} />
           </div>
         </header>
 
