@@ -33,6 +33,7 @@ const DB_VERSION_KEY = "tamp_db_version";
 
 const CURRENT_DB_VERSION = seedData.meta.version;
 
+export const USER_PROFILE_UPDATED_EVENT = "tamp:user-profile-updated";
 /* -------------------------------------------------------------------------- */
 /* Storage helpers                                                             */
 /* -------------------------------------------------------------------------- */
@@ -144,6 +145,18 @@ export function resetMockDb(): TampDatabase {
 export function clearMockDb(): void {
   removeStorage(STORAGE_KEY);
   removeStorage(DB_VERSION_KEY);
+}
+
+function emitUserProfileUpdated(userId: EntityId): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(USER_PROFILE_UPDATED_EVENT, {
+      detail: { userId },
+    }),
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -400,6 +413,7 @@ export interface EnsureRegisteredUserProfileInput {
   email: string;
   role: "freight_owner" | "transporter";
   company: string;
+  phoneNumber?: string;
   createdAt: string;
 }
 
@@ -411,15 +425,26 @@ export function ensureRegisteredUserProfile(
   const existingUser = db.users.find((user) => user.id === input.id);
 
   if (existingUser) {
+    existingUser.name = input.name.trim();
+    existingUser.email = input.email.trim().toLowerCase();
+    existingUser.company = input.company.trim();
+
+    if (typeof input.phoneNumber === "string") {
+      existingUser.phoneNumber = input.phoneNumber.trim();
+    }
+
+    saveDb(db);
+
     return existingUser;
   }
-
   const user: User = {
     id: input.id,
     name: input.name.trim(),
     email: input.email.trim().toLowerCase(),
     role: input.role,
     company: input.company.trim(),
+    phoneNumber: input.phoneNumber?.trim() ?? "",
+    profileImage: null,
     verificationStatus: "pending",
     complianceStatus: "pending",
     rating: null,
@@ -443,6 +468,107 @@ export function ensureRegisteredUserProfile(
   saveDb(db);
 
   return user;
+}
+
+export interface UpdateUserProfileInput {
+  name: string;
+  email: string;
+  company: string;
+  phoneNumber: string;
+  profileImage: string | null;
+}
+
+export function updateUserProfile(
+  userId: EntityId,
+  input: UpdateUserProfileInput,
+): User {
+  const db = getDb();
+  const user = requireUser(db, userId);
+
+  const name = input.name.trim();
+  const company = input.company.trim();
+  const email = input.email.trim().toLowerCase();
+  const phoneNumber = input.phoneNumber.trim();
+  const profileImage = input.profileImage ?? null;
+
+  if (name.length < 2 || name.length > 100) {
+    throw new Error("Full name must contain between 2 and 100 characters.");
+  }
+
+  if (company.length < 2 || company.length > 120) {
+    throw new Error(
+      "Organization name must contain between 2 and 120 characters.",
+    );
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error("Enter a valid email address.");
+  }
+
+  const duplicateEmail = db.users.some(
+    (candidate) =>
+      candidate.id !== userId && candidate.email.toLowerCase() === email,
+  );
+
+  if (duplicateEmail) {
+    throw new Error("Another TAMP profile already uses this email address.");
+  }
+
+  if (!/^[+0-9() -]{7,30}$/.test(phoneNumber)) {
+    throw new Error("Enter a valid phone number.");
+  }
+
+  if (
+    profileImage &&
+    !/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(profileImage)
+  ) {
+    throw new Error(
+      "The profile picture must be a valid JPG, PNG or WEBP image.",
+    );
+  }
+
+  if (profileImage && profileImage.length > 1_000_000) {
+    throw new Error("The prepared profile picture is too large.");
+  }
+
+  const previousProfileImage = user.profileImage ?? null;
+
+  const profileImageAction =
+    previousProfileImage === profileImage
+      ? "unchanged"
+      : profileImage
+        ? "added_or_replaced"
+        : "removed";
+
+  const nameChanged = user.name !== name;
+  const companyChanged = user.company !== company;
+  const emailChanged = user.email.toLowerCase() !== email;
+  const phoneChanged = (user.phoneNumber ?? "") !== phoneNumber;
+
+  user.name = name;
+  user.company = company;
+  user.email = email;
+  user.phoneNumber = phoneNumber;
+  user.profileImage = profileImage;
+
+  appendAuditEvent(db, {
+    actorId: user.id,
+    action: "USER_PROFILE_UPDATED",
+    entityType: "user",
+    entityId: user.id,
+    metadata: {
+      nameChanged,
+      companyChanged,
+      emailChanged,
+      phoneChanged,
+      profileImageAction,
+    },
+  });
+
+  saveDb(db);
+  emitUserProfileUpdated(user.id);
+
+  return { ...user };
 }
 
 /* -------------------------------------------------------------------------- */
