@@ -1,0 +1,383 @@
+.freight-settings-page {
+  width: min(100%, 1120px);
+  margin-inline: auto;
+}
+
+.freight-settings-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-7);
+}
+
+.freight-settings-page__header h2 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-settings-page__header > div > p:last-child {
+  max-width: 700px;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.freight-settings-page__eyebrow {
+  margin: 0 0 var(--space-1);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.freight-settings-page__back-link {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.freight-settings-page__back-link:hover {
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+.freight-settings-page__alert {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border: 1px solid rgb(185 28 28 / 0.2);
+  border-radius: var(--radius-md);
+}
+
+.freight-settings-page__alert--success {
+  color: var(--color-success);
+  background: var(--color-success-background);
+  border-color: rgb(21 128 61 / 0.2);
+}
+
+.freight-settings-page__layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.65fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.freight-settings-page__sidebar,
+.freight-settings-page__main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.freight-settings-page__profile-card,
+.freight-settings-page__account-card,
+.freight-settings-page__panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-settings-page__profile-card {
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+}
+
+.freight-settings-page__profile-preview {
+  display: grid;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto var(--space-4);
+  overflow: hidden;
+  place-items: center;
+  color: #7f1d1d;
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgb(255 255 255 / 0.75),
+      transparent 30%
+    ),
+    #fee2e2;
+  border: 5px solid var(--color-white);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px var(--color-border-light),
+    var(--shadow-md);
+  font-size: 2.5rem;
+  font-weight: 900;
+}
+
+.freight-settings-page__profile-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.freight-settings-page__profile-card h3 {
+  margin-bottom: var(--space-1);
+}
+
+.freight-settings-page__profile-card > p {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.freight-settings-page__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.freight-settings-page__upload-button,
+.freight-settings-page__remove-button {
+  width: 100%;
+  margin-bottom: var(--space-2);
+}
+
+.freight-settings-page__remove-button {
+  color: var(--color-error);
+  background: var(--color-white);
+  border: 1px solid rgb(185 28 28 / 0.28);
+}
+
+.freight-settings-page__remove-button:hover:not(:disabled) {
+  color: var(--color-error);
+  background: var(--color-error-background);
+}
+
+.freight-settings-page__profile-card > small {
+  display: block;
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.freight-settings-page__account-card {
+  padding: var(--space-5);
+}
+
+.freight-settings-page__account-card > div {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-settings-page__account-card > div:first-child {
+  padding-top: 0;
+}
+
+.freight-settings-page__account-card > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.freight-settings-page__account-card span {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.freight-settings-page__account-card strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  text-transform: capitalize;
+}
+
+.freight-settings-page__panel {
+  padding: var(--space-7);
+}
+
+.freight-settings-page__panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.freight-settings-page__panel-heading h3 {
+  margin-bottom: var(--space-1);
+}
+
+.freight-settings-page__panel-heading p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.freight-settings-page__panel-heading > span {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.65rem;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+}
+
+.freight-settings-page__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.freight-settings-page__field {
+  min-width: 0;
+}
+
+.freight-settings-page__field label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.freight-settings-page__field > small {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.freight-settings-page__field-error {
+  margin: var(--space-2) 0 0;
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
+}
+
+.freight-settings-page__security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.freight-settings-page__security-row strong {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.freight-settings-page__security-row p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.freight-settings-page__security-row a {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  color: #1d4ed8;
+  background: var(--color-white);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.freight-settings-page__actions {
+  position: sticky;
+  bottom: var(--space-4);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgb(255 255 255 / 0.94);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.freight-settings-page__reset-button {
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+}
+
+.freight-settings-page__reset-button:hover:not(:disabled) {
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+@media (max-width: 900px) {
+  .freight-settings-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-settings-page__sidebar {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .freight-settings-page__header,
+  .freight-settings-page__security-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .freight-settings-page__back-link,
+  .freight-settings-page__security-row a {
+    width: 100%;
+  }
+
+  .freight-settings-page__sidebar,
+  .freight-settings-page__form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-settings-page__panel {
+    padding: var(--space-5);
+  }
+}
+
+@media (max-width: 500px) {
+  .freight-settings-page__panel-heading {
+    flex-direction: column;
+  }
+
+  .freight-settings-page__panel-heading > span {
+    align-self: flex-start;
+  }
+
+  .freight-settings-page__actions {
+    position: static;
+    flex-direction: column-reverse;
+  }
+
+  .freight-settings-page__actions button {
+    width: 100%;
+  }
+}
