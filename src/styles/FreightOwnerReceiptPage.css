@@ -65,8 +65,12 @@
 }
 
 .freight-receipt-page__secondary-action:hover {
-  color: var(--color-white);
+  color: var(--color-text);
   background: var(--color-surface-muted);
+}
+
+button.freight-receipt-page__secondary-action:hover {
+  color: var(--color-white);
 }
 
 .freight-receipt-page__alert {
