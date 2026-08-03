@@ -33,6 +33,37 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const PROFILE_IMAGE_SIZE = 512;
 
+function getVerificationLabel(status: string): string {
+  switch (status) {
+    case "verified":
+      return "Verified";
+
+    case "rejected":
+      return "Verification rejected";
+
+    case "pending":
+    default:
+      return "Awaiting admin review";
+  }
+}
+
+function getComplianceLabel(status: string): string {
+  switch (status) {
+    case "approved":
+      return "Approved";
+
+    case "review":
+      return "Under compliance review";
+
+    case "rejected":
+      return "Compliance rejected";
+
+    case "pending":
+    default:
+      return "Awaiting compliance review";
+  }
+}
+
 function formatAccountDate(value: string): string {
   return new Intl.DateTimeFormat("en-ZA", {
     dateStyle: "long",
@@ -454,12 +485,14 @@ export function FreightOwnerSettingsPage() {
 
             <div>
               <span>Verification</span>
-              <strong>{profile.verificationStatus.replace("_", " ")}</strong>
+              <strong>
+                {getVerificationLabel(profile.verificationStatus)}
+              </strong>
             </div>
 
             <div>
               <span>Compliance</span>
-              <strong>{profile.complianceStatus.replace("_", " ")}</strong>
+              <strong>{getComplianceLabel(profile.complianceStatus)}</strong>
             </div>
 
             <div>
