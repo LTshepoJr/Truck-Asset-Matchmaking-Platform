@@ -728,7 +728,11 @@ export function getMatchesForTruck(truckId: EntityId): Match[] {
 export function generateMatchesForLoad(loadId: EntityId): Match[] {
   const db = getDb();
   const load = requireLoad(db, loadId);
-
+  if (load.status !== "open") {
+    throw new Error(
+      `Only open loads can generate matches. Current status: "${load.status}".`,
+    );
+  }
   const existingTruckIds = new Set(
     db.matches
       .filter((match) => match.loadId === loadId)
@@ -802,6 +806,23 @@ function setMatchDecision(
   };
 }
 
+function requireMatchDecisionAccess(
+  actor: User,
+  load: Load,
+  truck: Truck,
+): void {
+  const ownsLoad = actor.role === "freight_owner" && load.ownerId === actor.id;
+
+  const ownsTruck =
+    actor.role === "transporter" && truck.transporterId === actor.id;
+
+  if (!ownsLoad && !ownsTruck) {
+    throw new Error(
+      "You can only make decisions on matches connected to your own load or truck.",
+    );
+  }
+}
+
 export interface AcceptMatchResult {
   match: Match;
   receipt: Receipt;
@@ -813,6 +834,7 @@ export function acceptMatch(
   actorId: EntityId,
 ): AcceptMatchResult {
   const db = getDb();
+
   const actor = requireUser(db, actorId);
   const match = requireMatch(db, matchId);
 
@@ -829,17 +851,68 @@ export function acceptMatch(
   const load = requireLoad(db, match.loadId);
   const truck = requireTruck(db, match.truckId);
 
-  const actorCanAccept =
-    actor.role === "freight_owner" || actor.role === "transporter";
+  requireMatchDecisionAccess(actor, load, truck);
 
-  if (!actorCanAccept) {
-    throw new Error("Only Freight Owners or Transporters can accept a match.");
+  if (load.status !== "open") {
+    throw new Error(
+      `Only open loads can accept a match. Current status: "${load.status}".`,
+    );
+  }
+
+  if (truck.status !== "available") {
+    throw new Error(
+      `Only available trucks can be accepted. Current status: "${truck.status}".`,
+    );
   }
 
   setMatchDecision(db, match, actorId, "accepted", "accepted");
 
   load.status = "matched";
   truck.status = "reserved";
+
+  /*
+   * Once one engagement is accepted:
+   * - every other recommendation for this load expires;
+   * - every recommendation using the reserved truck expires.
+   */
+  for (const otherMatch of db.matches) {
+    if (otherMatch.id === match.id || otherMatch.status !== "recommended") {
+      continue;
+    }
+
+    const conflictsWithLoad = otherMatch.loadId === load.id;
+
+    const conflictsWithTruck = otherMatch.truckId === truck.id;
+
+    if (!conflictsWithLoad && !conflictsWithTruck) {
+      continue;
+    }
+
+    otherMatch.status = "expired";
+
+    let reason = "conflicting_match_accepted";
+
+    if (conflictsWithLoad && conflictsWithTruck) {
+      reason = "same_load_and_truck";
+    } else if (conflictsWithLoad) {
+      reason = "another_truck_accepted_for_load";
+    } else if (conflictsWithTruck) {
+      reason = "truck_reserved_for_another_load";
+    }
+
+    appendAuditEvent(db, {
+      actorId: "SYSTEM",
+      action: "MATCH_EXPIRED",
+      entityType: "match",
+      entityId: otherMatch.id,
+      metadata: {
+        reason,
+        acceptedMatchId: match.id,
+        loadId: otherMatch.loadId,
+        truckId: otherMatch.truckId,
+      },
+    });
+  }
 
   const receipt: Receipt = {
     contractId: createContractId(db),
@@ -901,18 +974,20 @@ export function acceptMatch(
 
 export function rejectMatch(matchId: EntityId, actorId: EntityId): Match {
   const db = getDb();
+
   const actor = requireUser(db, actorId);
   const match = requireMatch(db, matchId);
-
-  if (actor.role !== "freight_owner" && actor.role !== "transporter") {
-    throw new Error("Only Freight Owners or Transporters can reject a match.");
-  }
 
   if (match.status !== "recommended") {
     throw new Error(
       `Only recommended matches can be rejected. Current status: "${match.status}".`,
     );
   }
+
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  requireMatchDecisionAccess(actor, load, truck);
 
   setMatchDecision(db, match, actorId, "rejected", "rejected");
 
@@ -922,8 +997,8 @@ export function rejectMatch(matchId: EntityId, actorId: EntityId): Match {
     entityType: "match",
     entityId: match.id,
     metadata: {
-      loadId: match.loadId,
-      truckId: match.truckId,
+      loadId: load.id,
+      truckId: truck.id,
     },
   });
 
