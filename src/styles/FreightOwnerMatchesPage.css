@@ -22,7 +22,8 @@
 }
 
 .freight-matches-page__primary-action,
-.freight-matches-page__secondary-action {
+.freight-matches-page__secondary-action,
+.freight-matches-page__receipt-action {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -52,6 +53,17 @@
 .freight-matches-page__secondary-action:hover {
   color: var(--color-text);
   background: var(--color-surface-muted);
+}
+
+.freight-matches-page__receipt-action {
+  color: #166534;
+  background: var(--color-success-background);
+  border: 1px solid rgb(21 128 61 / 0.24);
+}
+
+.freight-matches-page__receipt-action:hover {
+  color: #14532d;
+  background: #dcfce7;
 }
 
 .freight-matches-page__alert {
@@ -154,6 +166,11 @@
   opacity: 0.86;
 }
 
+.freight-matches-page__card--accepted {
+  border-color: rgb(21 128 61 / 0.35);
+  box-shadow: 0 0 0 1px rgb(21 128 61 / 0.08);
+}
+
 .freight-matches-page__card-header {
   display: flex;
   align-items: flex-start;
@@ -163,13 +180,45 @@
   border-bottom: 1px solid var(--color-border-light);
 }
 
-.freight-matches-page__match-id {
+.freight-matches-page__match-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin-bottom: var(--space-1);
+}
+
+.freight-matches-page__match-id {
+  margin: 0;
   color: var(--color-primary);
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.freight-matches-page__match-status {
+  display: inline-flex;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-matches-page__match-status--recommended {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.freight-matches-page__match-status--accepted,
+.freight-matches-page__match-status--completed {
+  color: var(--color-success);
+  background: var(--color-success-background);
+}
+
+.freight-matches-page__match-status--rejected,
+.freight-matches-page__match-status--expired {
+  color: var(--color-error);
+  background: var(--color-error-background);
 }
 
 .freight-matches-page__card-header h4 {
@@ -291,6 +340,34 @@
   line-height: 1.5;
 }
 
+.freight-matches-page__card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.freight-matches-page__reject-action {
+  color: var(--color-error);
+  background: var(--color-white);
+  border: 1px solid rgb(185 28 28 / 0.35);
+}
+
+.freight-matches-page__reject-action:hover:not(:disabled) {
+  color: #991b1b;
+  background: var(--color-error-background);
+}
+
+.freight-matches-page__danger-action {
+  background: var(--color-error);
+}
+
+.freight-matches-page__danger-action:hover:not(:disabled) {
+  background: #991b1b;
+}
+
 .freight-matches-page__rejected {
   margin-top: var(--space-6);
   padding: var(--space-5);
@@ -333,6 +410,85 @@
   color: var(--color-text-muted);
 }
 
+/* Decision modal */
+
+.freight-matches-page__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  padding: var(--space-4);
+  place-items: center;
+  background: rgb(15 23 42 / 0.64);
+}
+
+.freight-matches-page__modal {
+  width: min(100%, 500px);
+  padding: var(--space-7);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.freight-matches-page__modal-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--space-5);
+  place-items: center;
+  border-radius: 50%;
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+}
+
+.freight-matches-page__modal-icon--accept {
+  color: var(--color-success);
+  background: var(--color-success-background);
+}
+
+.freight-matches-page__modal-icon--reject {
+  color: var(--color-error);
+  background: var(--color-error-background);
+}
+
+.freight-matches-page__modal h3 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-matches-page__modal > p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.freight-matches-page__modal-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.freight-matches-page__modal-summary dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.freight-matches-page__modal-summary dd {
+  margin: var(--space-1) 0 0;
+  font-weight: 700;
+}
+
+.freight-matches-page__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
 @media (max-width: 900px) {
   .freight-matches-page__load-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -367,12 +523,21 @@
     grid-template-columns: 1fr;
   }
 
-  .freight-matches-page__card-header {
+  .freight-matches-page__card-header,
+  .freight-matches-page__truck-details,
+  .freight-matches-page__rules,
+  .freight-matches-page__card-actions {
     padding-inline: var(--space-4);
   }
 
-  .freight-matches-page__truck-details,
-  .freight-matches-page__rules {
-    padding-inline: var(--space-4);
+  .freight-matches-page__card-actions,
+  .freight-matches-page__modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .freight-matches-page__card-actions button,
+  .freight-matches-page__receipt-action,
+  .freight-matches-page__modal-actions button {
+    width: 100%;
   }
 }
