@@ -26,39 +26,24 @@ export function FreightOwnerReceiptPage() {
   const { matchId } = useParams<{ matchId: string }>();
   const session = getCurrentSession();
 
-  const match = matchId
-    ? getMatchById(matchId)
-    : undefined;
+  const match = matchId ? getMatchById(matchId) : undefined;
 
-  const receipt = matchId
-    ? getReceiptByMatchId(matchId)
-    : undefined;
+  const receipt = matchId ? getReceiptByMatchId(matchId) : undefined;
 
-  const load = match
-    ? getLoadById(match.loadId)
-    : undefined;
+  const load = match ? getLoadById(match.loadId) : undefined;
 
-  const truck = match
-    ? getTruckById(match.truckId)
-    : undefined;
+  const truck = match ? getTruckById(match.truckId) : undefined;
 
-  const transporter = truck
-    ? getUserById(truck.transporterId)
-    : undefined;
+  const transporter = truck ? getUserById(truck.transporterId) : undefined;
 
-  const actor = receipt
-    ? getUserById(receipt.actorId)
-    : undefined;
+  const actor = receipt ? getUserById(receipt.actorId) : undefined;
 
-  const trip = matchId
-    ? getTripByMatchId(matchId)
-    : undefined;
+  const trip = matchId ? getTripByMatchId(matchId) : undefined;
 
   const vehicleLabel = truck
-    ? getVehicleTypes().find(
-        (vehicleType) =>
-          vehicleType.id === truck.vehicleType,
-      )?.label ?? truck.vehicleType
+    ? (getVehicleTypes().find(
+        (vehicleType) => vehicleType.id === truck.vehicleType,
+      )?.label ?? truck.vehicleType)
     : "";
 
   const canViewReceipt =
@@ -69,12 +54,9 @@ export function FreightOwnerReceiptPage() {
   if (!canViewReceipt) {
     return (
       <section className="freight-receipt-page">
-        <div
-          className="freight-receipt-page__alert"
-          role="alert"
-        >
-          This confirmation receipt is unavailable or does
-          not belong to your Freight Owner account.
+        <div className="freight-receipt-page__alert" role="alert">
+          This confirmation receipt is unavailable or does not belong to your
+          Freight Owner account.
         </div>
 
         <Link
@@ -87,21 +69,11 @@ export function FreightOwnerReceiptPage() {
     );
   }
 
-  if (
-    !receipt ||
-    !match ||
-    !load ||
-    !truck ||
-    !trip
-  ) {
+  if (!receipt || !match || !load || !truck || !trip) {
     return (
       <section className="freight-receipt-page">
-        <div
-          className="freight-receipt-page__alert"
-          role="alert"
-        >
-          The digital confirmation record could not be
-          found.
+        <div className="freight-receipt-page__alert" role="alert">
+          The digital confirmation record could not be found.
         </div>
 
         <Link
@@ -128,15 +100,13 @@ export function FreightOwnerReceiptPage() {
     <section className="freight-receipt-page">
       <header className="freight-receipt-page__header">
         <div>
-          <p className="freight-receipt-page__eyebrow">
-            Digital confirmation
-          </p>
+          <p className="freight-receipt-page__eyebrow">Digital confirmation</p>
 
           <h2>Match accepted</h2>
 
           <p>
-            This receipt confirms the selected truck and
-            records who accepted the engagement and when.
+            This receipt confirms the selected truck and records who accepted
+            the engagement and when.
           </p>
         </div>
 
@@ -161,16 +131,12 @@ export function FreightOwnerReceiptPage() {
       <article className="freight-receipt-page__receipt">
         <div className="freight-receipt-page__receipt-top">
           <div>
-            <span className="freight-receipt-page__brand">
-              TAMP
-            </span>
+            <span className="freight-receipt-page__brand">TAMP</span>
 
             <p>Truck Asset Matchmaking Platform</p>
           </div>
 
-          <span className="freight-receipt-page__confirmed">
-            Confirmed
-          </span>
+          <span className="freight-receipt-page__confirmed">Confirmed</span>
         </div>
 
         <div className="freight-receipt-page__contract">
@@ -193,16 +159,12 @@ export function FreightOwnerReceiptPage() {
 
           <div>
             <dt>Accepted by</dt>
-            <dd>
-              {actor?.name ?? receipt.actorId}
-            </dd>
+            <dd>{actor?.name ?? receipt.actorId}</dd>
           </div>
 
           <div>
             <dt>Decision time</dt>
-            <dd>
-              {formatDateTime(receipt.timestamp)}
-            </dd>
+            <dd>{formatDateTime(receipt.timestamp)}</dd>
           </div>
         </dl>
 
@@ -249,18 +211,14 @@ export function FreightOwnerReceiptPage() {
             <div>
               <dt>Weight / volume</dt>
               <dd>
-                {load.weightKg.toLocaleString("en-ZA")} kg
-                / {load.volumeM3} m³
+                {load.weightKg.toLocaleString("en-ZA")} kg / {load.volumeM3} m³
               </dd>
             </div>
 
             <div>
               <dt>Pickup window</dt>
               <dd>
-                {formatDateTime(
-                  load.pickupWindow.start,
-                )}{" "}
-                –{" "}
+                {formatDateTime(load.pickupWindow.start)} –{" "}
                 {formatDateTime(load.pickupWindow.end)}
               </dd>
             </div>
@@ -324,10 +282,7 @@ export function FreightOwnerReceiptPage() {
         </section>
 
         <footer className="freight-receipt-page__receipt-footer">
-          <p>
-            This is a simulated digital confirmation for
-            the TAMP front-end MVP.
-          </p>
+          <p>Digital Receipt</p>
 
           <time dateTime={receipt.timestamp}>
             {formatDateTime(receipt.timestamp)}
