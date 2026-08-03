@@ -1078,6 +1078,50 @@ export function getTrackingEvents(tripId: EntityId): TrackingEvent[] {
     );
 }
 
+const TRIP_STATUS_SEQUENCE: TripStatus[] = [
+  "confirmed",
+  "at_pickup",
+  "loaded",
+  "in_transit",
+  "at_delivery",
+  "completed",
+];
+
+function requireTrackingEventAccess(
+  actor: User,
+  load: Load,
+  truck: Truck,
+): void {
+  const ownsLoad = actor.role === "freight_owner" && load.ownerId === actor.id;
+
+  const ownsTruck =
+    actor.role === "transporter" && truck.transporterId === actor.id;
+
+  if (!ownsLoad && !ownsTruck) {
+    throw new Error(
+      "You can only update tracking for a trip connected to your own load or truck.",
+    );
+  }
+}
+
+function validateTrackingCoordinates(lat: number, lng: number): void {
+  if (!Number.isFinite(lat)) {
+    throw new Error("Tracking latitude must be a valid number.");
+  }
+
+  if (!Number.isFinite(lng)) {
+    throw new Error("Tracking longitude must be a valid number.");
+  }
+
+  if (lat < -90 || lat > 90) {
+    throw new Error("Tracking latitude must be between -90 and 90.");
+  }
+
+  if (lng < -180 || lng > 180) {
+    throw new Error("Tracking longitude must be between -180 and 180.");
+  }
+}
+
 export interface AddTrackingEventInput {
   status: TripStatus;
   lat: number;
@@ -1091,9 +1135,57 @@ export function addTrackingEvent(
   input: AddTrackingEventInput,
 ): TrackingEvent {
   const db = getDb();
-  requireUser(db, actorId);
 
+  const actor = requireUser(db, actorId);
   const trip = requireTrip(db, tripId);
+  const match = requireMatch(db, trip.matchId);
+  const load = requireLoad(db, match.loadId);
+  const truck = requireTruck(db, match.truckId);
+
+  requireTrackingEventAccess(actor, load, truck);
+
+  if (match.status !== "accepted") {
+    throw new Error(
+      `Tracking can only be updated for an accepted match. Current match status: "${match.status}".`,
+    );
+  }
+
+  if (trip.status === "completed") {
+    throw new Error(
+      "A completed trip cannot receive further tracking updates.",
+    );
+  }
+
+  const currentStatusIndex = TRIP_STATUS_SEQUENCE.indexOf(trip.status);
+
+  const requestedStatusIndex = TRIP_STATUS_SEQUENCE.indexOf(input.status);
+
+  if (currentStatusIndex === -1 || requestedStatusIndex === -1) {
+    throw new Error("The current or requested trip status is invalid.");
+  }
+
+  const expectedStatus = TRIP_STATUS_SEQUENCE[currentStatusIndex + 1];
+
+  if (input.status !== expectedStatus) {
+    throw new Error(
+      `Trip status must progress from "${trip.status}" to "${expectedStatus}". Requested status: "${input.status}".`,
+    );
+  }
+
+  validateTrackingCoordinates(input.lat, input.lng);
+
+  const label = input.label.trim();
+
+  if (!label) {
+    throw new Error("A tracking update label is required.");
+  }
+
+  if (label.length > 200) {
+    throw new Error("Tracking update labels cannot exceed 200 characters.");
+  }
+
+  const previousStatus = trip.status;
+  const timestamp = nowIso();
 
   const event: TrackingEvent = {
     id: createTrackingEventId(db),
@@ -1101,22 +1193,23 @@ export function addTrackingEvent(
     status: input.status,
     lat: input.lat,
     lng: input.lng,
-    label: input.label,
-    timestamp: nowIso(),
+    label,
+    timestamp,
     coordinateType: "mock_route_point",
   };
 
+  /*
+   * All validation has passed. State changes only begin
+   * after this point.
+   */
   db.trackingEvents.push(event);
 
   trip.status = input.status;
   trip.progressPercent = TRIP_PROGRESS[input.status];
-  trip.lastUpdatedAt = event.timestamp;
+
+  trip.lastUpdatedAt = timestamp;
 
   if (input.status === "completed") {
-    const match = requireMatch(db, trip.matchId);
-    const load = requireLoad(db, match.loadId);
-    const truck = requireTruck(db, match.truckId);
-
     match.status = "completed";
     load.status = "completed";
     truck.status = "available";
@@ -1125,10 +1218,6 @@ export function addTrackingEvent(
     input.status === "in_transit" ||
     input.status === "at_delivery"
   ) {
-    const match = requireMatch(db, trip.matchId);
-    const load = requireLoad(db, match.loadId);
-    const truck = requireTruck(db, match.truckId);
-
     load.status = "in_transit";
     truck.status = "in_transit";
   }
@@ -1139,8 +1228,14 @@ export function addTrackingEvent(
     entityType: "trip",
     entityId: trip.id,
     metadata: {
+      previousStatus,
       status: input.status,
       progressPercent: trip.progressPercent,
+      loadId: load.id,
+      truckId: truck.id,
+      matchId: match.id,
+      latitude: input.lat,
+      longitude: input.lng,
     },
   });
 
@@ -1148,15 +1243,6 @@ export function addTrackingEvent(
 
   return event;
 }
-
-const TRIP_STATUS_SEQUENCE: TripStatus[] = [
-  "confirmed",
-  "at_pickup",
-  "loaded",
-  "in_transit",
-  "at_delivery",
-  "completed",
-];
 
 const DEMO_STATUS_LABELS: Record<TripStatus, string> = {
   confirmed: "Trip confirmed",
