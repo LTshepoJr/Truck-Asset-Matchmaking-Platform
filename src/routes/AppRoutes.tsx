@@ -13,6 +13,7 @@ import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 import { CreateLoadPage } from "../pages/freight-owner/CreateLoadPage";
 import { FreightOwnerLoadsPage } from "../pages/freight-owner/FreightOwnerLoadsPage";
 import { FreightOwnerMatchesPage } from "../pages/freight-owner/FreightOwnerMatchesPage";
+import { FreightOwnerReceiptPage } from "../pages/freight-owner/FreightOwnerReceiptPage";
 import { FreightOwnerTrackingPage } from "../pages/freight-owner/FreightOwnerTrackingPage";
 
 const freightOwnerNavigation = [
@@ -85,6 +86,11 @@ export function AppRoutes() {
           <Route path="loads/new" element={<CreateLoadPage />} />
 
           <Route path="matches" element={<FreightOwnerMatchesPage />} />
+
+          <Route
+            path="receipts/:matchId"
+            element={<FreightOwnerReceiptPage />}
+          />
 
           <Route path="tracking" element={<FreightOwnerTrackingPage />} />
         </Route>
