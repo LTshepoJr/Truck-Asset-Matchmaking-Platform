@@ -1,0 +1,689 @@
+.freight-tracking-page {
+  width: min(100%, 1160px);
+  margin-inline: auto;
+}
+
+.freight-tracking-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.freight-tracking-page__header h2 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-tracking-page__header p {
+  max-width: 700px;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.freight-tracking-page__primary-action,
+.freight-tracking-page__secondary-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.freight-tracking-page__primary-action {
+  color: var(--color-white);
+  background: var(--color-primary);
+}
+
+.freight-tracking-page__primary-action:hover {
+  color: var(--color-white);
+  background: var(--color-primary-hover);
+}
+
+.freight-tracking-page__secondary-action {
+  flex: 0 0 auto;
+  color: var(--color-text);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+}
+
+.freight-tracking-page__secondary-action:hover {
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+.freight-tracking-page__alert {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  color: var(--color-error);
+  background: var(--color-error-background);
+  border: 1px solid rgb(185 28 28 / 0.2);
+  border-radius: var(--radius-md);
+}
+
+.freight-tracking-page__alert--success {
+  color: var(--color-success);
+  background: var(--color-success-background);
+  border-color: rgb(21 128 61 / 0.2);
+}
+
+.freight-tracking-page__controls {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  align-items: end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-tracking-page__field label {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.freight-tracking-page__summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  color: var(--color-white);
+  background: #0f172a;
+  border-radius: var(--radius-lg);
+}
+
+.freight-tracking-page__summary div {
+  min-width: 0;
+}
+
+.freight-tracking-page__summary span {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: #94a3b8;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.freight-tracking-page__summary strong {
+  display: block;
+  overflow: hidden;
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freight-tracking-page__status {
+  color: #bbf7d0 !important;
+}
+
+.freight-tracking-page__progress-card,
+.freight-tracking-page__route-card,
+.freight-tracking-page__info-card,
+.freight-tracking-page__timeline-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-tracking-page__progress-card {
+  margin-bottom: var(--space-5);
+  padding: var(--space-6);
+}
+
+.freight-tracking-page__progress-heading,
+.freight-tracking-page__card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.freight-tracking-page__progress-heading {
+  margin-bottom: var(--space-5);
+}
+
+.freight-tracking-page__progress-heading h3,
+.freight-tracking-page__card-heading h3 {
+  margin-bottom: var(--space-1);
+}
+
+.freight-tracking-page__progress-heading p,
+.freight-tracking-page__card-heading p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__progress-heading > strong {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+}
+
+.freight-tracking-page__progress-bar {
+  height: 10px;
+  overflow: hidden;
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+.freight-tracking-page__progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: inherit;
+  transition: width var(--transition-normal);
+}
+
+.freight-tracking-page__steps {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.freight-tracking-page__steps li {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.freight-tracking-page__steps li > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  background: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+}
+
+.freight-tracking-page__steps small {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.freight-tracking-page__step--complete > span,
+.freight-tracking-page__step--current > span {
+  color: var(--color-white);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.freight-tracking-page__step--current small {
+  color: var(--color-text);
+}
+
+.freight-tracking-page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.8fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.freight-tracking-page__route-card,
+.freight-tracking-page__info-card,
+.freight-tracking-page__timeline-card {
+  padding: var(--space-6);
+}
+
+.freight-tracking-page__card-heading {
+  margin-bottom: var(--space-6);
+}
+
+.freight-tracking-page__card-heading > span {
+  padding: 0.35rem 0.65rem;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-tracking-page__route-map {
+  position: relative;
+  min-height: 230px;
+  overflow: hidden;
+  padding: var(--space-8) var(--space-6);
+  background:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.35), transparent 28%),
+    linear-gradient(135deg, #e2e8f0, #f8fafc);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+}
+
+.freight-tracking-page__route-map::before,
+.freight-tracking-page__route-map::after {
+  position: absolute;
+  width: 150px;
+  height: 70px;
+  content: "";
+  border: 2px solid rgb(148 163 184 / 0.25);
+  border-radius: 50%;
+  transform: rotate(-18deg);
+}
+
+.freight-tracking-page__route-map::before {
+  top: 16px;
+  left: -30px;
+}
+
+.freight-tracking-page__route-map::after {
+  right: -40px;
+  bottom: 20px;
+}
+
+.freight-tracking-page__route-track {
+  position: relative;
+  z-index: 1;
+  height: 8px;
+  margin-top: var(--space-8);
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.freight-tracking-page__route-track::before,
+.freight-tracking-page__route-track::after {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 18px;
+  height: 18px;
+  content: "";
+  background: var(--color-white);
+  border: 5px solid var(--color-primary);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.freight-tracking-page__route-track::before {
+  left: 0;
+}
+
+.freight-tracking-page__route-track::after {
+  right: 0;
+}
+
+.freight-tracking-page__route-complete {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--route-progress);
+  background: var(--color-primary);
+  border-radius: inherit;
+}
+
+.freight-tracking-page__truck-marker {
+  position: absolute;
+  top: 50%;
+  left: var(--route-progress);
+  z-index: 3;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--color-white);
+  background: #0f172a;
+  border: 3px solid var(--color-white);
+  border-radius: 9px;
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-xs);
+  font-weight: 900;
+  transform: translate(-50%, -50%);
+  transition: left var(--transition-normal);
+}
+
+.freight-tracking-page__route-cities {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+}
+
+.freight-tracking-page__route-cities > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-tracking-page__route-cities > div:last-child {
+  text-align: right;
+}
+
+.freight-tracking-page__route-cities span,
+.freight-tracking-page__current-location span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.freight-tracking-page__route-cities strong {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-lg);
+}
+
+.freight-tracking-page__route-cities small,
+.freight-tracking-page__current-location small {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+}
+
+.freight-tracking-page__current-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.freight-tracking-page__location-pulse {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  background: var(--color-success);
+  border-radius: 50%;
+}
+
+.freight-tracking-page__location-pulse::after {
+  position: absolute;
+  inset: -5px;
+  content: "";
+  border: 2px solid rgb(21 128 61 / 0.3);
+  border-radius: 50%;
+}
+
+.freight-tracking-page__current-location div:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.freight-tracking-page__current-location strong {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__details {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0;
+}
+
+.freight-tracking-page__details div {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.freight-tracking-page__details div:last-child {
+  border-bottom: 0;
+}
+
+.freight-tracking-page__details dt {
+  margin-bottom: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.freight-tracking-page__details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.freight-tracking-page__timeline-card {
+  margin-bottom: var(--space-5);
+}
+
+.freight-tracking-page__timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.freight-tracking-page__timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-bottom: var(--space-5);
+}
+
+.freight-tracking-page__timeline li:not(:last-child)::before {
+  position: absolute;
+  top: 22px;
+  bottom: 0;
+  left: 8px;
+  width: 2px;
+  content: "";
+  background: var(--color-border-light);
+}
+
+.freight-tracking-page__timeline-marker {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  background: var(--color-primary);
+  border: 4px solid #fee2e2;
+  border-radius: 50%;
+}
+
+.freight-tracking-page__timeline-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.freight-tracking-page__timeline-heading time {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.freight-tracking-page__timeline p {
+  margin: var(--space-1) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__timeline small {
+  color: var(--color-text-muted);
+}
+
+.freight-tracking-page__timeline-empty {
+  padding: var(--space-5);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.freight-tracking-page__timeline-empty strong {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.freight-tracking-page__timeline-empty p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.freight-tracking-page__planned {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+}
+
+.freight-tracking-page__planned summary {
+  color: #92400e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.freight-tracking-page__planned ul {
+  display: flex;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.freight-tracking-page__planned li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: #92400e;
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__demo-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  color: #1e3a8a;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-lg);
+}
+
+.freight-tracking-page__demo-note strong {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.freight-tracking-page__demo-note p {
+  max-width: 760px;
+  margin: 0;
+  color: #1e40af;
+  font-size: var(--font-size-sm);
+}
+
+.freight-tracking-page__demo-note a {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.freight-tracking-page__empty {
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.freight-tracking-page__empty h3 {
+  margin-bottom: var(--space-2);
+}
+
+.freight-tracking-page__empty p {
+  max-width: 560px;
+  margin: 0 auto var(--space-5);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 980px) {
+  .freight-tracking-page__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .freight-tracking-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-tracking-page__details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+  }
+}
+
+@media (max-width: 720px) {
+  .freight-tracking-page__header,
+  .freight-tracking-page__demo-note {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .freight-tracking-page__secondary-action {
+    width: 100%;
+  }
+
+  .freight-tracking-page__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-tracking-page__controls button {
+    width: 100%;
+  }
+
+  .freight-tracking-page__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: var(--space-4);
+  }
+
+  .freight-tracking-page__timeline-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .freight-tracking-page__planned li {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+@media (max-width: 520px) {
+  .freight-tracking-page__summary,
+  .freight-tracking-page__details {
+    grid-template-columns: 1fr;
+  }
+
+  .freight-tracking-page__progress-card,
+  .freight-tracking-page__route-card,
+  .freight-tracking-page__info-card,
+  .freight-tracking-page__timeline-card {
+    padding: var(--space-4);
+  }
+
+  .freight-tracking-page__route-map {
+    min-height: 210px;
+    padding-inline: var(--space-4);
+  }
+
+  .freight-tracking-page__route-cities strong {
+    font-size: var(--font-size-base);
+  }
+}
