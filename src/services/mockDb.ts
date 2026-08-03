@@ -1144,15 +1144,15 @@ export function addTrackingEvent(
 
   requireTrackingEventAccess(actor, load, truck);
 
-  if (match.status !== "accepted") {
-    throw new Error(
-      `Tracking can only be updated for an accepted match. Current match status: "${match.status}".`,
-    );
-  }
-
   if (trip.status === "completed") {
     throw new Error(
       "A completed trip cannot receive further tracking updates.",
+    );
+  }
+
+  if (match.status !== "accepted") {
+    throw new Error(
+      `Tracking can only be updated for an accepted match. Current match status: "${match.status}".`,
     );
   }
 
