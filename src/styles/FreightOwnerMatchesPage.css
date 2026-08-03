@@ -51,7 +51,7 @@
 }
 
 .freight-matches-page__secondary-action:hover {
-  color: var(--color-text);
+  color: var(--color-white);
   background: var(--color-surface-muted);
 }
 
@@ -428,6 +428,7 @@
   background: var(--color-white);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
+  padding: var(--space-6) var(--space-8);
 }
 
 .freight-matches-page__modal-icon {
