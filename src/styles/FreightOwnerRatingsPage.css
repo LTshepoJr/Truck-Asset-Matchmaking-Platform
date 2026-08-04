@@ -592,3 +592,43 @@
     text-align: left;
   }
 }
+
+.freight-ratings-page__feedback {
+  display: grid;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+}
+
+.freight-ratings-page__feedback .freight-ratings-page__field > label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.freight-ratings-page__feedback label span {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.freight-ratings-page__feedback .freight-ratings-page__field > small {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.freight-ratings-page__feedback select:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  background: #e2e8f0;
+}
+
+.freight-ratings-page__feedback textarea {
+  resize: vertical;
+}
