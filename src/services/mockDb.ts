@@ -1507,6 +1507,10 @@ export function createRating(input: CreateRatingInput): Rating {
 
   const comment = input.comment?.trim() ?? "";
 
+  if (!comment) {
+    throw new Error("A comment is required when submitting a rating.");
+  }
+
   if (comment.length > 500) {
     throw new Error("Rating comments cannot exceed 500 characters.");
   }
