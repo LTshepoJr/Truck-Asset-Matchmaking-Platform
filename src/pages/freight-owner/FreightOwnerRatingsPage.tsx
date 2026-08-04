@@ -1,8 +1,4 @@
-import {
-  useMemo,
-  useState,
-  type FormEvent,
-} from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import "../../styles/FreightOwnerRatingsPage.css";
@@ -39,6 +35,42 @@ const SCORE_OPTIONS: Array<{
   { score: 4, label: "Very good" },
   { score: 5, label: "Excellent" },
 ];
+
+const OTHER_COMMENT_VALUE = "other";
+
+const LOW_SCORE_COMMENTS = [
+  "The delivery was late or missed the agreed schedule.",
+  "Communication during the trip was poor.",
+  "The cargo handling or overall service did not meet expectations.",
+];
+
+const MID_SCORE_COMMENTS = [
+  "The delivery was completed, but communication could improve.",
+  "The service was acceptable, with minor delays or issues.",
+  "The cargo arrived safely, but the overall experience was average.",
+];
+
+const HIGH_SCORE_COMMENTS = [
+  "The delivery was completed on time and professionally.",
+  "Communication was clear throughout the trip.",
+  "The cargo was handled safely and delivered as agreed.",
+];
+
+function getCommonComments(score: RatingScore | 0): string[] {
+  if (score === 1 || score === 2) {
+    return LOW_SCORE_COMMENTS;
+  }
+
+  if (score === 3) {
+    return MID_SCORE_COMMENTS;
+  }
+
+  if (score === 4 || score === 5) {
+    return HIGH_SCORE_COMMENTS;
+  }
+
+  return [];
+}
 
 interface RateableTrip {
   trip: Trip;
@@ -116,14 +148,14 @@ export function FreightOwnerRatingsPage() {
   const initialTripId =
     rateableTrips.find(({ trip }) => trip.id === requestedTripId)?.trip.id ??
     rateableTrips.find(
-      ({ trip }) =>
-        !ratings.some((rating) => rating.tripId === trip.id),
+      ({ trip }) => !ratings.some((rating) => rating.tripId === trip.id),
     )?.trip.id ??
     rateableTrips[0]?.trip.id ??
     "";
 
   const [selectedTripId, setSelectedTripId] = useState(initialTripId);
   const [score, setScore] = useState<RatingScore | 0>(0);
+  const [commentChoice, setCommentChoice] = useState("");
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -135,14 +167,12 @@ export function FreightOwnerRatingsPage() {
 
   const existingRating = ratings.find(
     (rating) =>
-      rating.tripId === selectedTripId &&
-      rating.reviewerId === sessionId,
+      rating.tripId === selectedTripId && rating.reviewerId === sessionId,
   );
 
   const submittedCount = rateableTrips.filter(({ trip }) =>
     ratings.some(
-      (rating) =>
-        rating.tripId === trip.id && rating.reviewerId === sessionId,
+      (rating) => rating.tripId === trip.id && rating.reviewerId === sessionId,
     ),
   ).length;
 
@@ -153,9 +183,13 @@ export function FreightOwnerRatingsPage() {
       : ratings.reduce((total, rating) => total + rating.score, 0) /
         ratings.length;
 
+  const commonComments = getCommonComments(score);
+  const isOtherComment = commentChoice === OTHER_COMMENT_VALUE;
+
   const handleTripChange = (tripId: string) => {
     setSelectedTripId(tripId);
     setScore(0);
+    setCommentChoice("");
     setComment("");
     setError("");
     setNotice("");
@@ -165,6 +199,19 @@ export function FreightOwnerRatingsPage() {
     } else {
       setSearchParams({});
     }
+  };
+
+  const handleScoreChange = (nextScore: RatingScore) => {
+    setScore(nextScore);
+
+    /*
+     * Each score range has different comments, so an
+     * existing selection must be cleared when the score
+     * changes.
+     */
+    setCommentChoice("");
+    setComment("");
+    setError("");
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -182,6 +229,19 @@ export function FreightOwnerRatingsPage() {
       return;
     }
 
+    if (!commentChoice) {
+      setError("Choose a comment that describes your experience.");
+      return;
+    }
+
+    const resolvedComment =
+      commentChoice === OTHER_COMMENT_VALUE ? comment.trim() : commentChoice;
+
+    if (!resolvedComment) {
+      setError("Enter your personal comment before submitting the review.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -190,11 +250,12 @@ export function FreightOwnerRatingsPage() {
         reviewerId: sessionId,
         reviewedUserId: selectedTrip.transporter.id,
         score,
-        comment,
+        comment: resolvedComment,
       });
 
       setRatings(getRatingsByReviewer(sessionId));
       setScore(0);
+      setCommentChoice("");
       setComment("");
       setNotice(
         `Your ${rating.score}-star review for ${selectedTrip.transporter.company} was submitted.`,
@@ -375,10 +436,7 @@ export function FreightOwnerRatingsPage() {
                             name="rating-score"
                             value={option.score}
                             checked={score === option.score}
-                            onChange={() => {
-                              setScore(option.score);
-                              setError("");
-                            }}
+                            onChange={() => handleScoreChange(option.score)}
                           />
                           <span aria-hidden="true">★</span>
                           <small>
@@ -389,21 +447,77 @@ export function FreightOwnerRatingsPage() {
                     </div>
                   </fieldset>
 
-                  <div className="freight-ratings-page__field">
-                    <div className="freight-ratings-page__label-row">
-                      <label htmlFor="rating-comment">
-                        Comment <span>(optional)</span>
+                  <div className="freight-ratings-page__feedback">
+                    <div className="freight-ratings-page__field">
+                      <label htmlFor="rating-comment-choice">
+                        Comment <span>(required)</span>
                       </label>
-                      <small>{comment.length}/500</small>
+
+                      <select
+                        id="rating-comment-choice"
+                        value={commentChoice}
+                        disabled={score === 0}
+                        required
+                        onChange={(event) => {
+                          const nextChoice = event.target.value;
+
+                          setCommentChoice(nextChoice);
+
+                          if (nextChoice !== OTHER_COMMENT_VALUE) {
+                            setComment("");
+                          }
+
+                          setError("");
+                        }}
+                      >
+                        <option value="">
+                          {score === 0
+                            ? "Choose a star rating first"
+                            : "Choose a comment"}
+                        </option>
+
+                        {commonComments.map((commonComment) => (
+                          <option key={commonComment} value={commonComment}>
+                            {commonComment}
+                          </option>
+                        ))}
+
+                        {score !== 0 && (
+                          <option value={OTHER_COMMENT_VALUE}>Other</option>
+                        )}
+                      </select>
+
+                      <small>
+                        The available comments change according to the selected
+                        star rating.
+                      </small>
                     </div>
-                    <textarea
-                      id="rating-comment"
-                      value={comment}
-                      onChange={(event) => setComment(event.target.value)}
-                      maxLength={500}
-                      rows={6}
-                      placeholder="Share useful feedback about communication, punctuality, cargo handling or delivery."
-                    />
+
+                    {isOtherComment && (
+                      <div className="freight-ratings-page__field">
+                        <div className="freight-ratings-page__label-row">
+                          <label htmlFor="rating-comment">
+                            Personal comment
+                          </label>
+
+                          <small>{comment.length}/500</small>
+                        </div>
+
+                        <textarea
+                          id="rating-comment"
+                          value={comment}
+                          onChange={(event) => {
+                            setComment(event.target.value);
+                            setError("");
+                          }}
+                          maxLength={500}
+                          rows={6}
+                          required
+                          autoFocus
+                          placeholder="Describe your experience with the transporter."
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="freight-ratings-page__form-actions">
@@ -508,9 +622,7 @@ function SubmittedRating({
       <div className="freight-ratings-page__submitted-icon" aria-hidden="true">
         ✓
       </div>
-      <p className="freight-ratings-page__submitted-label">
-        Review submitted
-      </p>
+      <p className="freight-ratings-page__submitted-label">Review submitted</p>
       <h3>Thank you for rating {transporter.company}</h3>
       <div
         className="freight-ratings-page__submitted-stars"
