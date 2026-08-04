@@ -387,7 +387,7 @@ export interface CreateRatingInput {
   reviewerId: EntityId;
   reviewedUserId: EntityId;
   score: RatingScore;
-  comment?: string;
+  comment: string;
 }
 
 export interface CreateDisputeInput {
