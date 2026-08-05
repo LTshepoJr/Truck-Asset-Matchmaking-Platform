@@ -48,7 +48,7 @@ The current implementation focuses on the complete Freight Owner journey while r
 | Transporter       | Foundation only        | Registration and dashboard route exist; operational screens remain pending                                                    |
 | Administrator     | Foundation only        | Seeded login and dashboard route exist; management and analytics screens remain pending                                       |
 | Persistence       | Functional for the MVP | JSON seed data with `localStorage` and `sessionStorage`                                                                       |
-| Automated testing | Not configured         | Lint and production build scripts are available                                                                               |
+| Automated testing | Configured             | Vitest/JSDOM test environment, five matchmaking tests, V8 coverage and GitHub Actions CI                                      |
 
 ### Assessment scope covered
 
@@ -107,6 +107,11 @@ Implemented Freight Owner screens:
 | `localStorage` / `sessionStorage` | Browser-side persistence and session handling   |
 | JSON fixtures                     | Synthetic South African MVP data                |
 | Oxlint                            | Source linting                                  |
+| Vitest 4                          | Automated unit and service testing              |
+| Testing Library                   | DOM-oriented React testing utilities            |
+| JSDOM                             | Browser-like test environment                   |
+| V8 Coverage                       | Text and HTML coverage reporting                |
+| GitHub Actions                    | Automated lint, test and build checks           |
 
 This is a **front-end-only MVP**. No production backend API or database is connected.
 
@@ -407,7 +412,7 @@ Every generated result stores readable pass/fail reasons so that the recommendat
 
 Install:
 
-- Node.js 20.19+ or 22.12+
+- Node.js 22.12 or newer within the Node 22 release line (`>=22.12.0 <23`)
 - npm
 - a modern browser
 
@@ -421,8 +426,10 @@ cd Truck-Asset-Matchmaking-Platform
 ### Install dependencies
 
 ```bash
-npm install
+npm ci
 ```
+
+Use `npm install` when intentionally adding or updating dependencies. Commit changes to `package-lock.json` together with `package.json`.
 
 ### Start the development server
 
@@ -436,19 +443,21 @@ Open the local URL printed by Vite.
 
 ```bash
 npm run lint
+npm test
 npm run build
 ```
 
 ## Available Scripts
 
-| Command           | Description                                               |
-| ----------------- | --------------------------------------------------------- |
-| `npm run dev`     | Starts the Vite development server                        |
-| `npm run build`   | Runs the TypeScript build and creates a production bundle |
-| `npm run lint`    | Runs Oxlint                                               |
-| `npm run preview` | Serves the production build locally                       |
-
-There is currently no automated `test` script in `package.json`.
+| Command                 | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| `npm run dev`           | Starts the Vite development server                           |
+| `npm run build`         | Runs TypeScript and creates a production bundle              |
+| `npm run lint`          | Runs Oxlint                                                  |
+| `npm test`              | Runs the Vitest suite once and exits                         |
+| `npm run test:watch`    | Runs Vitest in watch mode while developing                   |
+| `npm run test:coverage` | Runs the suite and creates text and HTML V8 coverage reports |
+| `npm run preview`       | Serves the production build locally                          |
 
 ## Demo Accounts and Seed Data
 
@@ -623,6 +632,9 @@ This also removes locally registered Freight Owner and Transporter accounts.
 
 ```text
 Truck-Asset-Matchmaking-Platform/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── documentation/
 ├── public/
 ├── src/
@@ -657,8 +669,11 @@ Truck-Asset-Matchmaking-Platform/
 │   │   └── ProtectedRoute.tsx
 │   ├── services/
 │   │   ├── authService.ts
+│   │   ├── mockDb.matching.test.ts
 │   │   └── mockDb.ts
 │   ├── styles/
+│   ├── test/
+│   │   └── setup.ts
 │   ├── types/
 │   │   └── tamp.ts
 │   ├── App.css
@@ -694,16 +709,53 @@ The following table reflects the current `main` branch.
 
 ## Testing Status
 
-Run the current verification commands before committing or demonstrating changes:
+The repository uses Vitest with JSDOM and Testing Library. The shared setup clears `localStorage` and `sessionStorage` before each test so browser state does not leak between test cases.
+
+### Current automated coverage
+
+`src/services/mockDb.matching.test.ts` contains five tests for `evaluateMatch`:
+
+- a fully compatible truck receives an eligible `100/100` result;
+- insufficient capacity makes a match ineligible;
+- an incompatible vehicle type makes a match ineligible;
+- a non-overlapping availability window makes a match ineligible;
+- a truck in another city remains eligible but loses the location points.
+
+Run the complete local quality gate before committing or demonstrating changes:
 
 ```bash
+npm ci
 npm run lint
+npm test
 npm run build
 ```
 
-There is no automated test framework or `npm test` script configured yet.
+Generate a coverage report with:
 
-Manual checks should cover:
+```bash
+npm run test:coverage
+```
+
+The V8 provider writes a text summary to the terminal and an HTML report to `coverage/`.
+
+### Continuous integration
+
+`.github/workflows/ci.yml` defines the **TAMP CI** workflow. It runs on pushes to `main` and pull requests targeting `main`, using Node 22 on Ubuntu.
+
+The CI job is named **Lint, Test and Build** and executes:
+
+```text
+npm ci
+  → npm run lint
+  → npm test
+  → npm run build
+```
+
+A failed lint check, automated test or production build causes the workflow to fail. Repository rules can use **Lint, Test and Build** as a required status check before merging into `main`.
+
+### Manual regression checks
+
+Automated coverage currently protects the core matchmaking rules. Manual checks should still cover:
 
 - Freight Owner registration;
 - duplicate-email rejection;
@@ -739,7 +791,7 @@ Manual checks should cover:
 - Tracking uses simulated coordinates and status progression rather than live GPS.
 - Receipt IP address and user-agent values are mock evidence.
 - Payment, invoicing, escrow and production e-signature are outside the MVP scope.
-- No automated test framework is configured.
+- Automated coverage currently focuses on `evaluateMatch`; authentication, pages and the remaining domain state transitions still rely on manual regression checks.
 - Browser storage is not suitable for production-scale security, concurrency or persistence.
 
 ## Development Roadmap
@@ -751,7 +803,7 @@ Manual checks should cover:
 5. Build the Administrator user and compliance console.
 6. Add dispute and audit views.
 7. Add Administrator KPI and analytics screens.
-8. Add automated tests for critical validation, permissions and state transitions.
+8. Expand automated tests to cover authentication, load creation, permissions, receipts, tracking, ratings and critical state transitions.
 9. Replace browser storage with a backend API and persistent database for production use.
 
 ---
