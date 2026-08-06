@@ -195,6 +195,11 @@
   background: rgb(255 255 255 / 0.06);
 }
 
+.role-layout__navigation-link:focus,
+.role-layout__logout:focus {
+  outline: 3px solid var(--color-primary-active);
+}
+
 .role-layout__navigation-link--active {
   color: var(--color-white);
   background: rgb(185 28 28 / 0.18);
