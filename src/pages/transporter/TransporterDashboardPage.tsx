@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import "../../styles/transporter-css/TransporterDashboardPage.css";
 import { getCurrentSession } from "../../services/authService";
+import { ROUTES } from "../../routes/paths";
 import {
   getAuditEvents,
   getLoadById,
@@ -415,7 +417,10 @@ export function TransporterDashboardPage() {
         </div>
 
         <div className="transporter-dashboard__action-grid">
-          <a className="transporter-action-card" href="#fleet">
+          <Link
+            className="transporter-action-card"
+            to={ROUTES.transporterTrucks}
+          >
             <span className="transporter-action-card__icon" aria-hidden="true">
               01
             </span>
@@ -423,7 +428,7 @@ export function TransporterDashboardPage() {
               <strong>Manage fleet</strong>
               <small>Review truck availability, capacity and location.</small>
             </span>
-          </a>
+          </Link>
           <a className="transporter-action-card" href="#recommended-loads">
             <span className="transporter-action-card__icon" aria-hidden="true">
               02
@@ -465,15 +470,24 @@ export function TransporterDashboardPage() {
               <p className="transporter-dashboard__eyebrow">Fleet overview</p>
               <h2 id="fleet-heading">Your trucks</h2>
             </div>
-            <span className="transporter-dashboard__section-count">
-              {trucks.length} vehicle{trucks.length === 1 ? "" : "s"}
-            </span>
+            <Link
+              className="transporter-dashboard__section-count"
+              to={ROUTES.transporterTrucks}
+            >
+              View all {trucks.length} vehicle{trucks.length === 1 ? "" : "s"}
+            </Link>
           </div>
 
           {trucks.length === 0 ? (
             <div className="transporter-empty-state">
               <h3>No trucks posted yet</h3>
               <p>Add a truck to make capacity visible to freight owners.</p>
+              <Link
+                className="transporter-empty-state__action"
+                to={ROUTES.transporterNewTruck}
+              >
+                Add truck
+              </Link>
             </div>
           ) : (
             <div className="transporter-fleet-list">
