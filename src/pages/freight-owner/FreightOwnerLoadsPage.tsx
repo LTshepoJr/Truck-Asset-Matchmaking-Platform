@@ -12,7 +12,6 @@ import type { Load, LoadStatus } from "../../types/tamp";
 type StatusFilter = LoadStatus | "all";
 
 type SortOption = "newest" | "oldest" | "pickup-soonest";
-
 const STATUS_LABELS: Record<LoadStatus, string> = {
   draft: "Draft",
   open: "Open",
@@ -29,7 +28,6 @@ function formatDateTime(value: string): string {
     timeZone: "Africa/Johannesburg",
   }).format(new Date(value));
 }
-
 function getStatusClass(status: LoadStatus): string {
   return `freight-loads-page__status freight-loads-page__status--${status.replace(
     "_",
@@ -49,7 +47,6 @@ export function FreightOwnerLoadsPage() {
   }, [session]);
 
   const vehicleTypes = useMemo(() => getVehicleTypes(), []);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
@@ -68,7 +65,6 @@ export function FreightOwnerLoadsPage() {
       total: loads.length,
 
       open: loads.filter((load) => load.status === "open").length,
-
       active: loads.filter(
         (load) => load.status === "matched" || load.status === "in_transit",
       ).length,
@@ -84,7 +80,6 @@ export function FreightOwnerLoadsPage() {
     const result = loads.filter((load) => {
       const matchesStatus =
         statusFilter === "all" || load.status === statusFilter;
-
       const matchesSearch =
         !normalizedSearch ||
         load.id.toLowerCase().includes(normalizedSearch) ||
@@ -95,7 +90,6 @@ export function FreightOwnerLoadsPage() {
 
       return matchesStatus && matchesSearch;
     });
-
     return [...result].sort((a, b) => {
       if (sortOption === "oldest") {
         return (
@@ -109,7 +103,6 @@ export function FreightOwnerLoadsPage() {
           new Date(b.pickupWindow.start).getTime()
         );
       }
-
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [loads, searchTerm, sortOption, statusFilter]);
@@ -123,7 +116,6 @@ export function FreightOwnerLoadsPage() {
       </section>
     );
   }
-
   return (
     <section className="freight-loads-page">
       <header className="freight-loads-page__header">
@@ -140,7 +132,6 @@ export function FreightOwnerLoadsPage() {
           Post new load
         </Link>
       </header>
-
       {loads.length > 0 && (
         <div className="freight-loads-page__summary" aria-label="Load summary">
           <article className="freight-loads-page__summary-card">
@@ -152,7 +143,6 @@ export function FreightOwnerLoadsPage() {
             <span>Open</span>
             <strong>{summary.open}</strong>
           </article>
-
           <article className="freight-loads-page__summary-card">
             <span>Active</span>
             <strong>{summary.active}</strong>
@@ -164,7 +154,6 @@ export function FreightOwnerLoadsPage() {
           </article>
         </div>
       )}
-
       {loads.length === 0 ? (
         <div className="freight-loads-page__empty">
           <div className="freight-loads-page__empty-icon" aria-hidden="true">
@@ -177,7 +166,6 @@ export function FreightOwnerLoadsPage() {
             Once you post your first cargo load, it will appear here together
             with its route, pickup window and current status.
           </p>
-
           <Link
             className="freight-loads-page__primary-action"
             to={ROUTES.freightOwnerNewLoad}
@@ -190,7 +178,6 @@ export function FreightOwnerLoadsPage() {
           <div className="freight-loads-page__toolbar">
             <div className="freight-loads-page__search">
               <label htmlFor="load-search">Search loads</label>
-
               <input
                 id="load-search"
                 type="search"
@@ -202,7 +189,6 @@ export function FreightOwnerLoadsPage() {
 
             <div className="freight-loads-page__filter">
               <label htmlFor="load-status">Status</label>
-
               <select
                 id="load-status"
                 value={statusFilter}
@@ -211,7 +197,6 @@ export function FreightOwnerLoadsPage() {
                 }
               >
                 <option value="all">All statuses</option>
-
                 <option value="draft">Draft</option>
                 <option value="open">Open</option>
                 <option value="matched">Matched</option>
@@ -223,7 +208,6 @@ export function FreightOwnerLoadsPage() {
 
             <div className="freight-loads-page__filter">
               <label htmlFor="load-sort">Sort by</label>
-
               <select
                 id="load-sort"
                 value={sortOption}
@@ -239,7 +223,6 @@ export function FreightOwnerLoadsPage() {
               </select>
             </div>
           </div>
-
           <div className="freight-loads-page__results-heading">
             <p>
               <strong>{filteredLoads.length}</strong>{" "}
@@ -252,7 +235,6 @@ export function FreightOwnerLoadsPage() {
               <h3>No matching loads</h3>
 
               <p>Try changing your search term or status filter.</p>
-
               <button
                 type="button"
                 onClick={() => {
@@ -283,7 +265,6 @@ export function FreightOwnerLoadsPage() {
     </section>
   );
 }
-
 interface LoadCardProps {
   load: Load;
   vehicleLabel: string;
@@ -301,7 +282,6 @@ function LoadCard({ load, vehicleLabel }: LoadCardProps) {
               {STATUS_LABELS[load.status]}
             </span>
           </div>
-
           <p className="freight-loads-page__created">
             Posted {formatDateTime(load.createdAt)}
           </p>
@@ -314,7 +294,6 @@ function LoadCard({ load, vehicleLabel }: LoadCardProps) {
           <strong>{load.origin.city}</strong>
           <small>{load.origin.province}</small>
         </div>
-
         <div className="freight-loads-page__route-line" aria-hidden="true">
           <span />
           <div />
@@ -327,7 +306,6 @@ function LoadCard({ load, vehicleLabel }: LoadCardProps) {
           <small>{load.destination.province}</small>
         </div>
       </div>
-
       <div className="freight-loads-page__details">
         <div>
           <span>Cargo</span>
@@ -336,7 +314,12 @@ function LoadCard({ load, vehicleLabel }: LoadCardProps) {
 
         <div>
           <span>Weight</span>
-          <strong>{load.weightKg.toLocaleString("en-ZA")} kg</strong>
+          <strong>
+            {(load.weightKg / 1_000).toLocaleString("en-ZA", {
+              maximumFractionDigits: 2,
+            })}{" "}
+            tonnes
+          </strong>
         </div>
 
         <div>
@@ -349,7 +332,6 @@ function LoadCard({ load, vehicleLabel }: LoadCardProps) {
           <strong>{vehicleLabel}</strong>
         </div>
       </div>
-
       <div className="freight-loads-page__pickup">
         <div>
           <span>Pickup window</span>
