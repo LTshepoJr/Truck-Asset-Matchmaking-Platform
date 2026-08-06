@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "../../styles/transporter-css/TransporterMatchesPage.css";
 
@@ -98,6 +98,7 @@ function resolveTransporterMatches(transporterId: string): ResolvedMatch[] {
 
 export function TransporterMatchesPage() {
   const session = getCurrentSession();
+  const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("recommended");
@@ -189,16 +190,19 @@ export function TransporterMatchesPage() {
       if (pendingDecision.decision === "accept") {
         const result = acceptMatch(pendingDecision.matchId, session.id);
 
-        setNotice(
-          `Load accepted. Contract ${result.receipt.contractId} and trip ${result.trip.id} were created.`,
+        setPendingDecision(null);
+        navigate(
+          `${ROUTES.transporterReceipts}/${encodeURIComponent(
+            result.match.id,
+          )}`,
         );
-      } else {
-        rejectMatch(pendingDecision.matchId, session.id);
-        setNotice(
-          "Load recommendation rejected and recorded in the audit trail.",
-        );
+        return;
       }
 
+      rejectMatch(pendingDecision.matchId, session.id);
+      setNotice(
+        "Load recommendation rejected and recorded in the audit trail.",
+      );
       setPendingDecision(null);
       forceRefresh((value) => value + 1);
     } catch (caughtError) {
@@ -356,6 +360,8 @@ export function TransporterMatchesPage() {
               match.status === "recommended" &&
               load.status === "open" &&
               truck.status === "available";
+            const hasReceipt =
+              match.status === "accepted" || match.status === "completed";
             const isBusy = busyMatchId === match.id;
 
             const rules = [
@@ -524,6 +530,15 @@ export function TransporterMatchesPage() {
                         Accept load
                       </button>
                     </div>
+                  ) : hasReceipt ? (
+                    <Link
+                      className="transporter-matches__secondary-action"
+                      to={`${ROUTES.transporterReceipts}/${encodeURIComponent(
+                        match.id,
+                      )}`}
+                    >
+                      View receipt
+                    </Link>
                   ) : (
                     <span className="transporter-load-match-card__locked">
                       {match.status === "recommended"
