@@ -1,7 +1,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import "../../styles/FreightOwnerTrackingPage.css";
+import "../../styles/freight-owner-css/FreightOwnerTrackingPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";

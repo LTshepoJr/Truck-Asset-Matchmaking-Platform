@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import "../../styles/FreightOwnerRatingsPage.css";
+import "../../styles/freight-owner-css/FreightOwnerRatingsPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";

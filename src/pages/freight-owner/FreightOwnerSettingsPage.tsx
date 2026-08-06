@@ -1,7 +1,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 
-import "../../styles/FreightOwnerSettingsPage.css";
+import "../../styles/freight-owner-css/FreightOwnerSettingsPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import {

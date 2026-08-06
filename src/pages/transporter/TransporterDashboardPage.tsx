@@ -1,4 +1,4 @@
-import "../../styles/TransporterDashboardPage.css";
+import "../../styles/transporter-css/TransporterDashboardPage.css";
 import { getCurrentSession } from "../../services/authService";
 import {
   getAuditEvents,

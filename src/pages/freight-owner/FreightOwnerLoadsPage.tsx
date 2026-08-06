@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import "../../styles/FreightOwnerLoadsPage.css";
+import "../../styles/freight-owner-css/FreightOwnerLoadsPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";

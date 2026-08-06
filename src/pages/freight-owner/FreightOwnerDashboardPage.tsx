@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import "../../styles/FreightOwnerDashboardPage.css";
+import "../../styles/freight-owner-css/FreightOwnerDashboardPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";

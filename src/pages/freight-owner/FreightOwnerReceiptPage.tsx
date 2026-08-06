@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import "../../styles/FreightOwnerReceiptPage.css";
+import "../../styles/freight-owner-css/FreightOwnerReceiptPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";

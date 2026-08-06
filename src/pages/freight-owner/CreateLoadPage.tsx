@@ -1,7 +1,7 @@
 import { useMemo, useState, type SubmitEvent } from "react";
 import { Link } from "react-router-dom";
 
-import "../../styles/CreateLoadPage.css";
+import "../../styles/freight-owner-css/CreateLoadPage.css";
 
 import { ROUTES } from "../../routes/paths";
 import { getCurrentSession } from "../../services/authService";
