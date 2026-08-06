@@ -6,6 +6,8 @@ import LoginPage from "../pages/auth/LoginPage";
 import { FreightOwnerDashboardPage } from "../pages/freight-owner/FreightOwnerDashboardPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { TransporterDashboardPage } from "../pages/transporter/TransporterDashboardPage";
+import { TransporterTrucksPage } from "../pages/transporter/TransporterTrucksPage";
+import { CreateTruckPage } from "../pages/transporter/CreateTruckPage";
 import { ROUTES } from "./paths";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
@@ -50,6 +52,14 @@ const transporterNavigation = [
     label: "Dashboard",
     to: ROUTES.transporter,
   },
+  {
+    label: "My Trucks",
+    to: ROUTES.transporterTrucks,
+  },
+  {
+    label: "Post Truck",
+    to: ROUTES.transporterNewTruck,
+  },
 ];
 
 const adminNavigation = [
@@ -69,11 +79,9 @@ export function AppRoutes() {
       <Route path={ROUTES.login} element={<LoginPage />} />
 
       <Route path={ROUTES.register} element={<RegisterPage />} />
-
       <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
 
       <Route path={ROUTES.resetPassword} element={<ResetPasswordPage />} />
-
       {/* Freight Owner routes */}
       <Route element={<ProtectedRoute requiredRole="freight-owner" />}>
         <Route
@@ -88,7 +96,6 @@ export function AppRoutes() {
           <Route index element={<FreightOwnerDashboardPage />} />
 
           <Route path="loads" element={<FreightOwnerLoadsPage />} />
-
           <Route path="loads/new" element={<CreateLoadPage />} />
 
           <Route path="matches" element={<FreightOwnerMatchesPage />} />
@@ -101,11 +108,9 @@ export function AppRoutes() {
           <Route path="tracking" element={<FreightOwnerTrackingPage />} />
 
           <Route path="ratings" element={<FreightOwnerRatingsPage />} />
-
           <Route path="settings" element={<FreightOwnerSettingsPage />} />
         </Route>
       </Route>
-
       {/* Transporter routes */}
       <Route element={<ProtectedRoute requiredRole="transporter" />}>
         <Route
@@ -118,9 +123,11 @@ export function AppRoutes() {
           }
         >
           <Route index element={<TransporterDashboardPage />} />
+          <Route path="trucks" element={<TransporterTrucksPage />} />
+          <Route path="trucks/new" element={<CreateTruckPage />} />
+          <Route path="trucks/:truckId/edit" element={<CreateTruckPage />} />
         </Route>
       </Route>
-
       {/* Administrator routes */}
       <Route element={<ProtectedRoute requiredRole="admin" />}>
         <Route
