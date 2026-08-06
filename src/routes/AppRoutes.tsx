@@ -9,6 +9,7 @@ import { TransporterDashboardPage } from "../pages/transporter/TransporterDashbo
 import { TransporterTrucksPage } from "../pages/transporter/TransporterTrucksPage";
 import { CreateTruckPage } from "../pages/transporter/CreateTruckPage";
 import { TransporterMatchesPage } from "../pages/transporter/TransporterMatchesPage";
+import { TransporterReceiptPage } from "../pages/transporter/TransporterReceiptPage";
 import { ROUTES } from "./paths";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
@@ -128,6 +129,10 @@ export function AppRoutes() {
           <Route path="trucks/new" element={<CreateTruckPage />} />
           <Route path="trucks/:truckId/edit" element={<CreateTruckPage />} />
           <Route path="matches" element={<TransporterMatchesPage />} />
+          <Route
+            path="receipts/:matchId"
+            element={<TransporterReceiptPage />}
+          />
         </Route>
       </Route>
 
