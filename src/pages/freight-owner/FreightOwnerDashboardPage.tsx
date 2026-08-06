@@ -15,7 +15,6 @@ import {
   getTruckById,
   getUserById,
 } from "../../services/mockDb";
-
 import type {
   Load,
   LoadStatus,
@@ -35,7 +34,6 @@ const LOAD_STATUS_LABELS: Record<LoadStatus, string> = {
   completed: "Completed",
   cancelled: "Cancelled",
 };
-
 const TRIP_STATUS_LABELS: Record<TripStatus, string> = {
   confirmed: "Confirmed",
   at_pickup: "At pickup",
@@ -55,7 +53,6 @@ interface DashboardActivity {
   timestamp: string;
   to: string;
 }
-
 interface ActiveTripDetails {
   trip: Trip;
   match: Match;
@@ -71,7 +68,6 @@ function formatDateTime(value: string): string {
     timeZone: "Africa/Johannesburg",
   }).format(new Date(value));
 }
-
 function formatShortDate(value: string): string {
   return new Intl.DateTimeFormat("en-ZA", {
     day: "2-digit",
@@ -89,7 +85,6 @@ function getFirstName(name: string | undefined): string {
 
   return normalizedName.split(/\s+/)[0];
 }
-
 function getLoadStatusClass(status: LoadStatus): string {
   return `freight-dashboard__status freight-dashboard__status--${status.replace(
     "_",
@@ -107,7 +102,6 @@ function getActivitySymbol(kind: ActivityKind): string {
 
   return symbols[kind];
 }
-
 function buildActivity(
   loads: Load[],
   matches: Match[],
@@ -126,7 +120,6 @@ function buildActivity(
       to: ROUTES.freightOwnerLoads,
     });
   }
-
   for (const match of matches) {
     const load = getLoadById(match.loadId);
 
@@ -144,34 +137,23 @@ function buildActivity(
         to: ROUTES.freightOwnerMatches,
       });
     }
-
-    if (
-      match.decision &&
-      match.decision.decision !== "rule_rejected"
-    ) {
-      const accepted =
-        match.decision.decision === "accepted";
-
+    if (match.decision && match.decision.decision !== "rule_rejected") {
+      const accepted = match.decision.decision === "accepted";
       activities.push({
         id: `match-decision-${match.id}`,
         kind: "match",
-        title: accepted
-          ? "Truck match accepted"
-          : "Truck match rejected",
+        title: accepted ? "Truck match accepted" : "Truck match rejected",
         detail: `${load.origin.city} to ${load.destination.city} · ${match.score}/100`,
         timestamp: match.decision.timestamp,
         to: ROUTES.freightOwnerMatches,
       });
     }
   }
-
   for (const trip of trips) {
     activities.push({
       id: `trip-${trip.id}-${trip.lastUpdatedAt}`,
       kind: "trip",
-      title: `Trip ${TRIP_STATUS_LABELS[
-        trip.status
-      ].toLowerCase()}`,
+      title: `Trip ${TRIP_STATUS_LABELS[trip.status].toLowerCase()}`,
       detail: `${trip.origin} to ${trip.destination} · ${trip.progressPercent}% complete`,
       timestamp: trip.lastUpdatedAt,
       to: `${ROUTES.freightOwnerTracking}?tripId=${encodeURIComponent(
@@ -179,11 +161,8 @@ function buildActivity(
       )}`,
     });
   }
-
   for (const rating of ratings) {
-    const reviewedUser = getUserById(
-      rating.reviewedUserId,
-    );
+    const reviewedUser = getUserById(rating.reviewedUserId);
 
     activities.push({
       id: `rating-${rating.id}`,
@@ -198,19 +177,15 @@ function buildActivity(
       )}`,
     });
   }
-
   return activities
     .sort(
       (a, b) =>
-        new Date(b.timestamp).getTime() -
-        new Date(a.timestamp).getTime(),
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )
     .slice(0, 6);
 }
 
-function resolveActiveTrip(
-  trips: Trip[],
-): ActiveTripDetails | null {
+function resolveActiveTrip(trips: Trip[]): ActiveTripDetails | null {
   for (const trip of trips) {
     if (trip.status === "completed") {
       continue;
@@ -224,7 +199,6 @@ function resolveActiveTrip(
 
     const load = getLoadById(match.loadId);
     const truck = getTruckById(match.truckId);
-
     if (!load || !truck) {
       continue;
     }
@@ -234,9 +208,7 @@ function resolveActiveTrip(
       match,
       load,
       truck,
-      transporter: getUserById(
-        truck.transporterId,
-      ),
+      transporter: getUserById(truck.transporterId),
     };
   }
 
@@ -245,59 +217,39 @@ function resolveActiveTrip(
 
 export function FreightOwnerDashboardPage() {
   const session = getCurrentSession();
-
-  if (
-    !session ||
-    session.role !== "freight-owner"
-  ) {
+  if (!session || session.role !== "freight-owner") {
     return (
       <section className="freight-dashboard">
-        <div
-          className="freight-dashboard__alert"
-          role="alert"
-        >
-          Your Freight Owner session could not be found.
-          Please sign in again.
+        <div className="freight-dashboard__alert" role="alert">
+          Your Freight Owner session could not be found. Please sign in again.
         </div>
       </section>
     );
   }
-
   const owner = getUserById(session.id);
   const loads = getLoadsByOwner(session.id).sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() -
-      new Date(a.createdAt).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   const matches = loads
     .flatMap((load) => getMatchesForLoad(load.id))
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() -
-        new Date(a.createdAt).getTime(),
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-
   const trips = getTripsByFreightOwner(session.id);
   const ratings = getRatingsByReviewer(session.id);
   const kpis = getFreightOwnerKpis(session.id);
 
-  const activeTrips = trips.filter(
-    (trip) => trip.status !== "completed",
-  );
+  const activeTrips = trips.filter((trip) => trip.status !== "completed");
 
-  const completedTrips = trips.filter(
-    (trip) => trip.status === "completed",
-  );
+  const completedTrips = trips.filter((trip) => trip.status === "completed");
 
-  const ratedTripIds = new Set(
-    ratings.map((rating) => rating.tripId),
-  );
+  const ratedTripIds = new Set(ratings.map((rating) => rating.tripId));
 
   const pendingReviews = completedTrips.filter(
     (trip) => !ratedTripIds.has(trip.id),
   ).length;
-
   const recommendedMatches = matches.filter(
     (match) => match.status === "recommended",
   ).length;
@@ -305,28 +257,18 @@ export function FreightOwnerDashboardPage() {
   const activeTrip = resolveActiveTrip(trips);
   const recentLoads = loads.slice(0, 4);
 
-  const activities = buildActivity(
-    loads,
-    matches,
-    trips,
-    ratings,
-  );
+  const activities = buildActivity(loads, matches, trips, ratings);
 
   return (
     <section className="freight-dashboard">
       <header className="freight-dashboard__hero">
         <div>
-          <p className="freight-dashboard__eyebrow">
-            Freight Owner workspace
-          </p>
-
-          <h2>
-            Welcome back, {getFirstName(owner?.name)}
-          </h2>
+          <p className="freight-dashboard__eyebrow">Freight Owner workspace</p>
+          <h2>Welcome back, {getFirstName(owner?.name)}</h2>
 
           <p>
-            Monitor your loads, truck recommendations
-            and active deliveries from one place.
+            Monitor your loads, truck recommendations and active deliveries from
+            one place.
           </p>
         </div>
 
@@ -338,7 +280,6 @@ export function FreightOwnerDashboardPage() {
           Post a new load
         </Link>
       </header>
-
       <section
         className="freight-dashboard__kpis"
         aria-label="Freight Owner performance summary"
@@ -349,7 +290,6 @@ export function FreightOwnerDashboardPage() {
           detail={`${kpis.completedTrips} completed`}
           symbol="L"
         />
-
         <KpiCard
           label="Open loads"
           value={kpis.openLoads}
@@ -365,34 +305,25 @@ export function FreightOwnerDashboardPage() {
           detail={`${kpis.tripsInTransit} currently in transit`}
           symbol="T"
         />
-
         <KpiCard
           label="Pending reviews"
           value={pendingReviews}
           detail={
-            pendingReviews > 0
-              ? "Feedback is ready"
-              : "All reviews completed"
+            pendingReviews > 0 ? "Feedback is ready" : "All reviews completed"
           }
           symbol="R"
         />
       </section>
-
       <section
         className="freight-dashboard__quick-actions"
         aria-labelledby="quick-actions-title"
       >
         <div className="freight-dashboard__section-heading">
           <div>
-            <p className="freight-dashboard__section-kicker">
-              Shortcuts
-            </p>
-            <h3 id="quick-actions-title">
-              Quick actions
-            </h3>
+            <p className="freight-dashboard__section-kicker">Shortcuts</p>
+            <h3 id="quick-actions-title">Quick actions</h3>
           </div>
         </div>
-
         <div className="freight-dashboard__action-grid">
           <QuickAction
             to={ROUTES.freightOwnerNewLoad}
@@ -400,7 +331,6 @@ export function FreightOwnerDashboardPage() {
             title="Post load"
             description="Create a cargo requirement and open it for matching."
           />
-
           <QuickAction
             to={ROUTES.freightOwnerMatches}
             symbol="M"
@@ -409,7 +339,6 @@ export function FreightOwnerDashboardPage() {
               recommendedMatches === 1 ? "" : "s"
             } currently waiting.`}
           />
-
           <QuickAction
             to={ROUTES.freightOwnerTracking}
             symbol="T"
@@ -418,7 +347,6 @@ export function FreightOwnerDashboardPage() {
               activeTrips.length === 1 ? "" : "s"
             } across your loads.`}
           />
-
           <QuickAction
             to={ROUTES.freightOwnerRatings}
             symbol="R"
@@ -429,84 +357,52 @@ export function FreightOwnerDashboardPage() {
           />
         </div>
       </section>
-
       <div className="freight-dashboard__main-grid">
         <section className="freight-dashboard__panel">
           <div className="freight-dashboard__panel-heading">
             <div>
-              <p className="freight-dashboard__section-kicker">
-                Operations
-              </p>
+              <p className="freight-dashboard__section-kicker">Operations</p>
               <h3>Recent loads</h3>
             </div>
 
-            <Link to={ROUTES.freightOwnerLoads}>
-              View all loads
-            </Link>
+            <Link to={ROUTES.freightOwnerLoads}>View all loads</Link>
           </div>
-
           {recentLoads.length === 0 ? (
             <div className="freight-dashboard__empty">
               <strong>No loads posted yet</strong>
 
               <p>
-                Post your first cargo requirement to
-                begin matching with available trucks.
+                Post your first cargo requirement to begin matching with
+                available trucks.
               </p>
-
-              <Link
-                to={ROUTES.freightOwnerNewLoad}
-              >
-                Post first load
-              </Link>
+              <Link to={ROUTES.freightOwnerNewLoad}>Post first load</Link>
             </div>
           ) : (
             <div className="freight-dashboard__load-list">
               {recentLoads.map((load) => (
-                <article
-                  key={load.id}
-                  className="freight-dashboard__load-row"
-                >
+                <article key={load.id} className="freight-dashboard__load-row">
                   <div className="freight-dashboard__load-date">
-                    <strong>
-                      {formatShortDate(load.createdAt)}
-                    </strong>
+                    <strong>{formatShortDate(load.createdAt)}</strong>
                     <span>{load.id}</span>
                   </div>
-
                   <div className="freight-dashboard__load-main">
                     <div className="freight-dashboard__load-title">
                       <strong>
-                        {load.origin.city} →{" "}
-                        {load.destination.city}
+                        {load.origin.city} → {load.destination.city}
                       </strong>
-
-                      <span
-                        className={getLoadStatusClass(
-                          load.status,
-                        )}
-                      >
-                        {
-                          LOAD_STATUS_LABELS[
-                            load.status
-                          ]
-                        }
+                      <span className={getLoadStatusClass(load.status)}>
+                        {LOAD_STATUS_LABELS[load.status]}
                       </span>
                     </div>
-
                     <p>
                       {load.cargoType} ·{" "}
-                      {load.weightKg.toLocaleString(
-                        "en-ZA",
-                      )}{" "}
-                      kg
+                      {(load.weightKg / 1_000).toLocaleString("en-ZA", {
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      tonnes
                     </p>
-
                     <small>
-                      Pickup{" "}
-                      {formatDateTime(
-                        load.pickupWindow.start,
-                      )}
+                      Pickup {formatDateTime(load.pickupWindow.start)}
                     </small>
                   </div>
                 </article>
@@ -514,16 +410,12 @@ export function FreightOwnerDashboardPage() {
             </div>
           )}
         </section>
-
         <section className="freight-dashboard__panel">
           <div className="freight-dashboard__panel-heading">
             <div>
-              <p className="freight-dashboard__section-kicker">
-                Live delivery
-              </p>
+              <p className="freight-dashboard__section-kicker">Live delivery</p>
               <h3>Active trip</h3>
             </div>
-
             {activeTrip && (
               <Link
                 to={`${ROUTES.freightOwnerTracking}?tripId=${encodeURIComponent(
@@ -534,7 +426,6 @@ export function FreightOwnerDashboardPage() {
               </Link>
             )}
           </div>
-
           {activeTrip ? (
             <ActiveTripCard details={activeTrip} />
           ) : (
@@ -547,26 +438,20 @@ export function FreightOwnerDashboardPage() {
               </div>
 
               <strong>No active delivery</strong>
-
               <p>
-                An active trip will appear here after an
-                eligible truck match is accepted.
+                An active trip will appear here after an eligible truck match is
+                accepted.
               </p>
 
-              <Link to={ROUTES.freightOwnerMatches}>
-                Review truck matches
-              </Link>
+              <Link to={ROUTES.freightOwnerMatches}>Review truck matches</Link>
             </div>
           )}
         </section>
       </div>
-
       <section className="freight-dashboard__panel freight-dashboard__activity-panel">
         <div className="freight-dashboard__panel-heading">
           <div>
-            <p className="freight-dashboard__section-kicker">
-              Account history
-            </p>
+            <p className="freight-dashboard__section-kicker">Account history</p>
             <h3>Recent activity</h3>
           </div>
 
@@ -575,14 +460,11 @@ export function FreightOwnerDashboardPage() {
             {activities.length === 1 ? "" : "s"}
           </span>
         </div>
-
         {activities.length === 0 ? (
           <div className="freight-dashboard__empty">
             <strong>No account activity yet</strong>
-
             <p>
-              Load, match, tracking and rating activity
-              will be listed here.
+              Load, match, tracking and rating activity will be listed here.
             </p>
           </div>
         ) : (
@@ -596,18 +478,12 @@ export function FreightOwnerDashboardPage() {
                   >
                     {getActivitySymbol(activity.kind)}
                   </span>
-
                   <span className="freight-dashboard__activity-copy">
                     <strong>{activity.title}</strong>
                     <span>{activity.detail}</span>
                   </span>
-
-                  <time
-                    dateTime={activity.timestamp}
-                  >
-                    {formatDateTime(
-                      activity.timestamp,
-                    )}
+                  <time dateTime={activity.timestamp}>
+                    {formatDateTime(activity.timestamp)}
                   </time>
                 </Link>
               </li>
@@ -618,7 +494,6 @@ export function FreightOwnerDashboardPage() {
     </section>
   );
 }
-
 function KpiCard({
   label,
   value,
@@ -635,14 +510,10 @@ function KpiCard({
       <div className="freight-dashboard__kpi-top">
         <span>{label}</span>
 
-        <span
-          className="freight-dashboard__kpi-symbol"
-          aria-hidden="true"
-        >
+        <span className="freight-dashboard__kpi-symbol" aria-hidden="true">
           {symbol}
         </span>
       </div>
-
       <strong>{value}</strong>
       <p>{detail}</p>
     </article>
@@ -661,17 +532,13 @@ function QuickAction({
   description: string;
 }) {
   return (
-    <Link
-      className="freight-dashboard__quick-action"
-      to={to}
-    >
+    <Link className="freight-dashboard__quick-action" to={to}>
       <span
         className="freight-dashboard__quick-action-symbol"
         aria-hidden="true"
       >
         {symbol}
       </span>
-
       <span>
         <strong>{title}</strong>
         <small>{description}</small>
@@ -687,21 +554,15 @@ function QuickAction({
   );
 }
 
-function ActiveTripCard({
-  details,
-}: {
-  details: ActiveTripDetails;
-}) {
+function ActiveTripCard({ details }: { details: ActiveTripDetails }) {
   const { trip, load, truck, transporter } = details;
-
   return (
     <article className="freight-dashboard__trip-card">
       <div className="freight-dashboard__trip-header">
         <div>
           <span>{trip.id}</span>
           <strong>
-            {load.origin.city} →{" "}
-            {load.destination.city}
+            {load.origin.city} → {load.destination.city}
           </strong>
         </div>
 
@@ -709,12 +570,10 @@ function ActiveTripCard({
           {TRIP_STATUS_LABELS[trip.status]}
         </span>
       </div>
-
       <div className="freight-dashboard__trip-progress-copy">
         <span>Delivery progress</span>
         <strong>{trip.progressPercent}%</strong>
       </div>
-
       <div
         className="freight-dashboard__progress"
         role="progressbar"
@@ -729,13 +588,10 @@ function ActiveTripCard({
           }}
         />
       </div>
-
       <dl className="freight-dashboard__trip-details">
         <div>
           <dt>Transporter</dt>
-          <dd>
-            {transporter?.company ?? "Transporter"}
-          </dd>
+          <dd>{transporter?.company ?? "Transporter"}</dd>
         </div>
 
         <div>
@@ -747,12 +603,9 @@ function ActiveTripCard({
           <dt>Registration</dt>
           <dd>{truck.registrationDisplay}</dd>
         </div>
-
         <div>
           <dt>Last updated</dt>
-          <dd>
-            {formatDateTime(trip.lastUpdatedAt)}
-          </dd>
+          <dd>{formatDateTime(trip.lastUpdatedAt)}</dd>
         </div>
       </dl>
     </article>
