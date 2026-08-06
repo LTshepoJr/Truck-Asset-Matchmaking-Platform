@@ -15,7 +15,6 @@ import {
   getVehicleTypes,
   rejectMatch,
 } from "../../services/mockDb";
-
 import type { Load, Match, Truck } from "../../types/tamp";
 
 const RULE_LABELS: Array<[keyof Match["ruleChecks"], string]> = [
@@ -45,6 +44,12 @@ function formatDateTime(value: string): string {
   }).format(new Date(value));
 }
 
+function formatTonnes(valueKg: number): string {
+  return (valueKg / 1_000).toLocaleString("en-ZA", {
+    maximumFractionDigits: 2,
+  });
+}
+
 function sortMatches(matches: Match[]): Match[] {
   return [...matches].sort((a, b) => b.score - a.score);
 }
@@ -65,7 +70,6 @@ export function FreightOwnerMatchesPage() {
   const session = getCurrentSession();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const sessionId = session?.id;
   const sessionRole = session?.role;
 
@@ -86,11 +90,9 @@ export function FreightOwnerMatchesPage() {
     "";
 
   const [selectedLoadId, setSelectedLoadId] = useState(initialLoadId);
-
   const [matches, setMatches] = useState<Match[]>(() =>
     initialLoadId ? sortMatches(getMatchesForLoad(initialLoadId)) : [],
   );
-
   const [isGenerating, setIsGenerating] = useState(false);
   const [decisionRequest, setDecisionRequest] =
     useState<DecisionRequest | null>(null);
@@ -194,7 +196,6 @@ export function FreightOwnerMatchesPage() {
 
     try {
       const createdMatches = generateMatchesForLoad(selectedLoad.id);
-
       refreshSelectedLoadData();
 
       setNotice(
@@ -236,12 +237,10 @@ export function FreightOwnerMatchesPage() {
             result.match.id,
           )}`,
         );
-
         return;
       }
 
       rejectMatch(decisionRequest.match.id, sessionId);
-
       refreshSelectedLoadData();
       setDecisionRequest(null);
       setNotice(
@@ -273,7 +272,6 @@ export function FreightOwnerMatchesPage() {
       <header className="freight-matches-page__header">
         <div>
           <h2>Matches</h2>
-
           <p>
             Compare available trucks using transparent capacity, compatibility,
             availability and location checks.
@@ -306,12 +304,10 @@ export function FreightOwnerMatchesPage() {
       {ownerLoads.length === 0 ? (
         <div className="freight-matches-page__empty">
           <h3>No loads available for matching</h3>
-
           <p>
             Post a cargo load first, then return here to find compatible
             available trucks.
           </p>
-
           <Link
             className="freight-matches-page__primary-action"
             to={ROUTES.freightOwnerNewLoad}
@@ -324,7 +320,6 @@ export function FreightOwnerMatchesPage() {
           <section className="freight-matches-page__controls">
             <div className="freight-matches-page__field">
               <label htmlFor="match-load">Load</label>
-
               <select
                 id="match-load"
                 value={selectedLoadId}
@@ -354,7 +349,6 @@ export function FreightOwnerMatchesPage() {
           {matches.length === 0 ? (
             <div className="freight-matches-page__empty">
               <h3>No matching run has been completed</h3>
-
               <p>
                 Generate recommendations to compare this load with the available
                 trucks in the mock database.
@@ -375,7 +369,6 @@ export function FreightOwnerMatchesPage() {
               <div className="freight-matches-page__results-heading">
                 <div>
                   <h3>Eligible trucks</h3>
-
                   <p>
                     {eligibleMatches.length} eligible match
                     {eligibleMatches.length === 1 ? "" : "es"}
@@ -386,7 +379,6 @@ export function FreightOwnerMatchesPage() {
               {eligibleMatches.length === 0 ? (
                 <div className="freight-matches-page__empty freight-matches-page__empty--compact">
                   <h3>No eligible trucks found</h3>
-
                   <p>
                     The evaluated trucks failed one or more required matching
                     rules. Review the rejected candidates below to see why.
@@ -471,7 +463,7 @@ function SelectedLoadSummary({ load }: { load: Load }) {
       <div>
         <span>Required capacity</span>
         <strong>
-          {load.weightKg.toLocaleString("en-ZA")} kg / {load.volumeM3} m³
+          {formatTonnes(load.weightKg)} tonnes / {load.volumeM3} m³
         </strong>
       </div>
 
@@ -525,7 +517,6 @@ function MatchCard({
         <div>
           <div className="freight-matches-page__match-heading">
             <p className="freight-matches-page__match-id">{match.id}</p>
-
             <span
               className={`freight-matches-page__match-status freight-matches-page__match-status--${match.status}`}
             >
@@ -534,7 +525,6 @@ function MatchCard({
           </div>
 
           <h4>{truck.displayName}</h4>
-
           <p>
             {transporterName} · {truck.registrationDisplay}
           </p>
@@ -562,8 +552,7 @@ function MatchCard({
         <div>
           <dt>Capacity</dt>
           <dd>
-            {truck.capacityKg.toLocaleString("en-ZA")} kg / {truck.capacityM3}{" "}
-            m³
+            {formatTonnes(truck.capacityKg)} tonnes / {truck.capacityM3} m³
           </dd>
         </div>
 
@@ -597,7 +586,6 @@ function MatchCard({
               }`}
             >
               <span aria-hidden="true">{rule.passed ? "✓" : "×"}</span>
-
               <div>
                 <strong>{label}</strong>
                 <p>{rule.reason}</p>
