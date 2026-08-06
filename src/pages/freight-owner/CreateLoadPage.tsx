@@ -19,25 +19,23 @@ import type {
   LookupLocation,
   VehicleTypeId,
 } from "../../types/tamp";
-
 interface LoadFormData {
   originCity: string;
   destinationCity: string;
   cargoType: CargoType | "";
   description: string;
-  weightKg: string;
+  weightTonnes: string;
   volumeM3: string;
   requiredVehicleType: VehicleTypeId | "";
   pickupStart: string;
   pickupEnd: string;
 }
-
 interface LoadFormErrors {
   originCity?: string;
   destinationCity?: string;
   cargoType?: string;
   description?: string;
-  weightKg?: string;
+  weightTonnes?: string;
   volumeM3?: string;
   requiredVehicleType?: string;
   pickupStart?: string;
@@ -50,13 +48,12 @@ const INITIAL_FORM_DATA: LoadFormData = {
   destinationCity: "",
   cargoType: "",
   description: "",
-  weightKg: "",
+  weightTonnes: "",
   volumeM3: "",
   requiredVehicleType: "",
   pickupStart: "",
   pickupEnd: "",
 };
-
 function toLocation(location: LookupLocation): Location {
   return {
     city: location.city,
@@ -72,7 +69,6 @@ function formatDateTime(value: string): string {
     timeStyle: "short",
   }).format(new Date(value));
 }
-
 export function CreateLoadPage() {
   const locations = useMemo(() => getLookupLocations(), []);
   const cargoTypes = useMemo(() => getCargoTypes(), []);
@@ -83,7 +79,6 @@ export function CreateLoadPage() {
   const [errors, setErrors] = useState<LoadFormErrors>({});
   const [createdLoad, setCreatedLoad] = useState<Load | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const compatibleVehicleTypes = useMemo(() => {
     if (!formData.cargoType) {
       return vehicleTypes;
@@ -101,7 +96,6 @@ export function CreateLoadPage() {
       general: undefined,
     }));
   };
-
   const handleCargoTypeChange = (cargoType: CargoType | "") => {
     setFormData((current) => {
       const selectedVehicle = vehicleTypes.find(
@@ -110,7 +104,6 @@ export function CreateLoadPage() {
 
       const vehicleStillCompatible =
         cargoType && selectedVehicle?.compatibleCargo.includes(cargoType);
-
       return {
         ...current,
         cargoType,
@@ -130,7 +123,6 @@ export function CreateLoadPage() {
     if (!formData.originCity) {
       newErrors.originCity = "Select an origin.";
     }
-
     if (!formData.destinationCity) {
       newErrors.destinationCity = "Select a destination.";
     } else if (
@@ -148,17 +140,15 @@ export function CreateLoadPage() {
     if (!formData.description.trim()) {
       newErrors.description = "Enter a cargo description.";
     }
+    const weightTonnes = Number(formData.weightTonnes);
 
-    const weightKg = Number(formData.weightKg);
-
-    if (!formData.weightKg.trim()) {
-      newErrors.weightKg = "Enter the load weight.";
-    } else if (!Number.isFinite(weightKg) || weightKg <= 0) {
-      newErrors.weightKg = "Weight must be greater than zero.";
+    if (!formData.weightTonnes.trim()) {
+      newErrors.weightTonnes = "Enter the load weight.";
+    } else if (!Number.isFinite(weightTonnes) || weightTonnes <= 0) {
+      newErrors.weightTonnes = "Weight must be greater than zero.";
     }
 
     const volumeM3 = Number(formData.volumeM3);
-
     if (!formData.volumeM3.trim()) {
       newErrors.volumeM3 = "Enter the load volume.";
     } else if (!Number.isFinite(volumeM3) || volumeM3 <= 0) {
@@ -172,7 +162,6 @@ export function CreateLoadPage() {
     if (!formData.pickupStart) {
       newErrors.pickupStart = "Select the pickup window start.";
     }
-
     if (!formData.pickupEnd) {
       newErrors.pickupEnd = "Select the pickup window end.";
     }
@@ -185,7 +174,6 @@ export function CreateLoadPage() {
         newErrors.pickupEnd = "Pickup window end must be after the start time.";
       }
     }
-
     if (formData.cargoType && formData.requiredVehicleType) {
       const selectedVehicle = vehicleTypes.find(
         (vehicleType) => vehicleType.id === formData.requiredVehicleType,
@@ -202,7 +190,6 @@ export function CreateLoadPage() {
 
     return newErrors;
   };
-
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -216,7 +203,6 @@ export function CreateLoadPage() {
     }
 
     const session = getCurrentSession();
-
     if (!session || session.role !== "freight-owner") {
       setErrors({
         general:
@@ -232,7 +218,6 @@ export function CreateLoadPage() {
     const destination = locations.find(
       (location) => location.city === formData.destinationCity,
     );
-
     if (!origin || !destination) {
       setErrors({
         general:
@@ -246,14 +231,13 @@ export function CreateLoadPage() {
     }
 
     setIsSubmitting(true);
-
     try {
       const load = createLoad(session.id, {
         origin: toLocation(origin),
         destination: toLocation(destination),
         cargoType: formData.cargoType,
         description: formData.description.trim(),
-        weightKg: Number(formData.weightKg),
+        weightKg: Number(formData.weightTonnes) * 1_000,
         volumeM3: Number(formData.volumeM3),
         requiredVehicleType: formData.requiredVehicleType,
         pickupWindow: {
@@ -261,7 +245,6 @@ export function CreateLoadPage() {
           end: new Date(formData.pickupEnd).toISOString(),
         },
       });
-
       setCreatedLoad(load);
       setFormData(INITIAL_FORM_DATA);
       setErrors({});
@@ -284,13 +267,11 @@ export function CreateLoadPage() {
     setFormData(INITIAL_FORM_DATA);
     setErrors({});
   };
-
   const createdVehicleType = createdLoad
     ? vehicleTypes.find(
         (vehicleType) => vehicleType.id === createdLoad.requiredVehicleType,
       )
     : undefined;
-
   return (
     <section className="create-load-page" aria-labelledby="create-load-title">
       {createdLoad ? (
@@ -304,7 +285,6 @@ export function CreateLoadPage() {
               <p className="create-load-page__eyebrow">Load created</p>
 
               <h3>{createdLoad.id}</h3>
-
               <p>Your load has been saved and is now open for matchmaking.</p>
             </div>
           </div>
@@ -318,7 +298,6 @@ export function CreateLoadPage() {
                 </span>
               </dd>
             </div>
-
             <div>
               <dt>Route</dt>
               <dd>
@@ -333,9 +312,13 @@ export function CreateLoadPage() {
 
             <div>
               <dt>Weight</dt>
-              <dd>{createdLoad.weightKg.toLocaleString("en-ZA")} kg</dd>
+              <dd>
+                {(createdLoad.weightKg / 1_000).toLocaleString("en-ZA", {
+                  maximumFractionDigits: 2,
+                })}{" "}
+                tonnes
+              </dd>
             </div>
-
             <div>
               <dt>Volume</dt>
               <dd>{createdLoad.volumeM3} m³</dd>
@@ -347,7 +330,6 @@ export function CreateLoadPage() {
                 {createdVehicleType?.label ?? createdLoad.requiredVehicleType}
               </dd>
             </div>
-
             <div className="create-load-page__summary-wide">
               <dt>Pickup window</dt>
               <dd>
@@ -356,7 +338,6 @@ export function CreateLoadPage() {
               </dd>
             </div>
           </dl>
-
           <div className="create-load-page__actions">
             <Link
               className="create-load-page__secondary-action"
@@ -364,7 +345,6 @@ export function CreateLoadPage() {
             >
               View my loads
             </Link>
-
             <button type="button" onClick={handlePostAnother}>
               Post another load
             </button>
@@ -380,7 +360,6 @@ export function CreateLoadPage() {
               these details when finding compatible available trucks.
             </p>
           </header>
-
           <form
             className="create-load-page__form"
             onSubmit={handleSubmit}
@@ -394,7 +373,6 @@ export function CreateLoadPage() {
 
             <fieldset className="create-load-page__section">
               <legend>Route</legend>
-
               <p className="create-load-page__section-description">
                 Where should the cargo be collected and delivered?
               </p>
@@ -402,7 +380,6 @@ export function CreateLoadPage() {
               <div className="create-load-page__grid">
                 <div className="create-load-page__field">
                   <label htmlFor="load-origin">Origin</label>
-
                   <select
                     id="load-origin"
                     value={formData.originCity}
@@ -411,7 +388,6 @@ export function CreateLoadPage() {
                         ...current,
                         originCity: event.target.value,
                       }));
-
                       clearError("originCity");
                     }}
                     aria-invalid={Boolean(errors.originCity)}
@@ -421,7 +397,6 @@ export function CreateLoadPage() {
                     required
                   >
                     <option value="">Select origin</option>
-
                     {locations.map((location) => (
                       <option
                         key={`${location.city}-${location.province}`}
@@ -431,7 +406,6 @@ export function CreateLoadPage() {
                       </option>
                     ))}
                   </select>
-
                   {errors.originCity && (
                     <p
                       id="load-origin-error"
@@ -444,7 +418,6 @@ export function CreateLoadPage() {
 
                 <div className="create-load-page__field">
                   <label htmlFor="load-destination">Destination</label>
-
                   <select
                     id="load-destination"
                     value={formData.destinationCity}
@@ -453,7 +426,6 @@ export function CreateLoadPage() {
                         ...current,
                         destinationCity: event.target.value,
                       }));
-
                       clearError("destinationCity");
                     }}
                     aria-invalid={Boolean(errors.destinationCity)}
@@ -465,7 +437,6 @@ export function CreateLoadPage() {
                     required
                   >
                     <option value="">Select destination</option>
-
                     {locations.map((location) => (
                       <option
                         key={`${location.city}-${location.province}`}
@@ -475,7 +446,6 @@ export function CreateLoadPage() {
                       </option>
                     ))}
                   </select>
-
                   {errors.destinationCity && (
                     <p
                       id="load-destination-error"
@@ -490,7 +460,6 @@ export function CreateLoadPage() {
 
             <fieldset className="create-load-page__section">
               <legend>Cargo details</legend>
-
               <p className="create-load-page__section-description">
                 Describe the cargo and the transport capacity it requires.
               </p>
@@ -498,7 +467,6 @@ export function CreateLoadPage() {
               <div className="create-load-page__grid">
                 <div className="create-load-page__field">
                   <label htmlFor="load-cargo-type">Cargo type</label>
-
                   <select
                     id="load-cargo-type"
                     value={formData.cargoType}
@@ -514,14 +482,12 @@ export function CreateLoadPage() {
                     required
                   >
                     <option value="">Select cargo type</option>
-
                     {cargoTypes.map((cargoType) => (
                       <option key={cargoType} value={cargoType}>
                         {cargoType}
                       </option>
                     ))}
                   </select>
-
                   {errors.cargoType && (
                     <p
                       id="load-cargo-type-error"
@@ -536,7 +502,6 @@ export function CreateLoadPage() {
                   <label htmlFor="load-vehicle-type">
                     Required vehicle type
                   </label>
-
                   <select
                     id="load-vehicle-type"
                     value={formData.requiredVehicleType}
@@ -547,7 +512,6 @@ export function CreateLoadPage() {
                           | VehicleTypeId
                           | "",
                       }));
-
                       clearError("requiredVehicleType");
                     }}
                     disabled={!formData.cargoType}
@@ -564,21 +528,18 @@ export function CreateLoadPage() {
                         ? "Select vehicle type"
                         : "Select cargo type first"}
                     </option>
-
                     {compatibleVehicleTypes.map((vehicleType) => (
                       <option key={vehicleType.id} value={vehicleType.id}>
                         {vehicleType.label}
                       </option>
                     ))}
                   </select>
-
                   <p
                     id="load-vehicle-type-help"
                     className="create-load-page__helper"
                   >
                     Vehicle options are filtered using cargo compatibility.
                   </p>
-
                   {errors.requiredVehicleType && (
                     <p
                       id="load-vehicle-type-error"
@@ -590,43 +551,39 @@ export function CreateLoadPage() {
                 </div>
 
                 <div className="create-load-page__field">
-                  <label htmlFor="load-weight">Weight (kg)</label>
-
+                  <label htmlFor="load-weight">Weight (tonnes)</label>
                   <input
                     id="load-weight"
                     type="number"
-                    min="1"
-                    step="1"
-                    value={formData.weightKg}
+                    min="0.1"
+                    step="0.1"
+                    value={formData.weightTonnes}
                     onChange={(event) => {
                       setFormData((current) => ({
                         ...current,
-                        weightKg: event.target.value,
+                        weightTonnes: event.target.value,
                       }));
-
-                      clearError("weightKg");
+                      clearError("weightTonnes");
                     }}
-                    placeholder="e.g. 18000"
-                    aria-invalid={Boolean(errors.weightKg)}
+                    placeholder="e.g. 18"
+                    aria-invalid={Boolean(errors.weightTonnes)}
                     aria-describedby={
-                      errors.weightKg ? "load-weight-error" : undefined
+                      errors.weightTonnes ? "load-weight-error" : undefined
                     }
                     required
                   />
-
-                  {errors.weightKg && (
+                  {errors.weightTonnes && (
                     <p
                       id="load-weight-error"
                       className="create-load-page__error"
                     >
-                      {errors.weightKg}
+                      {errors.weightTonnes}
                     </p>
                   )}
                 </div>
 
                 <div className="create-load-page__field">
                   <label htmlFor="load-volume">Volume (m³)</label>
-
                   <input
                     id="load-volume"
                     type="number"
@@ -638,7 +595,6 @@ export function CreateLoadPage() {
                         ...current,
                         volumeM3: event.target.value,
                       }));
-
                       clearError("volumeM3");
                     }}
                     placeholder="e.g. 52"
@@ -648,7 +604,6 @@ export function CreateLoadPage() {
                     }
                     required
                   />
-
                   {errors.volumeM3 && (
                     <p
                       id="load-volume-error"
@@ -661,7 +616,6 @@ export function CreateLoadPage() {
 
                 <div className="create-load-page__field create-load-page__field--full">
                   <label htmlFor="load-description">Cargo description</label>
-
                   <textarea
                     id="load-description"
                     value={formData.description}
@@ -670,7 +624,6 @@ export function CreateLoadPage() {
                         ...current,
                         description: event.target.value,
                       }));
-
                       clearError("description");
                     }}
                     placeholder="Briefly describe the cargo, packaging or handling requirements."
@@ -680,7 +633,6 @@ export function CreateLoadPage() {
                     }
                     required
                   />
-
                   {errors.description && (
                     <p
                       id="load-description-error"
@@ -695,7 +647,6 @@ export function CreateLoadPage() {
 
             <fieldset className="create-load-page__section">
               <legend>Pickup window</legend>
-
               <p className="create-load-page__section-description">
                 Specify when the cargo will be ready for collection.
               </p>
@@ -703,7 +654,6 @@ export function CreateLoadPage() {
               <div className="create-load-page__grid">
                 <div className="create-load-page__field">
                   <label htmlFor="load-pickup-start">Pickup from</label>
-
                   <input
                     id="load-pickup-start"
                     type="datetime-local"
@@ -713,7 +663,6 @@ export function CreateLoadPage() {
                         ...current,
                         pickupStart: event.target.value,
                       }));
-
                       clearError("pickupStart");
                       clearError("pickupEnd");
                     }}
@@ -723,7 +672,6 @@ export function CreateLoadPage() {
                     }
                     required
                   />
-
                   {errors.pickupStart && (
                     <p
                       id="load-pickup-start-error"
@@ -736,7 +684,6 @@ export function CreateLoadPage() {
 
                 <div className="create-load-page__field">
                   <label htmlFor="load-pickup-end">Pickup until</label>
-
                   <input
                     id="load-pickup-end"
                     type="datetime-local"
@@ -746,7 +693,6 @@ export function CreateLoadPage() {
                         ...current,
                         pickupEnd: event.target.value,
                       }));
-
                       clearError("pickupEnd");
                     }}
                     aria-invalid={Boolean(errors.pickupEnd)}
@@ -755,7 +701,6 @@ export function CreateLoadPage() {
                     }
                     required
                   />
-
                   {errors.pickupEnd && (
                     <p
                       id="load-pickup-end-error"
@@ -767,7 +712,6 @@ export function CreateLoadPage() {
                 </div>
               </div>
             </fieldset>
-
             <div className="create-load-page__actions">
               <Link
                 className="create-load-page__secondary-action"
