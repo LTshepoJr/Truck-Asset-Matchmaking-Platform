@@ -1,0 +1,245 @@
+.create-truck {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0.25rem 0 2rem;
+  color: #182235;
+}
+
+.create-truck__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.create-truck__header h1,
+.create-truck__state-card h1 {
+  margin: 0;
+}
+
+.create-truck__header p:last-child {
+  max-width: 47rem;
+  margin: 0.45rem 0 0;
+  color: #647083;
+  line-height: 1.65;
+}
+
+.create-truck__eyebrow {
+  margin: 0 0 0.35rem;
+  color: #a40d1b;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.create-truck__header > a,
+.create-truck__state-card a,
+.create-truck__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid #a40d1b;
+  border-radius: 0.7rem;
+  color: #a40d1b;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.create-truck__header > a:hover,
+.create-truck__actions > a:hover {
+  background: var(--color-surface-white-red);
+}
+
+.create-truck__form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 64rem;
+  padding: 1.25rem;
+  border: 1px solid #dce1e8;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(24, 34, 53, 0.06);
+}
+
+.create-truck fieldset {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.1rem;
+  border: 1px solid #e0e5ec;
+  border-radius: 0.85rem;
+}
+
+.create-truck legend {
+  padding: 0 0.45rem;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.create-truck__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.create-truck label,
+.create-truck__cargo {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+}
+
+.create-truck label > span,
+.create-truck__cargo > span {
+  color: #404c60;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.create-truck input,
+.create-truck select {
+  min-height: 2.85rem;
+  width: 100%;
+  border: 1px solid #cbd2dc;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #182235;
+  font: inherit;
+}
+
+.create-truck input {
+  padding: 0.65rem 0.8rem;
+}
+
+.create-truck select {
+  padding: 0.65rem 2.2rem 0.65rem 0.8rem;
+}
+
+.create-truck input[aria-invalid="true"],
+.create-truck select[aria-invalid="true"] {
+  border-color: #bd1d2e;
+  background: #fff8f9;
+}
+
+.create-truck label small {
+  color: #9a1120;
+  font-weight: 700;
+}
+
+.create-truck__cargo {
+  padding: 0.85rem;
+  border-radius: 0.7rem;
+  background: #f5f7fa;
+}
+
+.create-truck__cargo div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.create-truck__cargo small {
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  background: #e7ebf1;
+  color: #4f5b6d;
+  font-weight: 700;
+}
+
+.create-truck__field--wide {
+  grid-column: 1 / -1;
+}
+
+.create-truck__submit-error {
+  padding: 0.85rem 1rem;
+  border: 1px solid #ef9ba4;
+  border-radius: 0.75rem;
+  background: var(--color-surface-white-red);
+  color: #8b1020;
+  font-weight: 800;
+}
+
+.create-truck__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  padding-top: 0.25rem;
+}
+
+.create-truck__actions button {
+  min-height: 2.7rem;
+  min-width: 8.5rem;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: #a40d1b;
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.create-truck__actions button:hover,
+.create-truck__actions button:focus-visible {
+  background: #7e0914;
+}
+
+.create-truck__actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.create-truck input:focus-visible,
+.create-truck select:focus-visible,
+.create-truck a:focus-visible,
+.create-truck button:focus-visible {
+  outline: 3px solid rgba(164, 13, 27, 0.24);
+  outline-offset: 2px;
+}
+
+.create-truck__state-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+  padding: 3rem 1.5rem;
+  border: 1px dashed #cbd2dc;
+  border-radius: 1rem;
+  background: #fff;
+  text-align: center;
+}
+
+.create-truck__state-card p {
+  max-width: 34rem;
+  margin: 0;
+  color: #647083;
+}
+
+@media (max-width: 680px) {
+  .create-truck__header,
+  .create-truck__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .create-truck__header > a,
+  .create-truck__actions a,
+  .create-truck__actions button {
+    width: 100%;
+  }
+
+  .create-truck__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .create-truck__field--wide {
+    grid-column: auto;
+  }
+
+  .create-truck__form,
+  .create-truck fieldset {
+    padding: 1rem;
+  }
+}
