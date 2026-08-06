@@ -6,7 +6,6 @@ export const ROUTES = {
 
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
-
   freightOwner: "/freight-owner",
   freightOwnerLoads: "/freight-owner/loads",
   freightOwnerNewLoad: "/freight-owner/loads/new",
@@ -17,5 +16,8 @@ export const ROUTES = {
   freightOwnerSettings: "/freight-owner/settings",
 
   transporter: "/transporter",
+  transporterTrucks: "/transporter/trucks",
+  transporterNewTruck: "/transporter/trucks/new",
+  transporterEditTruck: "/transporter/trucks/:truckId/edit",
   admin: "/admin",
 } as const;
