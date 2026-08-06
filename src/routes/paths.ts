@@ -18,5 +18,6 @@ export const ROUTES = {
   transporterNewTruck: "/transporter/trucks/new",
   transporterEditTruck: "/transporter/trucks/:truckId/edit",
   transporterMatches: "/transporter/matches",
+  transporterReceipts: "/transporter/receipts",
   admin: "/admin",
 } as const;
