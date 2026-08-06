@@ -3,7 +3,6 @@ export const ROUTES = {
 
   login: "/login",
   register: "/register",
-
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
   freightOwner: "/freight-owner",
@@ -14,10 +13,10 @@ export const ROUTES = {
   freightOwnerTracking: "/freight-owner/tracking",
   freightOwnerRatings: "/freight-owner/ratings",
   freightOwnerSettings: "/freight-owner/settings",
-
   transporter: "/transporter",
   transporterTrucks: "/transporter/trucks",
   transporterNewTruck: "/transporter/trucks/new",
   transporterEditTruck: "/transporter/trucks/:truckId/edit",
+  transporterMatches: "/transporter/matches",
   admin: "/admin",
 } as const;
