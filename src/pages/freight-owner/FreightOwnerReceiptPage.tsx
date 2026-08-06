@@ -13,7 +13,6 @@ import {
   getUserById,
   getVehicleTypes,
 } from "../../services/mockDb";
-
 function formatDateTime(value: string): string {
   return new Intl.DateTimeFormat("en-ZA", {
     dateStyle: "long",
@@ -29,7 +28,6 @@ export function FreightOwnerReceiptPage() {
   const match = matchId ? getMatchById(matchId) : undefined;
 
   const receipt = matchId ? getReceiptByMatchId(matchId) : undefined;
-
   const load = match ? getLoadById(match.loadId) : undefined;
 
   const truck = match ? getTruckById(match.truckId) : undefined;
@@ -45,7 +43,6 @@ export function FreightOwnerReceiptPage() {
         (vehicleType) => vehicleType.id === truck.vehicleType,
       )?.label ?? truck.vehicleType)
     : "";
-
   const canViewReceipt =
     session?.role === "freight-owner" &&
     Boolean(load) &&
@@ -58,7 +55,6 @@ export function FreightOwnerReceiptPage() {
           This confirmation receipt is unavailable or does not belong to your
           Freight Owner account.
         </div>
-
         <Link
           className="freight-receipt-page__secondary-action"
           to={ROUTES.freightOwnerMatches}
@@ -75,7 +71,6 @@ export function FreightOwnerReceiptPage() {
         <div className="freight-receipt-page__alert" role="alert">
           The digital confirmation record could not be found.
         </div>
-
         <Link
           className="freight-receipt-page__secondary-action"
           to={`${ROUTES.freightOwnerMatches}?loadId=${encodeURIComponent(
@@ -95,7 +90,6 @@ export function FreightOwnerReceiptPage() {
   const trackingPath = `${
     ROUTES.freightOwnerTracking
   }?tripId=${encodeURIComponent(trip.id)}`;
-
   return (
     <section className="freight-receipt-page">
       <header className="freight-receipt-page__header">
@@ -109,7 +103,6 @@ export function FreightOwnerReceiptPage() {
             the engagement and when.
           </p>
         </div>
-
         <div className="freight-receipt-page__header-actions">
           <button
             type="button"
@@ -127,7 +120,6 @@ export function FreightOwnerReceiptPage() {
           </Link>
         </div>
       </header>
-
       <article className="freight-receipt-page__receipt">
         <div className="freight-receipt-page__receipt-top">
           <div>
@@ -138,7 +130,6 @@ export function FreightOwnerReceiptPage() {
 
           <span className="freight-receipt-page__confirmed">Confirmed</span>
         </div>
-
         <div className="freight-receipt-page__contract">
           <span>Contract ID</span>
           <strong>{receipt.contractId}</strong>
@@ -156,7 +147,6 @@ export function FreightOwnerReceiptPage() {
               {receipt.decision}
             </dd>
           </div>
-
           <div>
             <dt>Accepted by</dt>
             <dd>{actor?.name ?? receipt.actorId}</dd>
@@ -173,7 +163,6 @@ export function FreightOwnerReceiptPage() {
             <h3>Engagement details</h3>
             <span>{trip.id}</span>
           </div>
-
           <div className="freight-receipt-page__route">
             <div>
               <span>Origin</span>
@@ -189,7 +178,6 @@ export function FreightOwnerReceiptPage() {
               <div />
               <span />
             </div>
-
             <div className="freight-receipt-page__destination">
               <span>Destination</span>
               <strong>{load.destination.city}</strong>
@@ -202,7 +190,6 @@ export function FreightOwnerReceiptPage() {
               <dt>Load</dt>
               <dd>{load.id}</dd>
             </div>
-
             <div>
               <dt>Cargo</dt>
               <dd>{load.cargoType}</dd>
@@ -211,10 +198,12 @@ export function FreightOwnerReceiptPage() {
             <div>
               <dt>Weight / volume</dt>
               <dd>
-                {load.weightKg.toLocaleString("en-ZA")} kg / {load.volumeM3} m³
+                {(load.weightKg / 1_000).toLocaleString("en-ZA", {
+                  maximumFractionDigits: 2,
+                })}{" "}
+                tonnes / {load.volumeM3} m³
               </dd>
             </div>
-
             <div>
               <dt>Pickup window</dt>
               <dd>
@@ -227,7 +216,6 @@ export function FreightOwnerReceiptPage() {
 
         <section className="freight-receipt-page__section">
           <h3>Truck and transporter</h3>
-
           <dl className="freight-receipt-page__details-grid">
             <div>
               <dt>Truck</dt>
@@ -243,7 +231,6 @@ export function FreightOwnerReceiptPage() {
               <dt>Vehicle type</dt>
               <dd>{vehicleLabel}</dd>
             </div>
-
             <div>
               <dt>Transporter</dt>
               <dd>
@@ -257,7 +244,6 @@ export function FreightOwnerReceiptPage() {
 
         <section className="freight-receipt-page__section freight-receipt-page__evidence">
           <h3>Confirmation evidence</h3>
-
           <dl className="freight-receipt-page__details-grid">
             <div>
               <dt>Receipt status</dt>
@@ -273,7 +259,6 @@ export function FreightOwnerReceiptPage() {
               <dt>User agent</dt>
               <dd>{receipt.userAgent}</dd>
             </div>
-
             <div>
               <dt>Trip status</dt>
               <dd>{trip.status.replace("_", " ")}</dd>
@@ -289,7 +274,6 @@ export function FreightOwnerReceiptPage() {
           </time>
         </footer>
       </article>
-
       <div className="freight-receipt-page__bottom-actions">
         <Link
           className="freight-receipt-page__secondary-action"
