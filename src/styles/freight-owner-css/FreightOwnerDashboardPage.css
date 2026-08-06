@@ -66,7 +66,7 @@
   justify-content: center;
   gap: var(--space-2);
   padding: 0.8rem 1.05rem;
-  color: #7f1d1d;
+  color: #1e293b;
   background: var(--color-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -74,13 +74,19 @@
 }
 
 .freight-dashboard__primary-action:hover {
-  color: #7f1d1d;
-  background: #fff7ed;
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .freight-dashboard__primary-action span {
   font-size: var(--font-size-lg);
   line-height: 1;
+}
+
+.freight-dashboard__primary-action:focus-visible {
+  outline: 3px solid #fda29b;
+  outline-offset: 3px;
 }
 
 .freight-dashboard__kpis {
