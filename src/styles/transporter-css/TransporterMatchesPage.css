@@ -421,6 +421,10 @@
   cursor: pointer;
 }
 
+.transporter-matches__empty button:hover {
+  background: var(--color-surface-white-red);
+}
+
 .transporter-load-match-card__reject {
   border: 1px solid #b9c1cc;
   background: #fff;
